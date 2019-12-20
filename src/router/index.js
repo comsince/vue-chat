@@ -13,10 +13,6 @@ const router = new Router({
     {
       path: '/friend',
       component: require('@/page/friend/friend.vue')
-    },
-    {
-      path: '/my',
-      component: require('@/page/resume/resume.vue')
     }
   ],
   linkActiveClass: 'active'

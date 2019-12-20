@@ -1,6 +1,6 @@
 # vue-chat
 
-基于[universe-push]()的vue即时通讯web端实现，使用websocket进行消息通讯
+基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯
 
 ## Build Setup
 
