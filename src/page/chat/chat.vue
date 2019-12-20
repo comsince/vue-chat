@@ -16,12 +16,17 @@ import search from '../../components/search/search'
 import chatlist from '../../components/chatlist/chatlist'
 import message from '../../components/message/message'
 import vText from '../../components/text/text'
+import VueSocket from '../../websocket/index'
 export default {
    components: {
    	 search,
    	 chatlist,
    	 message,
    	 vText
+   },
+   mounted(){
+      var socket = new VueSocket('ws','127.0.0.1',9326, 25 * 1000, 30 * 1000,'blob');
+	  socket.connect(true);
    }
 }
 </script>
