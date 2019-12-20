@@ -17,6 +17,7 @@ import chatlist from '../../components/chatlist/chatlist'
 import message from '../../components/message/message'
 import vText from '../../components/text/text'
 import VueSocket from '../../websocket/index'
+import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from '../../constant/index'
 export default {
    components: {
    	 search,
@@ -25,7 +26,7 @@ export default {
    	 vText
    },
    mounted(){
-      var socket = new VueSocket('ws','127.0.0.1',9326, 25 * 1000, 30 * 1000,'blob');
+      var socket = new VueSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE);
 	  socket.connect(true);
    }
 }
