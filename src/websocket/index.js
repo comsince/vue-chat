@@ -29,7 +29,7 @@ export default class VueWebSocket {
              websocketObj.sendConnectMessage();
         }
         this.ws.onmessage = function(event) {
-            console.log("ws onmessage");
+            console.log("ws onmessage["+event.data+"]");
             websocketObj.lastInteractionTime(new Date().getTime());
         }
         this.ws.onclose = function(event) {

@@ -9,9 +9,10 @@ export function decrypt (text) {
       padding: CryptoJS.pad.Pkcs7
     })
     //由于服务端加密的时候前四个字节时间参数，现在暂时忽略前4字节
-    let result = decrypted.toString(CryptoJS.enc.Utf8);
-    let rmtimeResult = result.slice(4);
-    return rmtimeResult;
+    var resultWordArr = CryptoJS.enc.Hex.parse(decrypted.toString().slice(8));
+    let result = resultWordArr.toString(CryptoJS.enc.Utf8);
+    // let rmtimeResult = result.slice(4);
+    return result;
   }
 
 
@@ -29,7 +30,9 @@ export function decrypt (text) {
     let timeEncryptCode = convertTimeEncryptCode(encryptCode);
     console.log('timeEncryptCode '+timeEncryptCode);
     
-    let encrypted = CryptoJS.AES.encrypt(timeEncryptCode, secretCode, {
+    //pwd 必须base64解码
+
+    let encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Base64.parse(timeEncryptCode), secretCode, {
          iv: secretCode, 
          mode: CryptoJS.mode.CBC, 
          padding: CryptoJS.pad.Pkcs7 
@@ -38,17 +41,36 @@ export function decrypt (text) {
 }
 
 function convertTimeEncryptCode(encryptCode){
-    let encryptArr = string2Bin(encryptCode);
+    
+    // let encryptArr = string2Bin(encryptCode);
+   let encryptArr = CryptoJS.enc.Base64.parse(encryptCode);
+
+   encryptArr = wordToByteArray(encryptArr.words);
+    // encryptArr  = string2Bin(encryptArr);
     let result = [];
-    for(var i=0; i < encryptCode.length + 4; i++){
+    let curhour = (new Date().getMilliseconds()/1000 - 1514736000)/3600;
+    for(var i=0; i < encryptArr.length + 4; i++){
         if(i < 4){
-            result.push(1 & 0xFF);
+            if(i == 0){
+              result.push(curhour & 0xFF);
+            } else if(i == 1){
+              result.push((curhour & 0xFF00) >> 8);
+            } else if(i == 2){
+              result.push((curhour & 0xFF0000) >> 16);
+            } else if(i == 3){
+               result.push((curhour & 0xFF) >> 24);
+            }
         } else{
             result.push(encryptArr[i - 4]);
         }
     }
     console.log('convertTimeEncryptCode result '+result);
-    return bin2String(result);
+
+    // https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string
+    var base64wordarr = btoa(String.fromCharCode(...new Uint8Array(result)));
+    console.log("hash word "+base64wordarr);
+
+    return base64wordarr;
 }
 
 function bin2String(array) {
@@ -66,3 +88,22 @@ function string2Bin(str) {
     }
     return result;
   }
+
+  function wordToByteArray(wordArray) {
+    var byteArray = [], word, i, j;
+    for (i = 0; i < wordArray.length; ++i) {
+        word = wordArray[i];
+        for (j = 3; j >= 0; --j) {
+            byteArray.push((word >> 8 * j) & 0xFF);
+        }
+    }
+    return byteArray;
+}
+
+function byteArrayToString(byteArray) {
+    var str = "", i;
+    for (i = 0; i < byteArray.length; ++i) {
+        str += escape(String.fromCharCode(byteArray[i]));
+    }
+    return str;
+}
