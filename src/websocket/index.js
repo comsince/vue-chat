@@ -1,9 +1,13 @@
-import {USER_ID,TOKEN,CLINET_ID} from '../constant'
+import {USER_ID,TOKEN,CLINET_ID, PUBLISH, FP} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
-import {CONNECT,CONNECT_ACK} from '../constant'
+import {CONNECT} from '../constant'
 import {ProtoMessage} from './message/protomessage'
+import ConnectAckHandler from './handler/connectackhandler';
+import GetFriendResultHandler from './handler/getfriendresultHandler';
 
 export default class VueWebSocket {
+    handlerList = [];
+
     constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType){
         this.ws_protocol = ws_protocol;
         this.ip= ip;
@@ -12,6 +16,7 @@ export default class VueWebSocket {
         this.reconnectInterval = reconnectInterval;
         this.binaryType = binaryType;
         this.url = ws_protocol + '://' + ip + ':'+ port;
+        this.initHandlerList();
     }
 
     connect(isReconncect){
@@ -30,6 +35,7 @@ export default class VueWebSocket {
         }
         this.ws.onmessage = function(event) {
             console.log("ws onmessage["+event.data+"]");
+            websocketObj.processMessage(event.data);
             websocketObj.lastInteractionTime(new Date().getTime());
         }
         this.ws.onclose = function(event) {
@@ -70,6 +76,23 @@ export default class VueWebSocket {
     }
 
 
+    initHandlerList(){
+        this.handlerList.push(new ConnectAckHandler(this));
+        this.handlerList.push(new GetFriendResultHandler(this));
+    }
+
+    processMessage(data){
+        var protoObj = JSON.parse(data);
+        for(var i = 0; i < this.handlerList.length; i++){
+            if(this.handlerList[i].match(protoObj)){
+                 this.handlerList[i].processMessage(protoObj);
+            }
+        }
+    }
+
+    /**
+     * 链接建立信息
+     */
     sendConnectMessage(){
         console.log("userToken "+TOKEN);
         let allToken = decrypt(TOKEN);
@@ -92,4 +115,12 @@ export default class VueWebSocket {
         console.log(protoMessage.toJson());
         this.send(protoMessage.toJson());
     }
+
+    getFriend(){
+        var  protoMessage  = new ProtoMessage();
+        protoMessage.setSignal(PUBLISH);
+        protoMessage.setSubSignal(FP);
+        protoMessage.setContent({version : 0});
+        this.send(protoMessage.toJson());
+    }    
 }

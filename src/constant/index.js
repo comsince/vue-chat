@@ -5,9 +5,14 @@ export const HEART_BEAT_INTERVAL = 25 * 1000;
 export const RECONNECT_INTERVAL = 30 * 1000;
 export const BINTRAY_TYPE = 'blob';
 
-
+//signal
 export const CONNECT = 'CONNECT';
 export const CONNECT_ACK = 'CONNECT_ACK';
+export const PUBLISH = 'PUBLISH';
+export const PUB_ACK = 'PUB_ACK';
+//subsignal
+export const FRP = 'FRP';
+export const FP = 'FP';
 
 //userId 这里为了演示静态登录，由于还没有登录界面所以暂时使用静态userid
 export const USER_ID = 'TYTzTz33';
