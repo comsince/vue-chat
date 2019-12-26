@@ -26,8 +26,8 @@ export default {
    	 vText
    },
    mounted(){
-      var socket = new VueSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE);
-	  socket.connect(true);
+    //   var socket = new VueSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE,this.$store);
+	//   socket.connect(true);
    }
 }
 </script>

@@ -12,12 +12,16 @@
 <script>
 import mycard from './components/mycard/mycard'
 import { mapActions } from 'vuex'
+import VueWebSocket from './websocket';
+import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from './constant/index'
 export default {
    components: {
      mycard
    },
    created () {
        this.$store.dispatch('initData')
+       var socket = new VueWebSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE,this.$store);
+	     socket.connect(true);
    }
 }
 </script>

@@ -75,93 +75,94 @@ const state = {
             sex: 0,   //性别 1为男，0为女
             remark: "新的朋友",  //备注
             area: "",  //地区
-        },
-        {
-            id: 1,
-            wxid: "AmorAres-", //微信号
-            initial: 'A', //姓名首字母
-            img: 'static/images/小姨妈.jpg', //头像
-            signature: "每天我就萌萌哒", //个性签名
-            nickname: "Amor",  //昵称
-            sex: 0,   //性别 1为男，0为女
-            remark: "Amor",  //备注
-            area: "浙江 宁波",  //地区
-        },
-        {  
-            id: 2,
-            wxid: "Big-fly",
-            initial: 'B',
-            img: 'static/images/大飞哥.jpg',
-            signature: "你不知道的js", 
-            nickname: "fly", 
-            sex: 1,
-            remark: "大飞哥",  
-            area: "奥地利 布尔根兰",
-        },
-        {
-            id: 3,
-            wxid: "microzz",
-            initial: 'D',
-            img: 'static/images/microzz.jpg',
-            signature: "学习让我快乐让我成长",
-            nickname: "microzz",
-            sex: 1,
-            remark: "大佬",
-            area: "江西 赣州",
-        },
-        {   
-            id: 4,
-            wxid: "hwn0366",
-            initial: 'F',
-            img: 'static/images/father.jpg',
-            signature: "学习让我快乐让我成长",
-            nickname: "丢",
-            sex: 1,
-            remark: "father",
-            area: "江西 抚州",
-        },
-        {
-            id: 5,
-            wxid: "orange66",
-            initial: 'J',
-            img: 'static/images/orange.jpg',
-            signature: "你可以笑的很阳光！",
-            nickname: "orange",
-            sex: 1,
-            remark: "橘子",
-            area: "江西 赣州",
-        },
-        {
-            id: 6,
-            wxid: "Seto_L",
-            img: 'static/images/加菲猫.jpg',
-            signature: "自强不息",
-            nickname: "21",
-            sex: 1,
-            remark: "加菲",
-            area: "北京 海淀",
-        },
-        {
-            id: 7,
-            wxid: "wxid_itjz73t1ajt722",
-            initial: 'M',
-            img: 'static/images/mother.jpg',
-            signature: "开开心心就好",
-            nickname: "娄娄",
-            sex: 0,
-            remark: "妈咪",
-            area: "江西 抚州",
-        },
-        {
-            id: 8,
-            wxid: "hj960503",
-            img: 'static/images/萌萌俊.jpg',
-            signature: "原谅我有点蠢。。",
-            nickname: "。。。。。",
-            sex: 1,
-            remark: "萌萌均",
-            area: "江西 萍乡",
         }
+        // ,
+        // {
+        //     id: 1,
+        //     wxid: "AmorAres-", //微信号
+        //     initial: 'A', //姓名首字母
+        //     img: 'static/images/小姨妈.jpg', //头像
+        //     signature: "每天我就萌萌哒", //个性签名
+        //     nickname: "Amor",  //昵称
+        //     sex: 0,   //性别 1为男，0为女
+        //     remark: "Amor",  //备注
+        //     area: "浙江 宁波",  //地区
+        // },
+        // {  
+        //     id: 2,
+        //     wxid: "Big-fly",
+        //     initial: 'B',
+        //     img: 'static/images/大飞哥.jpg',
+        //     signature: "你不知道的js", 
+        //     nickname: "fly", 
+        //     sex: 1,
+        //     remark: "大飞哥",  
+        //     area: "奥地利 布尔根兰",
+        // },
+        // {
+        //     id: 3,
+        //     wxid: "microzz",
+        //     initial: 'D',
+        //     img: 'static/images/microzz.jpg',
+        //     signature: "学习让我快乐让我成长",
+        //     nickname: "microzz",
+        //     sex: 1,
+        //     remark: "大佬",
+        //     area: "江西 赣州",
+        // },
+        // {   
+        //     id: 4,
+        //     wxid: "hwn0366",
+        //     initial: 'F',
+        //     img: 'static/images/father.jpg',
+        //     signature: "学习让我快乐让我成长",
+        //     nickname: "丢",
+        //     sex: 1,
+        //     remark: "father",
+        //     area: "江西 抚州",
+        // },
+        // {
+        //     id: 5,
+        //     wxid: "orange66",
+        //     initial: 'J',
+        //     img: 'static/images/orange.jpg',
+        //     signature: "你可以笑的很阳光！",
+        //     nickname: "orange",
+        //     sex: 1,
+        //     remark: "橘子",
+        //     area: "江西 赣州",
+        // },
+        // {
+        //     id: 6,
+        //     wxid: "Seto_L",
+        //     img: 'static/images/加菲猫.jpg',
+        //     signature: "自强不息",
+        //     nickname: "21",
+        //     sex: 1,
+        //     remark: "加菲",
+        //     area: "北京 海淀",
+        // },
+        // {
+        //     id: 7,
+        //     wxid: "wxid_itjz73t1ajt722",
+        //     initial: 'M',
+        //     img: 'static/images/mother.jpg',
+        //     signature: "开开心心就好",
+        //     nickname: "娄娄",
+        //     sex: 0,
+        //     remark: "妈咪",
+        //     area: "江西 抚州",
+        // },
+        // {
+        //     id: 8,
+        //     wxid: "hj960503",
+        //     img: 'static/images/萌萌俊.jpg',
+        //     signature: "原谅我有点蠢。。",
+        //     nickname: "。。。。。",
+        //     sex: 1,
+        //     remark: "萌萌均",
+        //     area: "江西 萍乡",
+        // }
         
     ],
     //emoji表情
@@ -220,7 +221,7 @@ const state = {
     // 得知当前选择的是哪个对话
     selectId: 1,
     // 得知当前选择的是哪个好友
-    selectFriendId: 0
+    selectFriendId: 0,
 }
 
 const mutations = {
@@ -242,6 +243,14 @@ const mutations = {
     // 得知用户当前选择的是哪个好友。
     selectFriend (state, value) {
        state.selectFriendId = value
+    },
+
+    //更新朋友列表
+    updateFriendList(state,value){
+        for(var i in value){
+            state.friendlist.push(value[i]);
+        }
+        
     },
     // 发送信息
     sendMessage (state, msg){
@@ -328,6 +337,7 @@ const actions = {
     },
     selectSession: ({ commit }, value) => commit('selectSession', value),
     selectFriend: ({ commit }, value) => commit('selectFriend', value),
+    updateFriendList: ({ commit }, value) => commit('updateFriendList', value),
     sendMessage: ({ commit }, msg) => commit('sendMessage', msg),
     send: ({ commit }) => commit('send'),
     initData: ({ commit }) => commit('initData')

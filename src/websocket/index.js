@@ -8,7 +8,7 @@ import GetFriendResultHandler from './handler/getfriendresultHandler';
 export default class VueWebSocket {
     handlerList = [];
 
-    constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType){
+    constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType,vuexStore){
         this.ws_protocol = ws_protocol;
         this.ip= ip;
         this.port = port;
@@ -16,6 +16,7 @@ export default class VueWebSocket {
         this.reconnectInterval = reconnectInterval;
         this.binaryType = binaryType;
         this.url = ws_protocol + '://' + ip + ':'+ port;
+        this.vuexStore = vuexStore;
         this.initHandlerList();
     }
 
@@ -75,6 +76,13 @@ export default class VueWebSocket {
 
     }
 
+
+    /**
+     * 分发vuex action
+     */
+    sendAction(type,data){
+        this.vuexStore.dispatch(type,data);
+    }
 
     initHandlerList(){
         this.handlerList.push(new ConnectAckHandler(this));

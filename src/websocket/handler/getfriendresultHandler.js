@@ -8,8 +8,20 @@ export default class GetFriendResultHandler extends AbstractMessageHandler{
 
     processMessage(proto){
         var friendList  = JSON.parse(proto.content);
+        var stateFriendList = [];
         for(var i in friendList){
-            console.log(friendList[i].friendUid);
+            stateFriendList.push({
+                id: parseInt(i) + 1,
+                wxid: friendList[i].friendUid, //微信号
+                initial: friendList[i].friendUid.substring(0,1), //姓名首字母
+                img: 'static/images/newfriend.jpg', //头像
+                signature: "", //个性签名
+                nickname: friendList[i].friendUid,  //昵称
+                sex: 0,   //性别 1为男，0为女
+                remark: friendList[i].friendUid,  //备注
+                area: "",  //地区
+            });
         }
+        this.vueWebsocket.sendAction("updateFriendList",stateFriendList);
     }
 }
