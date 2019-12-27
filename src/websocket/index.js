@@ -1,9 +1,10 @@
-import {USER_ID,TOKEN,CLINET_ID, PUBLISH, FP} from '../constant'
+import {USER_ID,TOKEN,CLINET_ID, PUBLISH, FP, PUB_ACK, UPUI} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {ProtoMessage} from './message/protomessage'
 import ConnectAckHandler from './handler/connectackhandler';
 import GetFriendResultHandler from './handler/getfriendresultHandler';
+import GetUserInfoHandler from './handler/getuserinfoHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -41,6 +42,7 @@ export default class VueWebSocket {
         }
         this.ws.onclose = function(event) {
             console.log("ws onclose");
+            websocketObj.ws.close();
             clearInterval(websocketObj.pingIntervalId);
             websocketObj.reconnect(event);
         }
@@ -87,6 +89,7 @@ export default class VueWebSocket {
     initHandlerList(){
         this.handlerList.push(new ConnectAckHandler(this));
         this.handlerList.push(new GetFriendResultHandler(this));
+        this.handlerList.push(new GetUserInfoHandler(this));
     }
 
     processMessage(data){
@@ -124,11 +127,26 @@ export default class VueWebSocket {
         this.send(protoMessage.toJson());
     }
 
+    /**
+     * 获取朋友列表
+     */
     getFriend(){
         var  protoMessage  = new ProtoMessage();
         protoMessage.setSignal(PUBLISH);
         protoMessage.setSubSignal(FP);
         protoMessage.setContent({version : 0});
         this.send(protoMessage.toJson());
-    }    
+    }
+    
+    /**
+     * 获取用户详细信息
+     */
+    getUserInfos(userIds){
+        var protoMessage = new ProtoMessage();
+        protoMessage.setSignal(PUBLISH);
+        protoMessage.setSubSignal(UPUI);
+        protoMessage.setContent(userIds);
+        console.log("getUserInfos "+protoMessage.toJson());
+        this.send(protoMessage.toJson());
+    }
 }

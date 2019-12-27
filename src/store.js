@@ -247,7 +247,10 @@ const mutations = {
 
     //更新朋友列表
     updateFriendList(state,value){
-        for(var i in value){
+        var first = state.friendlist[0];
+        state.friendlist = [];
+        state.friendlist.push(first);
+        for(var i in value){    
             state.friendlist.push(value[i]);
         }
         
