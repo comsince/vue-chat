@@ -1,35 +1,51 @@
-export class ProtoMessage {
-    signal;
-    subSignal;
+import { USER_ID } from "../../constant";
+import MessageStatus from "./messageStatus";
+import ConversationType from "../model/conversationType";
+import ProtoMessageContent from "./protomessageContent";
 
-    constructor(){
-        console.log('constuctor');
-    }
+/**
+ * 聊天信息content，在发送的时候转换为json消息体发送
+ */
+export default class ProtoMessage {
+    conversationType;
+    target;
+    line;
+    from = '';
+    content = {}; 
+    messageId = 0;
+    direction = 0;
+    status = 0;
+    messageUid = 0;
+    timestamp = 0;
+    to = '';
 
-    setMessageId(messageId){
-        this.messageId = messageId;
-    }
 
-    setSignal(signal){
-        this.signal = signal;
-    }
-
-    setSubSignal(subSignal){
-        this.subsignal = subSignal;
-    }
-
-    setContent(content){
-        this.content = content; 
-    }
-
-    toJson(){
-        let message = {
-            signal : this.signal,
-            subsignal : this.subsignal == null ? 'NONE' : this.subsignal,
-            message_id : this.messageId == null ? 0 : this.messageId,
-            content : this.content
+    static toProtoMessage(obj){
+        let protoMessage = new ProtoMessage();
+        if(obj.from == USER_ID){
+            protoMessage.direction = 0;
+            protoMessage.status = MessageStatus.Sent;
+        } else {
+            protoMessage.direction = 1;
+            protoMessage.status = MessageStatus.Unread;
         }
-
-        return JSON.stringify(message);
+        protoMessage.messageId = obj.messageId;
+        protoMessage.messageUid = obj.messageId;
+        protoMessage.timestamp = obj.timestamp;
+        protoMessage.conversationType = obj.conversationType;
+        protoMessage.target = obj.target;
+        protoMessage.from = obj.from;
+        if(protoMessage.conversationType == ConversationType.Single){
+            if(obj.from != USER_ID){
+               protoMessage.target = obj.from;
+               protoMessage.from = obj.from;
+            } else {
+                protoMessage.target = obj.target;
+                protoMessage.from = obj.from;
+            }
+        }
+        protoMessage.line = obj.line;
+        protoMessage.content = ProtoMessageContent.toProtoMessageContent(obj.content);
+        return protoMessage;
     }
 }

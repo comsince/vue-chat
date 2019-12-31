@@ -2,6 +2,14 @@
 
 基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯
 
+
+## 版本规划
+### V1.0.0
+* 登录认证流程
+* 实现朋友列表展示，用户信息获取
+* 会话信息拉取
+* 纯文本消息通讯
+
 ## Build Setup
 
 **NOTE:** 项目尚在开发中，只有UI实现，具体逻辑正在开发中，敬请期待

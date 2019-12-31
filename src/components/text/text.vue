@@ -25,6 +25,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import TextMessageContent from '../../websocket/message/textMessageContent'
 export default {
     data () {
         return {
@@ -74,10 +75,9 @@ export default {
                             this.content = ''
                        })
                     }else{
-                        var msg = {
-                            content: this.content,
-                        }
-                        this.$store.dispatch('sendMessage', msg)
+                        //进行消息类型包装
+                        var textMessageContent = new TextMessageContent(this.content);
+                        this.$store.dispatch('sendMessage', textMessageContent)
                             this.content = ''
                     }
                }

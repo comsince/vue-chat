@@ -20,8 +20,8 @@ export default {
    },
    created () {
        this.$store.dispatch('initData')
-       var socket = new VueWebSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE,this.$store);
-	     socket.connect(true);
+      //  var socket = new VueWebSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE,this.$store);
+	    //  socket.connect(true);
    }
 }
 </script>

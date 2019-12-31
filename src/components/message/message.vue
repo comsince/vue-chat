@@ -2,16 +2,16 @@
 <template>
 	<div class="message">
 		<header class="header">
-			<div class="friendname">{{selectedChat.user.name}}</div>
+			<div class="friendname">{{selectedChat.name}}</div>
 		</header>
 		<div class="message-wrapper" ref="list">
 		    <ul v-if="selectedChat">
-		    	<li v-for="item in selectedChat.messages" class="message-item">
-		    		<div class="time"><span>{{item.date | time}}</span></div>
-		    		<div class="main" :class="{ self: item.self }">
-                        <img class="avatar" width="36" height="36" :src="item.self ? user.img : selectedChat.user.img" />
+		    	<li v-for="item in selectedChat.protoMessages" class="message-item">
+		    		<div class="time"><span>{{item.timestamp | time}}</span></div>
+		    		<div class="main" :class="{ self: item.direction == 0 ? true : false }">
+                        <img class="avatar" width="36" height="36" :src="item.self ? user.img : user.img" />
                         <div class="content">
-                            <div class="text" v-html="replaceFace(item.content)"></div>
+                            <div class="text" v-html="replaceFace(item.content.searchableContent)"></div>
                         </div>
                     </div>
 		    	</li>
@@ -60,8 +60,12 @@ export default {
     filters: {
             // 将日期过滤为 hour:minutes
             time (date) {
+                console.log('message date '+typeof(date));
                 if (typeof date === 'string') {
                     date = new Date(date);
+                }
+                if(typeof date === 'number'){
+                   date = new Date(date);
                 }
                 if(date.getMinutes()<10){
                   return date.getHours() + ':0' +date.getMinutes();

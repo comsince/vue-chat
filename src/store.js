@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import router from './router'
+import VueWebSocket from './websocket';
+import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from './constant/index'
+import StateConversationInfo from './websocket/model/stateConversationInfo';
+import StateChatMessage from './websocket/model/stateSelectChatMessage'
 Vue.use(Vuex)
 
 //获取当前时间
@@ -67,7 +71,7 @@ const state = {
     friendlist: [
         {
             id: 0,
-            wxid: "", //微信号
+            wxid: "new", //微信号
             initial: '新的朋友', //姓名首字母
             img: 'static/images/newfriend.jpg', //头像
             signature: "", //个性签名
@@ -76,93 +80,6 @@ const state = {
             remark: "新的朋友",  //备注
             area: "",  //地区
         }
-        // ,
-        // {
-        //     id: 1,
-        //     wxid: "AmorAres-", //微信号
-        //     initial: 'A', //姓名首字母
-        //     img: 'static/images/小姨妈.jpg', //头像
-        //     signature: "每天我就萌萌哒", //个性签名
-        //     nickname: "Amor",  //昵称
-        //     sex: 0,   //性别 1为男，0为女
-        //     remark: "Amor",  //备注
-        //     area: "浙江 宁波",  //地区
-        // },
-        // {  
-        //     id: 2,
-        //     wxid: "Big-fly",
-        //     initial: 'B',
-        //     img: 'static/images/大飞哥.jpg',
-        //     signature: "你不知道的js", 
-        //     nickname: "fly", 
-        //     sex: 1,
-        //     remark: "大飞哥",  
-        //     area: "奥地利 布尔根兰",
-        // },
-        // {
-        //     id: 3,
-        //     wxid: "microzz",
-        //     initial: 'D',
-        //     img: 'static/images/microzz.jpg',
-        //     signature: "学习让我快乐让我成长",
-        //     nickname: "microzz",
-        //     sex: 1,
-        //     remark: "大佬",
-        //     area: "江西 赣州",
-        // },
-        // {   
-        //     id: 4,
-        //     wxid: "hwn0366",
-        //     initial: 'F',
-        //     img: 'static/images/father.jpg',
-        //     signature: "学习让我快乐让我成长",
-        //     nickname: "丢",
-        //     sex: 1,
-        //     remark: "father",
-        //     area: "江西 抚州",
-        // },
-        // {
-        //     id: 5,
-        //     wxid: "orange66",
-        //     initial: 'J',
-        //     img: 'static/images/orange.jpg',
-        //     signature: "你可以笑的很阳光！",
-        //     nickname: "orange",
-        //     sex: 1,
-        //     remark: "橘子",
-        //     area: "江西 赣州",
-        // },
-        // {
-        //     id: 6,
-        //     wxid: "Seto_L",
-        //     img: 'static/images/加菲猫.jpg',
-        //     signature: "自强不息",
-        //     nickname: "21",
-        //     sex: 1,
-        //     remark: "加菲",
-        //     area: "北京 海淀",
-        // },
-        // {
-        //     id: 7,
-        //     wxid: "wxid_itjz73t1ajt722",
-        //     initial: 'M',
-        //     img: 'static/images/mother.jpg',
-        //     signature: "开开心心就好",
-        //     nickname: "娄娄",
-        //     sex: 0,
-        //     remark: "妈咪",
-        //     area: "江西 抚州",
-        // },
-        // {
-        //     id: 8,
-        //     wxid: "hj960503",
-        //     img: 'static/images/萌萌俊.jpg',
-        //     signature: "原谅我有点蠢。。",
-        //     nickname: "。。。。。",
-        //     sex: 1,
-        //     remark: "萌萌均",
-        //     area: "江西 萍乡",
-        // }
         
     ],
     //emoji表情
@@ -220,17 +137,27 @@ const state = {
      ],
     // 得知当前选择的是哪个对话
     selectId: 1,
+    //选择的会话target
+    selectTarget: 'new',
     // 得知当前选择的是哪个好友
     selectFriendId: 0,
+    vueSocket: null,
+    //会话列表
+    conversations: [],
+    //消息列表
+    messages: [],
 }
 
 const mutations = {
     // 从localStorage 中获取数据
     initData (state) {
-            let data = localStorage.getItem('vue-chat');
-            if (data) {
-                state.chatlist = JSON.parse(data);
-            }
+        const vueSocket = new VueWebSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE,store);
+        vueSocket.connect(true);
+        state.vueSocket = vueSocket;
+        let data = localStorage.getItem('vue-chat');
+        if (data) {
+            state.chatlist = JSON.parse(data);
+        }
     },
     // 获取搜索值
 	search (state, value) {
@@ -239,6 +166,9 @@ const mutations = {
     // 得知用户当前选择的是哪个对话。便于匹配对应的对话框
     selectSession (state, value) {
        state.selectId = value
+    },
+    selectConversation(state,value){
+       state.selectTarget = value;
     },
     // 得知用户当前选择的是哪个好友。
     selectFriend (state, value) {
@@ -256,22 +186,25 @@ const mutations = {
         
     },
     // 发送信息
-    sendMessage (state, msg){
+    sendMessage (state, messageContent){
         let result = state.chatlist.find(session => session.id === state.selectId);
          result.messages.push({
-                content: msg.content,
+                content: messageContent.content,
                 date: new Date(),
                 self: true
         });
-         if(result.user.name === '机器人'){
+        if(result.user.name === '机器人'){
              setTimeout(() => {
                 result.messages.push({
-                    content: msg.reply,
+                    content: messageContent.reply,
                     date: new Date(),
                     self: false
                 });
              },500)
-         }
+        }
+        //发送消息到对端
+        
+        // stat.vueSocket.send();
     },
 
     // 选择好友后，点击发送信息。判断在聊天列表中是否有该好友，有的话跳到该好友对话。没有的话
@@ -303,9 +236,60 @@ const mutations = {
             state.selectId = msg.index
             router.push({ path: '/chat'})
         }
+    },
+
+    //更新会话列表
+    updateConversationInfo(state,protoConversationInfo){
+        var update = false;
+        for(var stateConverstaionInfo of state.conversations){
+            if(stateConverstaionInfo.conversationInfo.conversationType == protoConversationInfo.conversationType 
+                && stateConverstaionInfo.conversationInfo.target == protoConversationInfo.target){
+                update = true;
+                stateConverstaionInfo.conversationInfo.lastMessage = protoConversationInfo.lastMessage;
+                stateConverstaionInfo.conversationInfo.timestamp = new Date();
+            }
+        }
+        if(!update){
+           var stateConverstaionInfo = new StateConversationInfo();
+           stateConverstaionInfo.conversationInfo = protoConversationInfo;
+           var friend = state.friendlist.find(friend => friend.wxid === protoConversationInfo.target);
+           if(friend != null){
+            var name = friend.nickname;
+            var img = friend.img == null ? 'static/images/vue.jpg': friend.img;
+            stateConverstaionInfo.name = name;
+            stateConverstaionInfo.img = img;
+            state.conversations.push(stateConverstaionInfo);
+           }
+           
+        }
+    },
+
+    addProtoMessage(state,protoMessage){
+       var added = false;
+       for(var stateChatMessage of state.messages){
+           if(protoMessage.target == stateChatMessage.target){
+               added = true;
+               stateChatMessage.protoMessages.push(protoMessage);
+           }
+       }
+       if(!added){
+          var stateChatMessage = new StateChatMessage();
+          var friend = state.friendlist.find(friend => friend.wxid === protoMessage.target);
+          if(friend != null){
+             stateChatMessage.name =  friend.nickname;
+          }
+          stateChatMessage.target = protoMessage.target;
+          stateChatMessage.protoMessages.push(protoMessage);
+          state.messages.push(stateChatMessage);
+       }
+       
     }
 }
 const getters = {
+    //筛选会话列表
+    searchedConversationList(){
+       return state.conversations;
+    },
     // 筛选出含有搜索值的聊天列表
     searchedChatlist (state) {
        let sessions = state.chatlist.filter(sessions => sessions.user.name.includes(state.searchText));
@@ -316,10 +300,17 @@ const getters = {
        let friends = state.friendlist.filter(friends => friends.remark.includes(state.searchText));
        return friends
     },
+    //获取用户头像
+    selectImageByTarget(state){
+
+    },
     // 通过当前选择是哪个对话匹配相应的对话
     selectedChat (state) {
-       let session = state.chatlist.find(session => session.id === state.selectId);
-       return session
+       let chatMessage = state.messages.find(chatMessage => chatMessage.target === state.selectTarget);
+       if(chatMessage == null){
+          chatMessage = state.messages[0];
+       }
+       return chatMessage
     },
     // 通过当前选择是哪个好友匹配相应的好友
     selectedFriend (state) {
@@ -339,11 +330,14 @@ const actions = {
         }, 100)
     },
     selectSession: ({ commit }, value) => commit('selectSession', value),
+    selectConversation: ({ commit }, value) => commit('selectConversation', value),
     selectFriend: ({ commit }, value) => commit('selectFriend', value),
     updateFriendList: ({ commit }, value) => commit('updateFriendList', value),
     sendMessage: ({ commit }, msg) => commit('sendMessage', msg),
     send: ({ commit }) => commit('send'),
-    initData: ({ commit }) => commit('initData')
+    initData: ({ commit }) => commit('initData'),
+    updateConversationInfo: ({ commit }, value) => commit('updateConversationInfo', value),
+    addProtoMessage: ({ commit }, value) => commit('addProtoMessage', value),
 }
 const store = new Vuex.Store({
   state,

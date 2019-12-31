@@ -26,6 +26,8 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
            }
            console.log("stateFriendList "+stateFriendList.length);
            this.vueWebsocket.sendAction("updateFriendList",stateFriendList);
+           //更新当前会话
+           this.vueWebsocket.sendAction('selectConversation',stateFriendList[0].wxid);
        }
     }
 }

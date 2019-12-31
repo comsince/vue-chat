@@ -1,10 +1,11 @@
-import {USER_ID,TOKEN,CLINET_ID, PUBLISH, FP, PUB_ACK, UPUI} from '../constant'
+import {USER_ID,TOKEN,CLINET_ID, PUBLISH, FP, PUB_ACK, UPUI, MP} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
-import {ProtoMessage} from './message/protomessage'
+import {WebSocketProtoMessage} from './message/websocketprotomessage'
 import ConnectAckHandler from './handler/connectackhandler';
 import GetFriendResultHandler from './handler/getfriendresultHandler';
 import GetUserInfoHandler from './handler/getuserinfoHandler';
+import ReceiveMessageHandler from './handler/receiveMessageHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -90,6 +91,7 @@ export default class VueWebSocket {
         this.handlerList.push(new ConnectAckHandler(this));
         this.handlerList.push(new GetFriendResultHandler(this));
         this.handlerList.push(new GetUserInfoHandler(this));
+        this.handlerList.push(new ReceiveMessageHandler(this));
     }
 
     processMessage(data){
@@ -115,38 +117,49 @@ export default class VueWebSocket {
         let pwdAesBase64 = encrypt(pwd,secret);
         console.log('encrypt pwd: '+pwdAesBase64);
 
-        var protoMessage =  new ProtoMessage();
-        protoMessage.setSignal(CONNECT);
+        var websocketprotomessage =  new WebSocketProtoMessage();
+        websocketprotomessage.setSignal(CONNECT);
         var connectMessage = {
             userName: USER_ID,
             password: pwdAesBase64,
             clientIdentifier: CLINET_ID
         }
-        protoMessage.content = connectMessage;
-        console.log(protoMessage.toJson());
-        this.send(protoMessage.toJson());
+        websocketprotomessage.content = connectMessage;
+        console.log(websocketprotomessage.toJson());
+        this.send(websocketprotomessage.toJson());
     }
 
     /**
      * 获取朋友列表
      */
     getFriend(){
-        var  protoMessage  = new ProtoMessage();
-        protoMessage.setSignal(PUBLISH);
-        protoMessage.setSubSignal(FP);
-        protoMessage.setContent({version : 0});
-        this.send(protoMessage.toJson());
+        var  websocketprotomessage  = new WebSocketProtoMessage();
+        websocketprotomessage.setSignal(PUBLISH);
+        websocketprotomessage.setSubSignal(FP);
+        websocketprotomessage.setContent({version : 0});
+        this.send(websocketprotomessage.toJson());
     }
     
     /**
      * 获取用户详细信息
      */
     getUserInfos(userIds){
-        var protoMessage = new ProtoMessage();
-        protoMessage.setSignal(PUBLISH);
-        protoMessage.setSubSignal(UPUI);
-        protoMessage.setContent(userIds);
-        console.log("getUserInfos "+protoMessage.toJson());
-        this.send(protoMessage.toJson());
+        var websocketprotomessage = new WebSocketProtoMessage();
+        websocketprotomessage.setSignal(PUBLISH);
+        websocketprotomessage.setSubSignal(UPUI);
+        websocketprotomessage.setContent(userIds);
+        console.log("getUserInfos "+websocketprotomessage.toJson());
+        this.send(websocketprotomessage.toJson());
+    }
+
+    pullMessage(messageId,type){
+        var websocketprotomessage =  new WebSocketProtoMessage();
+        websocketprotomessage.setSignal(PUBLISH);
+        websocketprotomessage.setSubSignal(MP);
+        websocketprotomessage.setContent({
+            id: messageId,
+            type: 0
+        });
+        this.send(websocketprotomessage.toJson());
     }
 }

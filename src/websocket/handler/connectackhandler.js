@@ -12,7 +12,10 @@ export default class ConnectAckHandler extends AbstractMessageHandler{
     processMessage(data){
         console.log("ConnectAckHandler process message");
         var connectAcceptedMessage = JSON.parse(data.content);
-        //console.log("connectAcceptedMessage friendHead "+connectAcceptedMessage.friendHead+" messageHead "+connectAcceptedMessage.messageHead);
+        //console.log("connectAcceptedMessage friendHead "+connectAcceptedMessage.friendHead+" messageHead "+connectAcceptedMessage.c);
+        //拉取朋友列表
         this.vueWebsocket.getFriend();
+        //初始拉取消息列表
+        this.vueWebsocket.pullMessage(connectAcceptedMessage.messageHead,0);
     }
 }
