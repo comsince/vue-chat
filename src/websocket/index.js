@@ -6,6 +6,7 @@ import ConnectAckHandler from './handler/connectackhandler';
 import GetFriendResultHandler from './handler/getfriendresultHandler';
 import GetUserInfoHandler from './handler/getuserinfoHandler';
 import ReceiveMessageHandler from './handler/receiveMessageHandler';
+import NotifyMessageHandler from './handler/notifyMessageHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -92,6 +93,7 @@ export default class VueWebSocket {
         this.handlerList.push(new GetFriendResultHandler(this));
         this.handlerList.push(new GetUserInfoHandler(this));
         this.handlerList.push(new ReceiveMessageHandler(this));
+        this.handlerList.push(new NotifyMessageHandler(this));
     }
 
     processMessage(data){
@@ -152,13 +154,13 @@ export default class VueWebSocket {
         this.send(websocketprotomessage.toJson());
     }
 
-    pullMessage(messageId,type){
+    pullMessage(messageId,type = 0){
         var websocketprotomessage =  new WebSocketProtoMessage();
         websocketprotomessage.setSignal(PUBLISH);
         websocketprotomessage.setSubSignal(MP);
         websocketprotomessage.setContent({
-            id: messageId,
-            type: 0
+            messageId: messageId,
+            type: type
         });
         this.send(websocketprotomessage.toJson());
     }

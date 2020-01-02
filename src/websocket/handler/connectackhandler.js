@@ -16,6 +16,6 @@ export default class ConnectAckHandler extends AbstractMessageHandler{
         //拉取朋友列表
         this.vueWebsocket.getFriend();
         //初始拉取消息列表
-        this.vueWebsocket.pullMessage(connectAcceptedMessage.messageHead,0);
+        this.vueWebsocket.pullMessage(0,0);
     }
 }
