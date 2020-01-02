@@ -48,7 +48,7 @@ export default {
     methods: {
         // 按回车发送信息
         onKeyup (e) {
-            if ( e.keyCode === 13 ) {
+            if ( e.keyCode === 13 && e.ctrlKey) {
                this.send()
             }
         },
@@ -61,7 +61,7 @@ export default {
                     this.warn = false;
                   }, 1000)
                }else{
-                    if(this.selectedChat.user.name === '机器人'){
+                    if(this.selectedChat.name === '机器人'){
                         this.$http.get(`https://zhaoplus.com/api/AI?search=${this.content}`).then(res => {
                             this.reply = res.data.result.text
                             if(this.content.includes('/:')){

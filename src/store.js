@@ -2,9 +2,13 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from './router'
 import VueWebSocket from './websocket';
-import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from './constant/index'
+import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE, USER_ID, TOKEN} from './constant/index'
 import StateConversationInfo from './websocket/model/stateConversationInfo';
 import StateChatMessage from './websocket/model/stateSelectChatMessage'
+import Message from './websocket/message/message';
+import Conversation from './websocket/model/conversation';
+import MessageStatus from './websocket/message/messageStatus';
+import ProtoMessage from './websocket/message/protomessage';
 Vue.use(Vuex)
 
 //获取当前时间
@@ -146,6 +150,8 @@ const state = {
     conversations: [],
     //消息列表
     messages: [],
+    userId: USER_ID,
+    token: TOKEN,
 }
 
 const mutations = {
@@ -187,24 +193,18 @@ const mutations = {
     },
     // 发送信息
     sendMessage (state, messageContent){
-        let result = state.chatlist.find(session => session.id === state.selectId);
-         result.messages.push({
-                content: messageContent.content,
-                date: new Date(),
-                self: true
-        });
-        if(result.user.name === '机器人'){
-             setTimeout(() => {
-                result.messages.push({
-                    content: messageContent.reply,
-                    date: new Date(),
-                    self: false
-                });
-             },500)
-        }
+        var message = Message.toMessage(state,messageContent);
+        var protoMessage = ProtoMessage.convertToProtoMessage(message);
+        console.log("send protomessage "+JSON.stringify(protoMessage));
+        var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
+        stateConversationInfo.conversationInfo.lastMessage = protoMessage;
+        stateConversationInfo.conversationInfo.timestamp = protoMessage.timestamp;
+
+        var stateChatMessage = state.messages.find(chatmessage => chatmessage.target === protoMessage.target);
+        stateChatMessage.protoMessages.push(protoMessage);
+
         //发送消息到对端
-        
-        // stat.vueSocket.send();
+        state.vueSocket.sendMessage(protoMessage);
     },
 
     // 选择好友后，点击发送信息。判断在聊天列表中是否有该好友，有的话跳到该好友对话。没有的话
@@ -318,8 +318,8 @@ const getters = {
        return friend
     },
     messages (state) {
-        let session = state.chatlist.find(session => session.id === state.selectId);
-        return session.messages
+        let chatMessage = state.messages.find(chatMessage => chatMessage.target === state.selectTarget);
+        return chatMessage.protoMessages;
     }
 }
 

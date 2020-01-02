@@ -48,4 +48,23 @@ export default class ProtoMessage {
         protoMessage.content = ProtoMessageContent.toProtoMessageContent(obj.content);
         return protoMessage;
     }
+
+    /***
+     * 转为即将发送的protomessage
+     */
+    static convertToProtoMessage(message){
+        var protoMessage = new ProtoMessage();
+        protoMessage.conversationType = message.conversation.type;
+        protoMessage.target = message.conversation.target;
+        protoMessage.line = message.conversation.line;
+        protoMessage.from = message.from;
+        protoMessage.direction = message.direction;
+        protoMessage.status = message.status;
+        protoMessage.messageId = message.messageId;
+        protoMessage.messageUid = message.messageUid;
+        protoMessage.timestamp = message.timestamp;
+        var payload = message.content.encode();
+        protoMessage.content = ProtoMessageContent.toProtoMessageContent(payload);
+        return protoMessage;
+    }
 }

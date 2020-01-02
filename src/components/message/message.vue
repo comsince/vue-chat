@@ -60,7 +60,6 @@ export default {
     filters: {
             // 将日期过滤为 hour:minutes
             time (date) {
-                console.log('message date '+typeof(date));
                 if (typeof date === 'string') {
                     date = new Date(date);
                 }

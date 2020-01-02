@@ -1,5 +1,6 @@
 import Conversation from '../model/conversation'
 import { USER_ID } from '../../constant';
+import MessageStatus from './messageStatus'
 /***
  *  message in json format
     {
@@ -41,21 +42,36 @@ export default class Message {
     timestamp = 0;
     to = '';
 
-    static toMessage(obj){
-        let msg = new Message();
-        msg.conversation = new Conversation(obj.conversationType,obj.target,obj.line);
-        msg.from = obj.from;
-        msg.content = obj.content;
-        msg.messageId = obj.messageId;
-        if(obj.from == USER_ID){
-            msg.direction = 0;
-        } else {
-            msg.direction = 1;
-        }
-        msg.status = obj.status;
-        msg.messageUid = obj.messageId;
-        msg.timestamp = obj.timestamp;
-        msg.to = obj.target;
-        return msg;
+    // static toMessage(obj){
+    //     let msg = new Message();
+    //     msg.conversation = new Conversation(obj.conversationType,obj.target,obj.line);
+    //     msg.from = obj.from;
+    //     msg.content = obj.content;
+    //     msg.messageId = obj.messageId;
+    //     if(obj.from == USER_ID){
+    //         msg.direction = 0;
+    //     } else {
+    //         msg.direction = 1;
+    //     }
+    //     msg.status = obj.status;
+    //     msg.messageUid = obj.messageId;
+    //     msg.timestamp = obj.timestamp;
+    //     msg.to = obj.target;
+    //     return msg;
+    // }
+
+    static toMessage(state,messageContent){
+        var message = new Message();
+        let stateConversationInfo =  state.conversations.find(conversation => conversation.conversationInfo.target === state.selectTarget);
+        message.conversation = new Conversation(stateConversationInfo.conversationInfo.type,
+            stateConversationInfo.conversationInfo.target,
+            stateConversationInfo.conversationInfo.line);
+        message.content = messageContent;
+        message.from = state.userId;
+        message.status = MessageStatus.Sending;
+        message.timestamp = new Date().getMilliseconds();
+        message.direction = 0;
+        message.messageId = new Date().getMilliseconds(); 
+        return message;
     }
 }

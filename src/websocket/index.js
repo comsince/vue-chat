@@ -1,4 +1,4 @@
-import {USER_ID,TOKEN,CLINET_ID, PUBLISH, FP, PUB_ACK, UPUI, MP} from '../constant'
+import {USER_ID,TOKEN,CLINET_ID, PUBLISH, FP, PUB_ACK, UPUI, MP, MS} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -161,5 +161,13 @@ export default class VueWebSocket {
             type: 0
         });
         this.send(websocketprotomessage.toJson());
+    }
+
+    sendMessage(protoMessage){
+       var websocketprotomessage = new WebSocketProtoMessage();
+       websocketprotomessage.setSignal(PUBLISH);
+       websocketprotomessage.setSubSignal(MS);
+       websocketprotomessage.setContent(protoMessage);
+       this.send(websocketprotomessage.toJson());
     }
 }

@@ -42,6 +42,9 @@ export default {
                 if (typeof date === 'string') {
                     date = new Date(date);
                 }
+                if( typeof date === 'number'){
+                    date = new Date(date);
+                }
                 if(date.getMinutes()<10){
                   return date.getHours() + ':0' +date.getMinutes();
                 }else{

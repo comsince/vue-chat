@@ -14,6 +14,7 @@ export default class ProtoMessageContent{
     static toProtoMessageContent(content){
         var protoMessageContent = new ProtoMessageContent();
         protoMessageContent.type = content.type;
+        protoMessageContent.content = content.content;
         protoMessageContent.searchableContent = content.searchableContent;
         protoMessageContent.pushContent = content.pushContent;
         protoMessageContent.binaryContent = content.binaryContent;
