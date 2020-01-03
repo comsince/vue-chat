@@ -5,7 +5,7 @@
 # 项目截图
 
 # 项目演示
-* [点击登录vue-chat](https://www.comsince.cn/chat/index.html)
+* [点击登录vue-chat](http://www.comsince.cn/chat/index.html)
 * 请选择其中任何一个帐号密码进行登录即可
 ```properties
 帐号：13800000000, 13800000001, 13800000002
