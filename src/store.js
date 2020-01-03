@@ -7,6 +7,7 @@ import StateConversationInfo from './websocket/model/stateConversationInfo';
 import StateChatMessage from './websocket/model/stateSelectChatMessage'
 import Message from './websocket/message/message';
 import ProtoMessage from './websocket/message/protomessage';
+import ConversationType from './websocket/model/conversationType';
 
 Vue.use(Vuex)
 
@@ -254,13 +255,19 @@ const mutations = {
         if(!update){
            var stateConverstaionInfo = new StateConversationInfo();
            stateConverstaionInfo.conversationInfo = protoConversationInfo;
-           var friend = state.friendlist.find(friend => friend.wxid === protoConversationInfo.target);
-           if(friend != null){
-            var name = friend.nickname;
-            var img = friend.img == null ? 'static/images/vue.jpg': friend.img;
-            stateConverstaionInfo.name = name;
-            stateConverstaionInfo.img = img;
-            state.conversations.push(stateConverstaionInfo);
+           //单聊会话
+           if(protoConversationInfo.conversationType == ConversationType.Single){
+            var friend = state.friendlist.find(friend => friend.wxid === protoConversationInfo.target);
+            if(friend != null){
+             var name = friend.nickname;
+             var img = friend.img == null ? 'static/images/vue.jpg': friend.img;
+             stateConverstaionInfo.name = name;
+             stateConverstaionInfo.img = img;
+             state.conversations.push(stateConverstaionInfo);
+            }
+           } else {
+            //群聊会话
+
            }
            
         }
@@ -320,8 +327,8 @@ const getters = {
        let chatMessage = state.messages.find(chatMessage => chatMessage.target === state.selectTarget);
        if(chatMessage == null){
           chatMessage = {
-              name: 'undefine',
-              target: 'undefine',
+              name: '',
+              target: '',
               protoMessages: []
           }
        }
