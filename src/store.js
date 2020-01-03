@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from './router'
 import VueWebSocket from './websocket';
-import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from './constant/index'
+import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE, KEY_VUE_USER_ID, KEY_VUE_TOKEN} from './constant/index'
 import StateConversationInfo from './websocket/model/stateConversationInfo';
 import StateChatMessage from './websocket/model/stateSelectChatMessage'
 import Message from './websocket/message/message';
@@ -287,6 +287,14 @@ const mutations = {
        
     },
 
+    loginOut(state,message){
+        state.userId = '';
+        state.token = '';
+        localStorage.setItem(KEY_VUE_USER_ID,'');
+        localStorage.setItem(KEY_VUE_TOKEN,'');
+        router.push({path: '/login'})
+    }
+
 }
 const getters = {
     //筛选会话列表
@@ -348,6 +356,7 @@ const actions = {
     initData: ({ commit }) => commit('initData'),
     updateConversationInfo: ({ commit }, value) => commit('updateConversationInfo', value),
     addProtoMessage: ({ commit }, value) => commit('addProtoMessage', value),
+    loginOut: ({ commit }, value) => commit('loginOut', value),
 }
 const store = new Vuex.Store({
   state,

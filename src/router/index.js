@@ -11,9 +11,9 @@ const router = new Router({
       component: require('@/page/login/login.vue')
     },
     {
-      path: '/chat',
+      path: '/',
       component: require('@/page/main.vue'),
-      redirect: 'chat/conversation',
+      redirect: 'conversation',
       children: [{
           path: 'conversation',
           name: 'conversation',
@@ -30,5 +30,5 @@ const router = new Router({
   ],
   linkActiveClass: 'active'
 })
-router.push({ path: '/chat' });
+// router.push({ path: '/chat' });
 export default router

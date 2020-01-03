@@ -5,12 +5,12 @@
 	    	<img :src="user.img" class="avatar">
 	    </header>
 	    <div class="navbar" @click="clearSearch">
-	         <router-link to="/chat/conversation" class="icon iconfont icon-msg" ></router-link>
-	         <router-link to="/chat/friend" class="icon iconfont icon-friend"></router-link>
+	         <router-link to="/conversation" class="icon iconfont icon-msg" ></router-link>
+	         <router-link to="/friend" class="icon iconfont icon-friend"></router-link>
 	         <!-- <router-link to="/my" class="icon iconfont icon-collection"></router-link> -->
 	    </div>
 	    <footer>
-	        <i class="icon iconfont icon-more"></i>
+	        <i class="icon iconfont icon-more" @click="loginOut"></i>
 	    </footer>
 	</div>
 </template>
@@ -26,7 +26,10 @@ export default {
     methods: {
     	clearSearch() {
     		this.$store.dispatch('search', '')
-    	}
+		},
+		loginOut(){
+			this.$store.dispatch('loginOut','');
+		}
     }
 }
 </script>

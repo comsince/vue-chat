@@ -1,6 +1,7 @@
 import MessageStatus from "./messageStatus";
 import ConversationType from "../model/conversationType";
 import ProtoMessageContent from "./protomessageContent";
+import { KEY_VUE_USER_ID } from "../../constant";
 
 /**
  * 聊天信息content，在发送的时候转换为json消息体发送
@@ -20,7 +21,7 @@ export default class ProtoMessage {
 
 
     static toProtoMessage(obj){
-        let currentUserId = localStorage.getItem('vue-user-id');
+        let currentUserId = localStorage.getItem(KEY_VUE_USER_ID);
         let protoMessage = new ProtoMessage();
         if(obj.from == currentUserId){
             protoMessage.direction = 0;

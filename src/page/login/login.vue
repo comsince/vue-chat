@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { LOGIN_API } from '../../constant'
+import { LOGIN_API, KEY_VUE_DEVICE_ID, KEY_VUE_USER_ID, KEY_VUE_TOKEN } from '../../constant'
 import { mapGetters } from 'vuex'
 import UUID from 'uuid-js'
 import axios from 'axios'
@@ -35,11 +35,11 @@ export default {
   methods: {
     login () {
       //初始唯一id
-        let vueDeviceId = localStorage.getItem('vue-device-id');
+        let vueDeviceId = localStorage.getItem(KEY_VUE_DEVICE_ID);
         if(vueDeviceId == null){
            vueDeviceId = UUID.create().toString();
            console.log('generate device id '+vueDeviceId);
-           localStorage.setItem('vue-device-id',vueDeviceId);
+           localStorage.setItem(KEY_VUE_DEVICE_ID,vueDeviceId);
         }
         console.log('vue deviceId '+vueDeviceId);
         axios({
@@ -61,10 +61,10 @@ export default {
                   console.log('userId '+userId+" token "+token);
                   this.$store.state.userId = userId;
                   this.$store.state.token = token;
-                  localStorage.setItem('vue-user-id',userId);
-                  localStorage.setItem('vue-token',token);
+                  localStorage.setItem(KEY_VUE_USER_ID,userId);
+                  localStorage.setItem(KEY_VUE_TOKEN,token);
                   //跳转到聊天页面
-                  this.$router.push({path: '/chat'})
+                  this.$router.push({path: '/conversation'})
               }
           }).catch((error) => {
             console.log(error)

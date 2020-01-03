@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -122,9 +122,9 @@ export default class VueWebSocket {
         var websocketprotomessage =  new WebSocketProtoMessage();
         websocketprotomessage.setSignal(CONNECT);
         var connectMessage = {
-            userName: localStorage.getItem('vue-user-id'),
+            userName: localStorage.getItem(KEY_VUE_USER_ID),
             password: pwdAesBase64,
-            clientIdentifier: localStorage.getItem('vue-device-id')
+            clientIdentifier: localStorage.getItem(KEY_VUE_DEVICE_ID)
         }
         websocketprotomessage.content = connectMessage;
         console.log(websocketprotomessage.toJson());

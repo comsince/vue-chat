@@ -20,6 +20,10 @@ export const MN = "MN";
 
 export const LOGIN_API = "http://localhost:8081/login";
 
+export const KEY_VUE_DEVICE_ID = 'vue-device-id';
+export const KEY_VUE_USER_ID = 'vue-user-id'; 
+export const KEY_VUE_TOKEN = 'vue-token';
+
 //userId 这里为了演示静态登录，由于还没有登录界面所以暂时使用静态userid
 export const USER_ID = 'TYTzTz33';
 export const CLINET_ID = 'bccdb58cfdb34d861576810441000';
