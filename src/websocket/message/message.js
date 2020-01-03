@@ -1,5 +1,4 @@
 import Conversation from '../model/conversation'
-import { USER_ID } from '../../constant';
 import MessageStatus from './messageStatus'
 /***
  *  message in json format

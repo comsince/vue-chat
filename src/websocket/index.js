@@ -1,4 +1,4 @@
-import {USER_ID,TOKEN,CLINET_ID, PUBLISH, FP, PUB_ACK, UPUI, MP, MS} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -109,8 +109,8 @@ export default class VueWebSocket {
      * 链接建立信息
      */
     sendConnectMessage(){
-        console.log("userToken "+TOKEN);
-        let allToken = decrypt(TOKEN);
+        console.log("userToken "+localStorage.getItem('vue-token'));
+        let allToken = decrypt(localStorage.getItem('vue-token'));
         console.log("decryptToken "+allToken);
         let pwd = allToken.substring(0,allToken.indexOf('|'));
         allToken = allToken.substring(allToken.indexOf('|')+1);
@@ -122,9 +122,9 @@ export default class VueWebSocket {
         var websocketprotomessage =  new WebSocketProtoMessage();
         websocketprotomessage.setSignal(CONNECT);
         var connectMessage = {
-            userName: USER_ID,
+            userName: localStorage.getItem('vue-user-id'),
             password: pwdAesBase64,
-            clientIdentifier: CLINET_ID
+            clientIdentifier: localStorage.getItem('vue-device-id')
         }
         websocketprotomessage.content = connectMessage;
         console.log(websocketprotomessage.toJson());

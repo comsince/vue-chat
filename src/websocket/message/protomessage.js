@@ -1,4 +1,3 @@
-import { USER_ID } from "../../constant";
 import MessageStatus from "./messageStatus";
 import ConversationType from "../model/conversationType";
 import ProtoMessageContent from "./protomessageContent";
@@ -21,8 +20,9 @@ export default class ProtoMessage {
 
 
     static toProtoMessage(obj){
+        let currentUserId = localStorage.getItem('vue-user-id');
         let protoMessage = new ProtoMessage();
-        if(obj.from == USER_ID){
+        if(obj.from == currentUserId){
             protoMessage.direction = 0;
             protoMessage.status = MessageStatus.Sent;
         } else {
@@ -36,7 +36,7 @@ export default class ProtoMessage {
         protoMessage.target = obj.target;
         protoMessage.from = obj.from;
         if(protoMessage.conversationType == ConversationType.Single){
-            if(obj.from != USER_ID){
+            if(obj.from != currentUserId){
                protoMessage.target = obj.from;
                protoMessage.from = obj.from;
             } else {

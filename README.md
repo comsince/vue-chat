@@ -35,3 +35,10 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 ## 参考项目
 
 * [Vue-chat](https://github.com/han960619/Vue-chat/)
+
+
+## 推荐项目
+
+* [vue-wechat](https://github.com/zhaohaodang/vue-WeChat)
+* [vue-chat](https://github.com/aermin/vue-chat)
+* [QRCodeLogin](https://github.com/HeyJC/QRCodeLogin/blob/master/Web/auth/src/components/Input.vue) 说明二维码和密码登录的切换操作

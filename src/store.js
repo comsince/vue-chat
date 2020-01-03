@@ -2,13 +2,12 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from './router'
 import VueWebSocket from './websocket';
-import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE, USER_ID, TOKEN} from './constant/index'
+import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from './constant/index'
 import StateConversationInfo from './websocket/model/stateConversationInfo';
 import StateChatMessage from './websocket/model/stateSelectChatMessage'
 import Message from './websocket/message/message';
-import Conversation from './websocket/model/conversation';
-import MessageStatus from './websocket/message/messageStatus';
 import ProtoMessage from './websocket/message/protomessage';
+
 Vue.use(Vuex)
 
 //获取当前时间
@@ -150,13 +149,16 @@ const state = {
     conversations: [],
     //消息列表
     messages: [],
-    userId: USER_ID,
-    token: TOKEN,
+    deviceId: '',
+    userId: '',
+    token: '',
 }
 
 const mutations = {
     // 从localStorage 中获取数据
     initData (state) {
+        state.userId = localStorage.getItem('vue-user-id');
+        state.token = localStorage.getItem('vue-token');
         const vueSocket = new VueWebSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE,store);
         vueSocket.connect(true);
         state.vueSocket = vueSocket;
@@ -283,7 +285,8 @@ const mutations = {
           state.messages.push(stateChatMessage);
        }
        
-    }
+    },
+
 }
 const getters = {
     //筛选会话列表
@@ -320,7 +323,7 @@ const getters = {
     messages (state) {
         let chatMessage = state.messages.find(chatMessage => chatMessage.target === state.selectTarget);
         return chatMessage.protoMessages;
-    }
+    },
 }
 
 const actions = {
