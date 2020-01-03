@@ -37,7 +37,8 @@ export default {
       //初始唯一id
         let vueDeviceId = localStorage.getItem('vue-device-id');
         if(vueDeviceId == null){
-           vueDeviceId = UUID.create(1);
+           vueDeviceId = UUID.create().toString();
+           console.log('generate device id '+vueDeviceId);
            localStorage.setItem('vue-device-id',vueDeviceId);
         }
         console.log('vue deviceId '+vueDeviceId);

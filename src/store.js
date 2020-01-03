@@ -311,7 +311,11 @@ const getters = {
     selectedChat (state) {
        let chatMessage = state.messages.find(chatMessage => chatMessage.target === state.selectTarget);
        if(chatMessage == null){
-          chatMessage = state.messages[0];
+          chatMessage = {
+              name: 'undefine',
+              target: 'undefine',
+              protoMessages: []
+          }
        }
        return chatMessage
     },
@@ -322,6 +326,9 @@ const getters = {
     },
     messages (state) {
         let chatMessage = state.messages.find(chatMessage => chatMessage.target === state.selectTarget);
+        if(chatMessage == null){
+            return [];
+        }
         return chatMessage.protoMessages;
     },
 }

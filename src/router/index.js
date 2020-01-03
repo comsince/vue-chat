@@ -7,7 +7,7 @@ const router = new Router({
 // 共三个页面： 聊天页面，好友页面，个人简历分别对应一下路由
   routes: [
     {
-      path: '/',
+      path: '/login',
       component: require('@/page/login/login.vue')
     },
     {
@@ -30,5 +30,5 @@ const router = new Router({
   ],
   linkActiveClass: 'active'
 })
-// router.push({ path: '/chat' });
+router.push({ path: '/chat' });
 export default router
