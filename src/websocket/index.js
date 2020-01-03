@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -46,7 +46,7 @@ export default class VueWebSocket {
             console.log("ws onclose");
             websocketObj.ws.close();
             clearInterval(websocketObj.pingIntervalId);
-            websocketObj.reconnect(event);
+            //websocketObj.reconnect(event);
         }
         this.ws.onerror = function(event) {
             console.log("connect error");
@@ -127,6 +127,18 @@ export default class VueWebSocket {
             clientIdentifier: localStorage.getItem(KEY_VUE_DEVICE_ID)
         }
         websocketprotomessage.content = connectMessage;
+        console.log(websocketprotomessage.toJson());
+        this.send(websocketprotomessage.toJson());
+    }
+
+
+    sendDisConnectMessage(){
+        var websocketprotomessage = new WebSocketProtoMessage();
+        websocketprotomessage.setSignal(DISCONNECT);
+        var disconnectMessage = {
+            clearSession : 1
+        }
+        websocketprotomessage.content = disconnectMessage;
         console.log(websocketprotomessage.toJson());
         this.send(websocketprotomessage.toJson());
     }

@@ -299,6 +299,12 @@ const mutations = {
         state.token = '';
         localStorage.setItem(KEY_VUE_USER_ID,'');
         localStorage.setItem(KEY_VUE_TOKEN,'');
+        state.selectTarget = 'new',
+        state.vueSocket.sendDisConnectMessage();
+        state.vueSocket = null;
+        state.conversations = [],
+        state.messages = [],
+        //发送断开消息，清除session，防止同一个设备切换登录导致的验证失败
         router.push({path: '/login'})
     }
 

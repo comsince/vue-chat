@@ -7,6 +7,7 @@ export const BINTRAY_TYPE = 'blob';
 
 //signal
 export const CONNECT = 'CONNECT';
+export const DISCONNECT = 'DISCONNECT';
 export const CONNECT_ACK = 'CONNECT_ACK';
 export const PUBLISH = 'PUBLISH';
 export const PUB_ACK = 'PUB_ACK';

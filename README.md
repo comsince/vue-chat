@@ -2,6 +2,15 @@
 
 基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯
 
+# 项目截图
+
+# 项目演示
+* [点击登录vue-chat](https://www.comsince.cn/chat/index.html)
+* 请选择其中任何一个帐号密码进行登录即可
+```properties
+帐号：13800000000, 13800000001, 13800000002
+密码：556677
+```
 
 ## 版本规划
 ### V1.0.0

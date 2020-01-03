@@ -5,7 +5,7 @@
         <li v-for="item in searchedFriendlist" class="frienditem"  :class="{ noborder: !item.initial}">
             <div class="list_title" v-if="item.initial">{{item.initial}}</div>
             <div class="friend-info" :class="{ active: item.id === selectFriendId }" @click="selectFriend(item.id)">
-                <img class="avatar"  width="36" height="36" :src="item.img">
+                <img class="avatar"  width="36" height="36" :src="item.img" onerror="this.src='static/images/vue.jpg'">
                 <div class="remark">{{item.remark}}</div>
             </div>
         </li>

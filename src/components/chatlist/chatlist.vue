@@ -4,7 +4,7 @@
     <ul>
         <li v-for="item in searchedConversationList" class="sessionlist" :class="{ active: item.conversationInfo.target === selectTarget }" @click="selectConversation(item.conversationInfo.target)">
             <div class="list-left">
-            	<img class="avatar"  width="42" height="42" :alt="item.img" :src="item.img">
+            	<img class="avatar"  width="42" height="42" alt="static/images/vue.jpg" :src="item.img" onerror="this.src='static/images/vue.jpg'">
             </div>
             <div class="list-right">
             	<p class="name">{{item.name}}</p>
