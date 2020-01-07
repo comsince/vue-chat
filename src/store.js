@@ -376,6 +376,7 @@ const getters = {
               protoMessages: []
           }
        }
+       console.log("selectedChat "+chatMessage.name+" target "+chatMessage.target);
        return chatMessage
     },
     // 通过当前选择是哪个好友匹配相应的好友

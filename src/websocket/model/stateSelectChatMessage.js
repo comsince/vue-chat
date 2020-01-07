@@ -1,5 +1,5 @@
 export default class StateSelectChateMessage{
-    name;
+    name = '';
     target;
     protoMessages = [];
 }
