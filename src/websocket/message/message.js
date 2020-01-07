@@ -69,9 +69,9 @@ export default class Message {
         message.content = messageContent;
         message.from = state.userId;
         message.status = MessageStatus.Sending;
-        message.timestamp = new Date().getMilliseconds();
+        message.timestamp = new Date().getTime();
         message.direction = 0;
-        message.messageId = new Date().getMilliseconds(); 
+        message.messageId = new Date().getTime(); 
         return message;
     }
 }
