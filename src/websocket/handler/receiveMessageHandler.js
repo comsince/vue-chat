@@ -3,6 +3,7 @@ import { MP, PUB_ACK } from "../../constant";
 import Message from "../message/message";
 import ProtoMessage from "../message/protomessage";
 import ProtoConversationInfo from '../model/protoConversationInfo'
+import LocalStore from "../store/localstore";
 
 export default class ReceiveMessageHandler extends AbstractMessageHandler {
       conversations = [];
@@ -12,6 +13,7 @@ export default class ReceiveMessageHandler extends AbstractMessageHandler {
       }
 
       processMessage(proto){
+        LocalStore.resetSendMessageCount();
         var content = JSON.parse(proto.content);
         console.log("current "+content.current+" head "+content.head+" messageCount "+content.messageCount);
         for(var protoMessage of content.messageResponseList){

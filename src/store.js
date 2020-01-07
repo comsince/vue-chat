@@ -9,6 +9,7 @@ import Message from './websocket/message/message';
 import ProtoMessage from './websocket/message/protomessage';
 import ConversationType from './websocket/model/conversationType';
 import GroupInfo from './websocket/model/groupInfo';
+import LocalStore from './websocket/store/localstore';
 
 Vue.use(Vuex)
 
@@ -167,6 +168,14 @@ const mutations = {
         let data = localStorage.getItem('vue-chat');
         if (data) {
             state.chatlist = JSON.parse(data);
+        }
+        let conversations = LocalStore.getConversations();
+        if(conversations){
+            state.conversations = conversations;
+        }
+        let messages = LocalStore.getMessages();
+        if(messages){
+            state.messages = messages;
         }
     },
     // 获取搜索值
@@ -332,6 +341,7 @@ const mutations = {
         state.vueSocket = null;
         state.conversations = [],
         state.messages = [],
+        LocalStore.clearLocalStore();
         //发送断开消息，清除session，防止同一个设备切换登录导致的验证失败
         router.push({path: '/login'})
     }
@@ -417,4 +427,25 @@ store.watch(
         deep: true
     }
 )
+
+store.watch(
+    state => state.conversations,
+    value => {
+        LocalStore.saveConverSations(value);
+    },
+    {
+        deep : true
+    }
+)
+
+store.watch(
+    state => state.messages,
+    value => {
+        LocalStore.saveMessages(value);
+    },
+    {
+        deep : true
+    }
+)
+
 export default store;

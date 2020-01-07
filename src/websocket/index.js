@@ -8,6 +8,7 @@ import GetUserInfoHandler from './handler/getuserinfoHandler';
 import ReceiveMessageHandler from './handler/receiveMessageHandler';
 import NotifyMessageHandler from './handler/notifyMessageHandler';
 import GetGroupInfoHandler from './handler/getGroupInfoHandler';
+import SendMessageHandler from './handler/sendMessageHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -74,6 +75,7 @@ export default class VueWebSocket {
     }
 
     send(data){
+        console.log("send message "+data);
         this.ws.send(data);
     }
 
@@ -91,6 +93,7 @@ export default class VueWebSocket {
         this.handlerList.push(new ReceiveMessageHandler(this));
         this.handlerList.push(new NotifyMessageHandler(this));
         this.handlerList.push(new GetGroupInfoHandler(this));
+        this.handlerList.push(new SendMessageHandler(this));
     }
 
     processMessage(data){
@@ -159,7 +162,7 @@ export default class VueWebSocket {
         websocketprotomessage.setSignal(PUBLISH);
         websocketprotomessage.setSubSignal(UPUI);
         websocketprotomessage.setContent(userIds);
-        console.log("getUserInfos "+websocketprotomessage.toJson());
+        // console.log("getUserInfos "+websocketprotomessage.toJson());
         this.send(websocketprotomessage.toJson());
     }
 
@@ -174,13 +177,15 @@ export default class VueWebSocket {
         this.sendPublishMessage(GPGI,groupIds);
     }
 
-    pullMessage(messageId,type = 0){
+    pullMessage(messageId,type = 0,pullType = 0,sendMessageCount = 0){
         var websocketprotomessage =  new WebSocketProtoMessage();
         websocketprotomessage.setSignal(PUBLISH);
         websocketprotomessage.setSubSignal(MP);
         websocketprotomessage.setContent({
             messageId: messageId,
-            type: type
+            type: type,
+            pullType : pullType,
+            sendMessageCount: sendMessageCount
         });
         this.send(websocketprotomessage.toJson());
     }
@@ -195,7 +200,7 @@ export default class VueWebSocket {
         websocketprotomessage.setSignal(PUBLISH);
         websocketprotomessage.setSubSignal(subsignal);
         websocketprotomessage.setContent(content);
-        console.log("sendPublishMessage "+websocketprotomessage.toJson());
+        // console.log("sendPublishMessage "+websocketprotomessage.toJson());
         this.send(websocketprotomessage.toJson());
     }
 
