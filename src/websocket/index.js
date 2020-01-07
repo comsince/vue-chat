@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -7,6 +7,7 @@ import GetFriendResultHandler from './handler/getfriendresultHandler';
 import GetUserInfoHandler from './handler/getuserinfoHandler';
 import ReceiveMessageHandler from './handler/receiveMessageHandler';
 import NotifyMessageHandler from './handler/notifyMessageHandler';
+import GetGroupInfoHandler from './handler/getGroupInfoHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -76,11 +77,6 @@ export default class VueWebSocket {
         this.ws.send(data);
     }
 
-    sendMessage(){
-
-    }
-
-
     /**
      * 分发vuex action
      */
@@ -94,6 +90,7 @@ export default class VueWebSocket {
         this.handlerList.push(new GetUserInfoHandler(this));
         this.handlerList.push(new ReceiveMessageHandler(this));
         this.handlerList.push(new NotifyMessageHandler(this));
+        this.handlerList.push(new GetGroupInfoHandler(this));
     }
 
     processMessage(data){
@@ -166,6 +163,17 @@ export default class VueWebSocket {
         this.send(websocketprotomessage.toJson());
     }
 
+    /**
+     * 
+     * @param {群组id} groupId 
+     * @param {是否需要刷新} refresh 
+     */
+    getGroupInfo(groupId,refresh){
+        var groupIds = [];
+        groupIds.push(groupId);
+        this.sendPublishMessage(GPGI,groupIds);
+    }
+
     pullMessage(messageId,type = 0){
         var websocketprotomessage =  new WebSocketProtoMessage();
         websocketprotomessage.setSignal(PUBLISH);
@@ -174,6 +182,20 @@ export default class VueWebSocket {
             messageId: messageId,
             type: type
         });
+        this.send(websocketprotomessage.toJson());
+    }
+
+    /**
+     * 
+     * @param {子信令} subsignal 
+     * @param {消息体内容} content 
+     */
+    sendPublishMessage(subsignal,content){
+        var websocketprotomessage = new WebSocketProtoMessage();
+        websocketprotomessage.setSignal(PUBLISH);
+        websocketprotomessage.setSubSignal(subsignal);
+        websocketprotomessage.setContent(content);
+        console.log("sendPublishMessage "+websocketprotomessage.toJson());
         this.send(websocketprotomessage.toJson());
     }
 

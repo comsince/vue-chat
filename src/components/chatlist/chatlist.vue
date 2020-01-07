@@ -7,7 +7,7 @@
             	<img class="avatar"  width="42" height="42" alt="static/images/vue.jpg" :src="item.img" onerror="this.src='static/images/vue.jpg'">
             </div>
             <div class="list-right">
-            	<p class="name">{{item.name}}</p>
+            	<p class="name">{{item.name.substring(0,15)}}</p>
                 <span class="time">{{item.conversationInfo.timestamp | time}}</span>
                 <p class="lastmsg">{{item.conversationInfo.lastMessage.content.searchableContent}}</p>
             </div>

@@ -62,7 +62,8 @@ export default class Message {
     static toMessage(state,messageContent){
         var message = new Message();
         let stateConversationInfo =  state.conversations.find(conversation => conversation.conversationInfo.target === state.selectTarget);
-        message.conversation = new Conversation(stateConversationInfo.conversationInfo.type,
+        console.log("conversationtype "+stateConversationInfo.conversationInfo.conversationType +" target "+stateConversationInfo.conversationInfo.target);
+        message.conversation = new Conversation(stateConversationInfo.conversationInfo.conversationType,
             stateConversationInfo.conversationInfo.target,
             stateConversationInfo.conversationInfo.line);
         message.content = messageContent;

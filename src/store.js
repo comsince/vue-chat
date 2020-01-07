@@ -8,6 +8,7 @@ import StateChatMessage from './websocket/model/stateSelectChatMessage'
 import Message from './websocket/message/message';
 import ProtoMessage from './websocket/message/protomessage';
 import ConversationType from './websocket/model/conversationType';
+import GroupInfo from './websocket/model/groupInfo';
 
 Vue.use(Vuex)
 
@@ -267,9 +268,36 @@ const mutations = {
             }
            } else {
             //群聊会话
-
+              stateConverstaionInfo.name = protoConversationInfo.target;
+              if(!stateConverstaionInfo.img){
+                state.vueSocket.getGroupInfo(protoConversationInfo.target,false);
+              }
+              stateConverstaionInfo.img = 'static/images/vue.jpg';
+              state.conversations.push(stateConverstaionInfo);
            }
            
+        }
+    },
+
+    /**
+     * 更新会话简介，主要更新会话的名称与图像
+     */
+    updateConversationIntro(state,groupInfos){
+        for(var groupInfo of groupInfos){
+           var stateConverstaionInfo = state.conversations.find(stateConverstaionInfo => stateConverstaionInfo.name === groupInfo.target);
+           if(stateConverstaionInfo){
+            console.log("update conversation name "+stateConverstaionInfo.name);
+               stateConverstaionInfo.name = groupInfo.name;
+               if(groupInfo.portrait){
+                   stateConverstaionInfo.img = groupInfo.portrait;
+               }
+           }
+           //更新会话标题
+
+           var stateChatMessage = state.messages.find(stateChatMessage => stateChatMessage.target === groupInfo.target);
+           if(stateChatMessage){
+               stateChatMessage.name = groupInfo.name;
+           }
         }
     },
 
@@ -368,6 +396,7 @@ const actions = {
     send: ({ commit }) => commit('send'),
     initData: ({ commit }) => commit('initData'),
     updateConversationInfo: ({ commit }, value) => commit('updateConversationInfo', value),
+    updateConversationIntro: ({ commit }, value) => commit('updateConversationIntro', value),
     addProtoMessage: ({ commit }, value) => commit('addProtoMessage', value),
     loginOut: ({ commit }, value) => commit('loginOut', value),
 }
