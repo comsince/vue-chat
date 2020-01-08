@@ -5,7 +5,13 @@
 	    	<img :src="user.img" class="avatar">
 	    </header>
 	    <div class="navbar" @click="clearSearch">
-	         <router-link to="/conversation" class="icon iconfont icon-msg" ></router-link>
+			<div class="conversation-item">
+				<span class="unread-num">
+					<em>9</em>
+				</span>
+				<router-link to="/conversation" class="icon iconfont icon-msg" >
+				</router-link>
+			</div>
 	         <router-link to="/friend" class="icon iconfont icon-friend"></router-link>
 	         <!-- <router-link to="/my" class="icon iconfont icon-collection"></router-link> -->
 	    </div>
@@ -55,7 +61,7 @@ export default {
 	        padding: 0 16px
 	        box-sizing: border-box
 	        color: rgb(173,174,175)
-	        opacity: 0.8
+	        opacity: 1
 	        cursor: pointer
 	        &.active
 	            color: rgb(0,220,65)
@@ -65,6 +71,20 @@ export default {
 	        font-size: 22px
 	    .icon-msg
 	        padding: 0 19px
+	.conversation-item
+	    position:relative
+		.unread-num
+			display: inline-block
+			min-width: 14px
+			height: 14px
+			background-color: red
+			border-radius: 8px
+			text-align: center
+			font-size: 12px
+			color: #fff
+			line-height: 14px
+			position:absolute
+			top: 20px
 	footer
 	    position: absolute
 	    bottom: 20px

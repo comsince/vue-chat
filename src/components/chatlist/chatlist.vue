@@ -7,10 +7,15 @@
             	<img class="avatar"  width="42" height="42" alt="static/images/vue.jpg" :src="item.img" onerror="this.src='static/images/vue.jpg'">
             </div>
             <div class="list-right">
-            	<p class="name">{{item.name.substring(0,15)}}</p>
+            	<p class="name">{{item.name.substring(0,9)}}</p>
                 <span class="time">{{item.conversationInfo.timestamp | getTimeStringAutoShort2}}</span>
-                <p class="lastmsg">{{processageGroupMessage(item)}}</p>
+                <div class="lastmsg-info">
+                    <p class="lastmsg">{{processageGroupMessage(item)}}</p>
+                    <span class="unread-num"><em>9</em></span>
+                </div>
+
             </div>
+            
         </li>
     </ul>
   </div>
@@ -110,15 +115,32 @@ export default {
 	        color: #999
 	        font-size: 10px
 	        vertical-align: top
-        .lastmsg
-            position: absolute
-            font-size: 12px
-            width: 130px
-            height: 15px
-            line-height: 15px
-            color: #999
-            bottom: 4px
-            overflow: hidden
-            white-space:nowrap
-            text-overflow:ellipsis
+        .lastmsg-info
+            display: flex
+            margin-top: 4px    
+            .lastmsg
+                flex: 1 1 auto 
+                font-size: 12px
+                width: 130px
+                height: 15px
+                line-height: 15px
+                color: #999
+                bottom: 4px
+                overflow: hidden
+                white-space:nowrap
+                text-overflow:ellipsis
+            .unread-num
+                flex: 0 0 auto
+                vertical-align:bottom
+                margin-top: 0px
+                display: inline-block;
+                min-width: 14px;
+                height: 14px;
+                background-color: red;
+                border-radius: 8px;
+                text-align: center;
+                font-size: 12px;
+                color: #fff;
+                line-height: 14px;       
+          
 </style>
