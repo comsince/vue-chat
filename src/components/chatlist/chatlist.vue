@@ -8,7 +8,7 @@
             </div>
             <div class="list-right">
             	<p class="name">{{item.name.substring(0,15)}}</p>
-                <span class="time">{{item.conversationInfo.timestamp | time}}</span>
+                <span class="time">{{item.conversationInfo.timestamp | getTimeStringAutoShort2}}</span>
                 <p class="lastmsg">{{processageGroupMessage(item)}}</p>
             </div>
         </li>
@@ -20,6 +20,7 @@
 import { mapState, mapActions ,mapGetters } from 'vuex'
 import ConversationType from '../../websocket/model/conversationType';
 import LocalStore from '../../websocket/store/localstore';
+import TimeUtils from '../../websocket/utils/timeUtils';
 export default {
     computed: {
    	    ...mapState([
@@ -72,6 +73,9 @@ export default {
                 }else{
                   return date.getHours() + ':' + date.getMinutes();
                 }
+            },
+            getTimeStringAutoShort2(timestamp){
+                return TimeUtils.getTimeStringAutoShort2(timestamp,false);
             }
     },
 }

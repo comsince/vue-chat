@@ -33,7 +33,7 @@ export default class ReceiveMessageHandler extends AbstractMessageHandler {
          protoConversationInfo.line = 0;
          protoConversationInfo.top = false;
          protoConversationInfo.slient = false;
-         protoConversationInfo.timestamp = new Date();
+         protoConversationInfo.timestamp = protoMessage.timestamp;
          protoConversationInfo.lastMessage = protoMessage;
          this.vueWebsocket.sendAction('updateConversationInfo',protoConversationInfo);
       }

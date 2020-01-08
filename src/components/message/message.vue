@@ -6,11 +6,12 @@
 		</header>
 		<div class="message-wrapper" ref="list">
 		    <ul v-if="selectedChat">
-		    	<li v-for="item in selectedChat.protoMessages" class="message-item">
-		    		<div class="time"><span>{{item.timestamp | time}}</span></div>
+		    	<li v-for="(item, index) in selectedChat.protoMessages" class="message-item">
+		    		<div v-if="isShowTime(index,selectedChat.protoMessages)" class="time"><span>{{item.timestamp | getTimeStringAutoShort2}}</span></div>
 		    		<div class="main" :class="{ self: item.direction == 0 ? true : false }">
                         <img class="avatar" width="36" height="36" :src="item.direction == 0 ? 
-                        user.img: (userInfos.get(item.from) != null ? userInfos.get(item.from).portrait : 'static/images/vue.jpg')" />
+                        user.img: (userInfos.get(item.from) != null ? userInfos.get(item.from).portrait : 'static/images/vue.jpg')" 
+                        onerror="this.src='static/images/vue.jpg'"/>
                         <div class="content">
                             <div class="text" v-html="replaceFace(item.content.searchableContent)"></div>
                         </div>
@@ -23,6 +24,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import TimeUtils from '../../websocket/utils/timeUtils'
 export default {
     computed: {
         ...mapGetters([
@@ -58,6 +60,18 @@ export default {
             }
             return con;
         },
+
+        isShowTime(index,protoMessages){
+           var msgTime = protoMessages[index].timestamp;
+           if(index > 0){
+               var preProtoMessage = protoMessages[index - 1];
+               var preMsgTime = preProtoMessage.timestamp;
+               if(msgTime - preMsgTime > ( 5 * 60 * 1000)){
+                   return true;
+               }
+           }
+           return false;
+        }
  
     },
     filters: {
@@ -74,7 +88,13 @@ export default {
                 }else{
                   return date.getHours() + ':' + date.getMinutes();
                 }
+            },
+
+            getTimeStringAutoShort2(timestamp){
+                return TimeUtils.getTimeStringAutoShort2(timestamp,true);
             }
+
+
     }
 }
 </script>
@@ -111,6 +131,7 @@ export default {
                 border-radius: 3px
                 background-color: #dcdcdc
         .main
+            margin-top: 10px
             .avatar 
                 float: left
                 margin-left: 15px

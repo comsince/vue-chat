@@ -155,7 +155,7 @@ const state = {
     deviceId: '',
     userId: '',
     token: '',
-    userInfos: ''
+    userInfos: new Map()
 }
 
 const mutations = {
@@ -278,7 +278,7 @@ const mutations = {
                 && stateConverstaionInfo.conversationInfo.target == protoConversationInfo.target){
                 update = true;
                 stateConverstaionInfo.conversationInfo.lastMessage = protoConversationInfo.lastMessage;
-                stateConverstaionInfo.conversationInfo.timestamp = new Date();
+                stateConverstaionInfo.conversationInfo.timestamp = protoConversationInfo.lastMessage.timestamp;
             }
         }
         if(!update){
