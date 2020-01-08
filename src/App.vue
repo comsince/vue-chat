@@ -1,5 +1,5 @@
 <template>
-  <div id="app-chat">
+  <div class="layout-container" id="app-chat">
     <router-view></router-view>
   </div>
 </template>
@@ -10,5 +10,18 @@ export default {
    name : 'AppChat',
 }
 </script>
+
+<style scoped>
+.layout-container {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column
+}
+
+</style>
 
 
