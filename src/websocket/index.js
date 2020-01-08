@@ -9,6 +9,7 @@ import ReceiveMessageHandler from './handler/receiveMessageHandler';
 import NotifyMessageHandler from './handler/notifyMessageHandler';
 import GetGroupInfoHandler from './handler/getGroupInfoHandler';
 import SendMessageHandler from './handler/sendMessageHandler';
+import LocalStore from './store/localstore';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -122,7 +123,7 @@ export default class VueWebSocket {
         var websocketprotomessage =  new WebSocketProtoMessage();
         websocketprotomessage.setSignal(CONNECT);
         var connectMessage = {
-            userName: localStorage.getItem(KEY_VUE_USER_ID),
+            userName: LocalStore.getUserId(),
             password: pwdAesBase64,
             clientIdentifier: localStorage.getItem(KEY_VUE_DEVICE_ID)
         }

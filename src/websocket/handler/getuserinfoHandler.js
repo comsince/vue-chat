@@ -1,5 +1,6 @@
 import AbstractMessageHandler from "./abstractmessagehandler";
 import { PUB_ACK, UPUI } from "../../constant";
+import UserInfo from "../model/userInfo";
 
 export default class GetUserInfoHandler extends AbstractMessageHandler{
     match(proto){
@@ -10,6 +11,7 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
        if(proto.content != null){
            var userInfoList = JSON.parse(proto.content);
            var stateFriendList = [];
+           var userInfos = [];
            for(var i in userInfoList){
                var displayName = userInfoList[i].displayName == null ? userInfoList[i].mobile : userInfoList[i].displayName;
                stateFriendList.push({
@@ -22,9 +24,11 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
                 sex: 0,   //性别 1为男，0为女
                 remark: displayName,  //备注
                 area: userInfoList[i].address,  //地区
-            });
+               });
+               userInfos.push(UserInfo.convert2UserInfo(userInfoList[i]));
            }
            console.log("stateFriendList "+stateFriendList.length);
+           this.vueWebsocket.sendAction("updateUserInfos",userInfos);
            this.vueWebsocket.sendAction("updateFriendList",stateFriendList);
            //更新当前会话
            this.vueWebsocket.sendAction('selectConversation',stateFriendList[0].wxid);

@@ -1,3 +1,5 @@
+import { KEY_VUE_USER_ID } from "../../constant";
+
 /**
  * 本地缓存，包括如下基本信息
  * 消息缓存
@@ -61,10 +63,15 @@ export default class LocalStore {
         localStorage.setItem("send_message_count",0);
     }
 
+    static getUserId(){
+        return localStorage.getItem(KEY_VUE_USER_ID);
+    }
+
     static clearLocalStore(){
         localStorage.setItem("coversations","");
         localStorage.setItem("last_message_seq","");
         localStorage.setItem("messages","");
         localStorage.setItem("send_message_count",0);
+        localStorage.setItem(KEY_VUE_USER_ID,'');
     }
 }

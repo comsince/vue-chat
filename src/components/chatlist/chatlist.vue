@@ -9,7 +9,7 @@
             <div class="list-right">
             	<p class="name">{{item.name.substring(0,15)}}</p>
                 <span class="time">{{item.conversationInfo.timestamp | time}}</span>
-                <p class="lastmsg">{{item.conversationInfo.lastMessage.content.searchableContent}}</p>
+                <p class="lastmsg">{{processageGroupMessage(item)}}</p>
             </div>
         </li>
     </ul>
@@ -18,6 +18,8 @@
 
 <script>
 import { mapState, mapActions ,mapGetters } from 'vuex'
+import ConversationType from '../../websocket/model/conversationType';
+import LocalStore from '../../websocket/store/localstore';
 export default {
     computed: {
    	    ...mapState([
@@ -34,7 +36,27 @@ export default {
     	...mapActions([
              'selectSession',
              'selectConversation',
-    	])	
+        ]),
+        processageGroupMessage(item){
+            var protoConversationInfo = item.conversationInfo;
+            var displayContent = protoConversationInfo.lastMessage.content.searchableContent;
+            var isCurrentUser = protoConversationInfo.lastMessage.from === LocalStore.getUserId();
+            if(protoConversationInfo.conversationType == ConversationType.Group && !isCurrentUser){
+                var from = protoConversationInfo.lastMessage.from;
+                console.log("conversation group from "+from);
+                var displayUserInfo = this.$store.state.userInfos.get(from);
+                var displayName = ''
+                if(displayUserInfo){
+                    displayName = displayUserInfo.displayName;
+                    if(!displayName){
+                        displayName = displayUserInfo.mobile;
+                    }
+                }
+                displayContent = displayName +":"+protoConversationInfo.lastMessage.content.searchableContent;
+            }
+
+           return displayContent;
+        }	
     },
     filters: {
             // 将日期过滤为 hour:minutes

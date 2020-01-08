@@ -155,6 +155,7 @@ const state = {
     deviceId: '',
     userId: '',
     token: '',
+    userInfos: ''
 }
 
 const mutations = {
@@ -199,10 +200,28 @@ const mutations = {
         var first = state.friendlist[0];
         state.friendlist = [];
         state.friendlist.push(first);
-        for(var i in value){    
-            state.friendlist.push(value[i]);
+        for(var i in value){
+            if(value[i].wxid != state.userId){
+                state.friendlist.push(value[i]);
+            }    
         }
         
+    },
+
+    updateUserInfos(state,userInfos){
+        let userInfoMap = state.userInfos;
+        if(!userInfoMap){
+            userInfoMap = new Map();
+        }
+        for(let userInfo of userInfos){
+            console.log("uid "+userInfo.uid+" portrait "+userInfo.portrait);
+           if(userInfo.uid === state.userId){
+               state.user.img = userInfo.portrait;
+               state.user.name = userInfo.displayName;
+           } 
+           userInfoMap.set(userInfo.uid,userInfo);
+        }
+        state.userInfos = userInfoMap;
     },
     // 发送信息
     sendMessage (state, messageContent){
@@ -284,7 +303,6 @@ const mutations = {
               stateConverstaionInfo.img = 'static/images/vue.jpg';
               state.conversations.push(stateConverstaionInfo);
            }
-           
         }
     },
 
@@ -391,6 +409,9 @@ const getters = {
         }
         return chatMessage.protoMessages;
     },
+    userInfos(){
+        return state.userInfos;
+    }
 }
 
 const actions = {
@@ -403,6 +424,7 @@ const actions = {
     selectConversation: ({ commit }, value) => commit('selectConversation', value),
     selectFriend: ({ commit }, value) => commit('selectFriend', value),
     updateFriendList: ({ commit }, value) => commit('updateFriendList', value),
+    updateUserInfos: ({ commit }, value) => commit('updateUserInfos', value),
     sendMessage: ({ commit }, msg) => commit('sendMessage', msg),
     send: ({ commit }) => commit('send'),
     initData: ({ commit }) => commit('initData'),

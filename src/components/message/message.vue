@@ -9,7 +9,8 @@
 		    	<li v-for="item in selectedChat.protoMessages" class="message-item">
 		    		<div class="time"><span>{{item.timestamp | time}}</span></div>
 		    		<div class="main" :class="{ self: item.direction == 0 ? true : false }">
-                        <img class="avatar" width="36" height="36" :src="item.self ? user.img : user.img" />
+                        <img class="avatar" width="36" height="36" :src="item.direction == 0 ? 
+                        user.img: (userInfos.get(item.from) != null ? userInfos.get(item.from).portrait : 'static/images/vue.jpg')" />
                         <div class="content">
                             <div class="text" v-html="replaceFace(item.content.searchableContent)"></div>
                         </div>
@@ -26,12 +27,13 @@ export default {
     computed: {
         ...mapGetters([
             'selectedChat',
-            'messages'
+            'messages',
+            'userInfos'
         ]),
         ...mapState([
             'user',
             'emojis'
-        ])
+        ]),
     },
     mounted() {
          //  在页面加载时让信息滚动到最下面
@@ -55,7 +57,8 @@ export default {
                 return con;
             }
             return con;
-        }
+        },
+ 
     },
     filters: {
             // 将日期过滤为 hour:minutes

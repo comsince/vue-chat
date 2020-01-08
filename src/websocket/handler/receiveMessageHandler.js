@@ -18,8 +18,8 @@ export default class ReceiveMessageHandler extends AbstractMessageHandler {
         console.log("current "+content.current+" head "+content.head+" messageCount "+content.messageCount);
         for(var protoMessage of content.messageResponseList){
           var protoMessage = ProtoMessage.toProtoMessage(protoMessage);
-          this.createAndUpdateConversation(protoMessage);
           this.addProtoMessage(protoMessage);
+          this.createAndUpdateConversation(protoMessage);
         }      
       }
 
