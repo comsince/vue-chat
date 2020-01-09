@@ -4,6 +4,7 @@ import Message from "../message/message";
 import ProtoMessage from "../message/protomessage";
 import ProtoConversationInfo from '../model/protoConversationInfo'
 import LocalStore from "../store/localstore";
+import UnreadCount from "../model/unReadCount";
 
 export default class ReceiveMessageHandler extends AbstractMessageHandler {
       conversations = [];
@@ -35,6 +36,7 @@ export default class ReceiveMessageHandler extends AbstractMessageHandler {
          protoConversationInfo.slient = false;
          protoConversationInfo.timestamp = protoMessage.timestamp;
          protoConversationInfo.lastMessage = protoMessage;
+         protoConversationInfo.unreadCount = new UnreadCount();
          this.vueWebsocket.sendAction('updateConversationInfo',protoConversationInfo);
       }
 

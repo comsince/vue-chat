@@ -11,7 +11,7 @@
                 <span class="time">{{item.conversationInfo.timestamp | getTimeStringAutoShort2}}</span>
                 <div class="lastmsg-info">
                     <p class="lastmsg">{{processageGroupMessage(item)}}</p>
-                    <span class="unread-num"><em>9</em></span>
+                    <span v-if="item.conversationInfo.unreadCount.unread > 0" class="unread-num"><em>{{item.conversationInfo.unreadCount.unread}}</em></span>
                 </div>
 
             </div>
@@ -117,7 +117,7 @@ export default {
 	        vertical-align: top
         .lastmsg-info
             display: flex
-            margin-top: 4px    
+            margin-top: 8px    
             .lastmsg
                 flex: 1 1 auto 
                 font-size: 12px

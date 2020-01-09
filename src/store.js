@@ -144,7 +144,7 @@ const state = {
     // 得知当前选择的是哪个对话
     selectId: 1,
     //选择的会话target
-    selectTarget: 'new',
+    selectTarget: '',
     // 得知当前选择的是哪个好友
     selectFriendId: 0,
     vueSocket: null,
@@ -155,7 +155,7 @@ const state = {
     deviceId: '',
     userId: '',
     token: '',
-    userInfos: new Map()
+    userInfos: new Map(),
 }
 
 const mutations = {
@@ -189,6 +189,11 @@ const mutations = {
     },
     selectConversation(state,value){
        state.selectTarget = value;
+       //清除未读数
+       var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === value);
+       if(stateConversationInfo){
+         stateConversationInfo.conversationInfo.unreadCount.unread = 0;
+       }
     },
     // 得知用户当前选择的是哪个好友。
     selectFriend (state, value) {
@@ -273,37 +278,49 @@ const mutations = {
     //更新会话列表
     updateConversationInfo(state,protoConversationInfo){
         var update = false;
+        var updateStateConverstaionInfo;
         for(var stateConverstaionInfo of state.conversations){
             if(stateConverstaionInfo.conversationInfo.conversationType == protoConversationInfo.conversationType 
                 && stateConverstaionInfo.conversationInfo.target == protoConversationInfo.target){
                 update = true;
                 stateConverstaionInfo.conversationInfo.lastMessage = protoConversationInfo.lastMessage;
                 stateConverstaionInfo.conversationInfo.timestamp = protoConversationInfo.lastMessage.timestamp;
+                updateStateConverstaionInfo = stateConverstaionInfo;
             }
         }
         if(!update){
-           var stateConverstaionInfo = new StateConversationInfo();
-           stateConverstaionInfo.conversationInfo = protoConversationInfo;
-           //单聊会话
+           updateStateConverstaionInfo = new StateConversationInfo();
+           updateStateConverstaionInfo.conversationInfo = protoConversationInfo;
+
+            //单聊会话
            if(protoConversationInfo.conversationType == ConversationType.Single){
-            var friend = state.friendlist.find(friend => friend.wxid === protoConversationInfo.target);
-            if(friend != null){
-             var name = friend.nickname;
-             var img = friend.img == null ? 'static/images/vue.jpg': friend.img;
-             stateConverstaionInfo.name = name;
-             stateConverstaionInfo.img = img;
-             state.conversations.push(stateConverstaionInfo);
+                var friend = state.friendlist.find(friend => friend.wxid === protoConversationInfo.target);
+                if(friend != null){
+                var name = friend.nickname;
+                var img = friend.img == null ? 'static/images/vue.jpg': friend.img;
+                updateStateConverstaionInfo.name = name;
+                updateStateConverstaionInfo.img = img;
+                }
+            } else {
+                //群聊会话
+                updateStateConverstaionInfo.name = protoConversationInfo.target;
+                if(!updateStateConverstaionInfo.img){
+                    state.vueSocket.getGroupInfo(protoConversationInfo.target,false);
+                }
+                updateStateConverstaionInfo.img = 'static/images/vue.jpg';
             }
-           } else {
-            //群聊会话
-              stateConverstaionInfo.name = protoConversationInfo.target;
-              if(!stateConverstaionInfo.img){
-                state.vueSocket.getGroupInfo(protoConversationInfo.target,false);
-              }
-              stateConverstaionInfo.img = 'static/images/vue.jpg';
-              state.conversations.push(stateConverstaionInfo);
-           }
+            state.conversations.push(updateStateConverstaionInfo);
         }
+
+
+        //更新会话消息未读数
+        if(state.selectTarget !== protoConversationInfo.target && LocalStore.getLastMessageSeq()){
+           //统计消息未读数,注意服务端暂时还没有将透传消息发送过来，原则上这里过来的消息都不是透传消息
+           var num = updateStateConverstaionInfo.conversationInfo.unreadCount.unread += 1;
+           console.log("target "+protoConversationInfo.target+" unread count "+num);
+        }
+
+
     },
 
     /**
@@ -354,7 +371,7 @@ const mutations = {
         state.token = '';
         localStorage.setItem(KEY_VUE_USER_ID,'');
         localStorage.setItem(KEY_VUE_TOKEN,'');
-        state.selectTarget = 'new',
+        state.selectTarget = '',
         state.vueSocket.sendDisConnectMessage();
         state.vueSocket = null;
         state.conversations = [],
@@ -411,6 +428,15 @@ const getters = {
     },
     userInfos(){
         return state.userInfos;
+    },
+    unreadTotalCount(state){
+        var total = 0;
+        if(state.conversations){
+            for(var stateConversationInfo of state.conversations){
+                total += stateConversationInfo.conversationInfo.unreadCount.unread;
+            }
+        }
+        return total;
     }
 }
 

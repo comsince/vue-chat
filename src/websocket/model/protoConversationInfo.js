@@ -1,3 +1,5 @@
+import UnreadCount from "./unReadCount";
+
 export default class ProtoConversationInfo{
     conversationType;
     target;
@@ -5,7 +7,7 @@ export default class ProtoConversationInfo{
     lastMessage = {};
     timestamp = 0;
     draft = '';
-    unreadCount = {};
+    unreadCount = new UnreadCount();
     isTop = false;
     isSilent = false;
 }

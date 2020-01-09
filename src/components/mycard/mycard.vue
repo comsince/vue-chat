@@ -6,8 +6,8 @@
 	    </header>
 	    <div class="navbar" @click="clearSearch">
 			<div class="conversation-item">
-				<span class="unread-num">
-					<em>9</em>
+				<span v-if="unreadTotalCount > 0" class="unread-num">
+					<em>{{unreadTotalCount}}</em>
 				</span>
 				<router-link to="/conversation" class="icon iconfont icon-msg" >
 				</router-link>
@@ -22,12 +22,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 export default {
     computed: {
        ...mapState([
        	  'user',
-       ])
+	   ]),
+	   ...mapGetters([
+		   'unreadTotalCount'
+	   ])
     },
     methods: {
     	clearSearch() {
