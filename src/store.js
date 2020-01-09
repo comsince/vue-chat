@@ -297,11 +297,11 @@ const mutations = {
         }
 
         //notify 弹框
-        state.notify.notify({
-            title: updateStateConverstaionInfo.name, // Set notification title
-            body: protoConversationInfo.lastMessage.content.searchableContent, // Set message content
-            icon: updateStateConverstaionInfo.img
-          });
+        // state.notify.notify({
+        //     title: updateStateConverstaionInfo.name, // Set notification title
+        //     body: protoConversationInfo.lastMessage.content.searchableContent, // Set message content
+        //     icon: updateStateConverstaionInfo.img
+        //   });
     },
 
     /**
