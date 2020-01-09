@@ -36,7 +36,6 @@ export default {
             'searchText'
         ]),
         ...mapGetters([
-            'searchedChatlist',
             'searchedConversationList'
         ])
     },

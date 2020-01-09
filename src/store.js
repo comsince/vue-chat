@@ -8,7 +8,6 @@ import StateChatMessage from './websocket/model/stateSelectChatMessage'
 import Message from './websocket/message/message';
 import ProtoMessage from './websocket/message/protomessage';
 import ConversationType from './websocket/model/conversationType';
-import GroupInfo from './websocket/model/groupInfo';
 import LocalStore from './websocket/store/localstore';
 import ProtoConversationInfo from './websocket/model/protoConversationInfo';
 import UnreadCount from './websocket/model/unReadCount';
@@ -26,56 +25,6 @@ const state = {
     	name: 'ratel',
     	img: 'static/images/UserAvatar.jpg'
     },
-    // 对话好友列表
-    chatlist: [
-        {
-        	id: 1, 
-        	user: {
-        		name: '妈咪',
-        		img: 'static/images/mother.jpg'
-        	},
-        	messages: [
-                {
-                	content: '么么哒，妈咪爱你',  //聊天内容
-                	date: now  //时间
-                },
-                {
-                	content: '按回车可以发送信息，还可以给我发送表情哟',
-                	date: now
-                }
-        	],
-            index: 1  // 当前在聊天列表中的位置,从1开始
-
-        },
-        {
-        	id: 2,
-        	user: {
-        		name: 'father',
-        		img: 'static/images/father.jpg'
-        	},
-        	messages: [
-                {
-                	content: 'Are you kidding me?',
-                	date: now
-                }
-        	],
-            index: 2
-        },
-        {
-            id: 3,
-            user: {
-                name: '机器人',
-                img: 'static/images/vue.jpg'
-            },
-            messages: [
-                {
-                    content: '我会跟你聊聊天的哟',
-                    date: now
-                }
-            ],
-            index: 3
-        }
-    ],
     // 好友列表
     friendlist: [
         {
@@ -169,10 +118,6 @@ const mutations = {
         const vueSocket = new VueWebSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE,store);
         vueSocket.connect(true);
         state.vueSocket = vueSocket;
-        let data = localStorage.getItem('vue-chat');
-        if (data) {
-            state.chatlist = JSON.parse(data);
-        }
         let conversations = LocalStore.getConversations();
         if(conversations){
             state.conversations = conversations;
@@ -397,21 +342,12 @@ const mutations = {
 const getters = {
     //筛选会话列表
     searchedConversationList(){
-       return state.conversations;
-    },
-    // 筛选出含有搜索值的聊天列表
-    searchedChatlist (state) {
-       let sessions = state.chatlist.filter(sessions => sessions.user.name.includes(state.searchText));
-       return sessions
+       return state.conversations.filter(conversationInfo => conversationInfo.name.includes(state.searchText));
     },
     // 筛选出含有搜索值的好友列表
     searchedFriendlist (state) {
        let friends = state.friendlist.filter(friends => friends.remark.includes(state.searchText));
        return friends
-    },
-    //获取用户头像
-    selectImageByTarget(state){
-
     },
     // 通过当前选择是哪个对话匹配相应的对话
     selectedChat (state) {
@@ -479,17 +415,6 @@ const store = new Vuex.Store({
   getters,
   actions
 })
-
-// 监听聊天列表的值， 发生变化就保存在localStorage中
-store.watch(
-    (state) => state.chatlist,
-    (val) => {
-        localStorage.setItem('vue-chat', JSON.stringify(val));
-    },
-    {
-        deep: true
-    }
-)
 
 store.watch(
     state => state.conversations,
