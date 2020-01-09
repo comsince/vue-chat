@@ -7,7 +7,7 @@
 	    <div class="navbar" @click="clearSearch">
 			<div class="conversation-item">
 				<span v-if="unreadTotalCount > 0" class="unread-num">
-					<em>{{unreadTotalCount}}</em>
+					{{unreadTotalCount}}
 				</span>
 				<router-link to="/conversation" class="icon iconfont icon-msg" >
 				</router-link>
@@ -88,6 +88,7 @@ export default {
 			line-height: 14px
 			position:absolute
 			top: 20px
+			right: 17px
 	footer
 	    position: absolute
 	    bottom: 20px

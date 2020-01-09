@@ -12,7 +12,7 @@
                 <div class="lastmsg-info">
                     <p class="lastmsg">{{processageGroupMessage(item)}}</p>
                     <span v-if="item.conversationInfo.unreadCount && item.conversationInfo.unreadCount.unread > 0" class="unread-num">
-                        <em>{{item.conversationInfo.unreadCount ? item.conversationInfo.unreadCount.unread : 0}}</em>
+                        {{item.conversationInfo.unreadCount ? item.conversationInfo.unreadCount.unread : 0}}
                     </span>
                 </div>
 

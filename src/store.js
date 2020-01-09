@@ -366,7 +366,7 @@ const mutations = {
 const getters = {
     //筛选会话列表
     searchedConversationList(){
-       return state.conversations.filter(conversationInfo => conversationInfo.name.includes(state.searchText));
+       return state.conversations.filter(conversationInfo => conversationInfo.name ? conversationInfo.name.includes(state.searchText): false);
     },
     // 筛选出含有搜索值的好友列表
     searchedFriendlist (state) {
