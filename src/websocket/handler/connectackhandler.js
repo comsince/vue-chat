@@ -19,6 +19,9 @@ export default class ConnectAckHandler extends AbstractMessageHandler{
         let lastMessageSeq = LocalStore.getLastMessageSeq();
         if(!lastMessageSeq){
             lastMessageSeq = '0';
+            this.vueWebsocket.sendAction('changetFirstLogin',true);
+        } else {
+            this.vueWebsocket.sendAction('changetFirstLogin',false);
         }
         //初始拉取消息列表
         this.vueWebsocket.pullMessage(lastMessageSeq,0,0,LocalStore.getSendMessageCount());

@@ -109,7 +109,8 @@ const state = {
     userId: '',
     token: '',
     userInfos: new Map(),
-    notify:''
+    notify:'',
+    firstLogin: false
 }
 
 const mutations = {
@@ -290,18 +291,21 @@ const mutations = {
 
 
         //更新会话消息未读数
-        if(state.selectTarget !== protoConversationInfo.target && LocalStore.getLastMessageSeq()){
+        if(state.selectTarget !== protoConversationInfo.target && !state.firstLogin){
            //统计消息未读数,注意服务端暂时还没有将透传消息发送过来，原则上这里过来的消息都不是透传消息
            var num = updateStateConverstaionInfo.conversationInfo.unreadCount.unread += 1;
            console.log("target "+protoConversationInfo.target+" unread count "+num);
         }
 
         //notify 弹框
-        // state.notify.notify({
-        //     title: updateStateConverstaionInfo.name, // Set notification title
-        //     body: protoConversationInfo.lastMessage.content.searchableContent, // Set message content
-        //     icon: updateStateConverstaionInfo.img
-        //   });
+        if(!state.firstLogin){
+            state.notify.notify({
+                title: updateStateConverstaionInfo.name, // Set notification title
+                body: protoConversationInfo.lastMessage.content.searchableContent, // Set message content
+                icon: updateStateConverstaionInfo.img
+              });
+        }
+       
     },
 
     /**
@@ -360,6 +364,11 @@ const mutations = {
         LocalStore.clearLocalStore();
         //发送断开消息，清除session，防止同一个设备切换登录导致的验证失败
         router.push({path: '/login'})
+    },
+
+    changetFirstLogin(state,value){
+        console.log("first login "+value);
+        state.firstLogin = value;
     }
 
 }
@@ -440,6 +449,7 @@ const actions = {
     updateConversationIntro: ({ commit }, value) => commit('updateConversationIntro', value),
     addProtoMessage: ({ commit }, value) => commit('addProtoMessage', value),
     loginOut: ({ commit }, value) => commit('loginOut', value),
+    changetFirstLogin: ({ commit }, value) => commit('changetFirstLogin', value),
 }
 const store = new Vuex.Store({
   state,

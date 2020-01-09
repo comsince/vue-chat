@@ -21,7 +21,8 @@ export default class ReceiveMessageHandler extends AbstractMessageHandler {
           var protoMessage = ProtoMessage.toProtoMessage(protoMessage);
           this.addProtoMessage(protoMessage);
           this.createAndUpdateConversation(protoMessage);
-        }      
+        } 
+        this.vueWebsocket.sendAction('changetFirstLogin',false);     
       }
 
       /**
