@@ -236,14 +236,23 @@ const mutations = {
     updateConversationInfo(state,protoConversationInfo){
         var update = false;
         var updateStateConverstaionInfo;
-        for(var stateConverstaionInfo of state.conversations){
+        var currentConversationInfoIndex;
+        for(var index in state.conversations){
+            var stateConverstaionInfo = state.conversations[index];
             if(stateConverstaionInfo.conversationInfo.conversationType == protoConversationInfo.conversationType 
                 && stateConverstaionInfo.conversationInfo.target == protoConversationInfo.target){
                 update = true;
+                currentConversationInfoIndex = index;
                 stateConverstaionInfo.conversationInfo.lastMessage = protoConversationInfo.lastMessage;
                 stateConverstaionInfo.conversationInfo.timestamp = protoConversationInfo.lastMessage.timestamp;
                 updateStateConverstaionInfo = stateConverstaionInfo;
+                break;
             }
+        }
+        //新消息会话置顶
+        if(update){
+            state.conversations.splice(currentConversationInfoIndex,1);
+            state.conversations.unshift(updateStateConverstaionInfo);
         }
         if(!update){
            updateStateConverstaionInfo = new StateConversationInfo();
