@@ -10,6 +10,9 @@ import ProtoMessage from './websocket/message/protomessage';
 import ConversationType from './websocket/model/conversationType';
 import GroupInfo from './websocket/model/groupInfo';
 import LocalStore from './websocket/store/localstore';
+import ProtoConversationInfo from './websocket/model/protoConversationInfo';
+import UnreadCount from './websocket/model/unReadCount';
+import StateSelectChateMessage from './websocket/model/stateSelectChatMessage';
 
 Vue.use(Vuex)
 
@@ -191,7 +194,7 @@ const mutations = {
        state.selectTarget = value;
        //清除未读数
        var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === value);
-       if(stateConversationInfo){
+       if(stateConversationInfo && stateConversationInfo.conversationInfo.unreadCount){
          stateConversationInfo.conversationInfo.unreadCount.unread = 0;
        }
     },
@@ -238,6 +241,17 @@ const mutations = {
         stateConversationInfo.conversationInfo.timestamp = protoMessage.timestamp;
 
         var stateChatMessage = state.messages.find(chatmessage => chatmessage.target === protoMessage.target);
+        if(!stateChatMessage){
+            stateChatMessage = new StateSelectChateMessage();
+            stateChatMessage.target = protoMessage.target;
+            var friend = state.friendlist.find(friend => friend.wxid === protoMessage.target);
+            if(friend != null){
+             stateChatMessage.name =  friend.nickname;
+            }
+            stateChatMessage.protoMessages.push(protoMessage);
+            state.messages.push(stateChatMessage);
+        }
+        
         stateChatMessage.protoMessages.push(protoMessage);
 
         //发送消息到对端
@@ -248,31 +262,29 @@ const mutations = {
     // 添加该好友的对话 并置顶
     send (state) {
         let result = state.friendlist.find(friend => friend.id === state.selectFriendId)
-        let msg = state.chatlist.find(msg => msg.user.name === result.remark)
-        if( !msg ){
-           state.selectId = 1
-            for(let i = 0; i < state.chatlist.length; i++ ){
-                state.chatlist[i].id++;
-                state.chatlist[i].index++;
-            }
-            state.chatlist.unshift({
-                id: 1,
-                user: {
-                    name: result.remark,
-                    img:  result.img
-                },
-                messages: [
-                    {
-                        content: '已经置顶聊天，可以给我发信息啦！',
-                        date: new Date()
-                    }
-                ],
-                index: 1
-            })
-        }else {
-            state.selectId = msg.index
-            router.push({ path: '/chat'})
+        let stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === result.wxid)
+        if( !stateConversationInfo ){
+            state.selectTarget  = result.wxid;
+            var protoConversationInfo = new ProtoConversationInfo();
+            protoConversationInfo.conversationType = ConversationType.Single;
+            protoConversationInfo.target = result.wxid;
+            protoConversationInfo.line = 0;
+            protoConversationInfo.top = false;
+            protoConversationInfo.slient = false;
+            protoConversationInfo.timestamp = new Date().getTime();
+            protoConversationInfo.unreadCount = new UnreadCount();
+            protoConversationInfo.lastMessage = null;
+
+            var newStateConversationInfo = new StateConversationInfo();
+            newStateConversationInfo.name = result.remark;
+            newStateConversationInfo.img = result.img;
+            newStateConversationInfo.conversationInfo = protoConversationInfo;
+            state.conversations.unshift(newStateConversationInfo);
+        } else {
+            state.selectTarget = stateConversationInfo.conversationInfo.target
+            
         }
+        router.push({ path: '/conversation'})
     },
 
     //更新会话列表
@@ -433,7 +445,9 @@ const getters = {
         var total = 0;
         if(state.conversations){
             for(var stateConversationInfo of state.conversations){
-                total += stateConversationInfo.conversationInfo.unreadCount.unread;
+                if(stateConversationInfo.conversationInfo.unreadCount){
+                    total += stateConversationInfo.conversationInfo.unreadCount.unread;
+                }
             }
         }
         return total;

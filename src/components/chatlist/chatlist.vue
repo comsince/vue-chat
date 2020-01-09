@@ -7,11 +7,13 @@
             	<img class="avatar"  width="42" height="42" alt="static/images/vue.jpg" :src="item.img" onerror="this.src='static/images/vue.jpg'">
             </div>
             <div class="list-right">
-            	<p class="name">{{item.name.substring(0,9)}}</p>
+            	<p class="name">{{item.name ? item.name.substring(0,9) : ""}}</p>
                 <span class="time">{{item.conversationInfo.timestamp | getTimeStringAutoShort2}}</span>
                 <div class="lastmsg-info">
                     <p class="lastmsg">{{processageGroupMessage(item)}}</p>
-                    <span v-if="item.conversationInfo.unreadCount.unread > 0" class="unread-num"><em>{{item.conversationInfo.unreadCount.unread}}</em></span>
+                    <span v-if="item.conversationInfo.unreadCount && item.conversationInfo.unreadCount.unread > 0" class="unread-num">
+                        <em>{{item.conversationInfo.unreadCount ? item.conversationInfo.unreadCount.unread : 0}}</em>
+                    </span>
                 </div>
 
             </div>
@@ -45,22 +47,24 @@ export default {
         ]),
         processageGroupMessage(item){
             var protoConversationInfo = item.conversationInfo;
-            var displayContent = protoConversationInfo.lastMessage.content.searchableContent;
-            var isCurrentUser = protoConversationInfo.lastMessage.from === LocalStore.getUserId();
-            if(protoConversationInfo.conversationType == ConversationType.Group && !isCurrentUser){
-                var from = protoConversationInfo.lastMessage.from;
-                console.log("conversation group from "+from);
-                var displayUserInfo = this.$store.state.userInfos.get(from);
-                var displayName = ''
-                if(displayUserInfo){
-                    displayName = displayUserInfo.displayName;
-                    if(!displayName){
-                        displayName = displayUserInfo.mobile;
+            var displayContent;
+            if(protoConversationInfo.lastMessage){
+                displayContent = protoConversationInfo.lastMessage.content.searchableContent;
+                var isCurrentUser = protoConversationInfo.lastMessage.from === LocalStore.getUserId();
+                if(protoConversationInfo.conversationType == ConversationType.Group && !isCurrentUser){
+                    var from = protoConversationInfo.lastMessage.from;
+                    console.log("conversation group from "+from);
+                    var displayUserInfo = this.$store.state.userInfos.get(from);
+                    var displayName = ''
+                    if(displayUserInfo){
+                        displayName = displayUserInfo.displayName;
+                        if(!displayName){
+                            displayName = displayUserInfo.mobile;
+                        }
                     }
+                    displayContent = displayName +":"+protoConversationInfo.lastMessage.content.searchableContent;
                 }
-                displayContent = displayName +":"+protoConversationInfo.lastMessage.content.searchableContent;
             }
-
            return displayContent;
         }	
     },
