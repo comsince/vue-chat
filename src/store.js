@@ -12,6 +12,7 @@ import LocalStore from './websocket/store/localstore';
 import ProtoConversationInfo from './websocket/model/protoConversationInfo';
 import UnreadCount from './websocket/model/unReadCount';
 import StateSelectChateMessage from './websocket/model/stateSelectChatMessage';
+import Notify from '@wcjiang/notify';
 
 Vue.use(Vuex)
 
@@ -108,6 +109,7 @@ const state = {
     userId: '',
     token: '',
     userInfos: new Map(),
+    notify:''
 }
 
 const mutations = {
@@ -126,6 +128,14 @@ const mutations = {
         if(messages){
             state.messages = messages;
         }
+        state.notify = new Notify({
+            effect: 'flash',
+            interval: 500,
+            onclick: () => {
+                console.log('on click');
+                state.notify.close();
+            }
+          });
     },
     // 获取搜索值
 	search (state, value) {
@@ -286,7 +296,12 @@ const mutations = {
            console.log("target "+protoConversationInfo.target+" unread count "+num);
         }
 
-
+        //notify 弹框
+        state.notify.notify({
+            title: updateStateConverstaionInfo.name, // Set notification title
+            body: protoConversationInfo.lastMessage.content.searchableContent, // Set message content
+            icon: updateStateConverstaionInfo.img
+          });
     },
 
     /**
@@ -394,6 +409,14 @@ const getters = {
                     total += stateConversationInfo.conversationInfo.unreadCount.unread;
                 }
             }
+        }
+        if(total === 0){
+            state.notify.faviconClear();
+            state.notify.setTitle();
+            state.notify.close();
+        } else {
+            state.notify.setFavicon(total)
+            state.notify.setTitle('你有新的消息未读');
         }
         return total;
     }
