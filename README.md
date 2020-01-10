@@ -3,7 +3,22 @@
 基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯
 
 # 项目截图
+* 消息提示
+
+![image](./attachment/vue-chat-unread.png)
+
+* 文字消息
+
 ![image](./attachment/vue-chat.png)
+
+* 图片消息
+
+![image](./attachment/vue-chat-pic.png)
+
+* 视频消息
+
+![image](./attachment/vue-chat-video.png)
+
 # 项目演示
 * [项目演示地址](http://www.comsince.cn/chat/index.html)
 * 请选择其中任何一个帐号密码进行登录即可
@@ -13,6 +28,7 @@
 ```
 
 ## 版本规划
+**NOTE:** web版本目前只实现了，消息的发送主体功能，至于添加用户等朋友相关请使用[android版本客户端](https://githu.com/comsince/android-chat)
 ### V1.0.0
 * 登录认证流程
 * 实现朋友列表展示，用户信息获取
