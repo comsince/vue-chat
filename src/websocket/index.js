@@ -49,7 +49,7 @@ export default class VueWebSocket {
             console.log("ws onclose");
             websocketObj.ws.close();
             clearInterval(websocketObj.pingIntervalId);
-            //websocketObj.reconnect(event);
+            websocketObj.reconnect(event);
         }
         this.ws.onerror = function(event) {
             console.log("connect error");
