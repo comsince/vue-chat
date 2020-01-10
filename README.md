@@ -18,6 +18,7 @@
 * 实现朋友列表展示，用户信息获取
 * 会话信息拉取，会话消息缓存
 * 纯文本消息通讯
+* 支持图片，视频消息展示
 * 群会话功能
 
 ## Build Setup
@@ -46,6 +47,9 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 
 * [Vue-chat](https://github.com/han960619/Vue-chat/)
 
+## 依赖组件
+* [常用的 vue 视频插件](https://wangchaoke.cn/?p=372)
+* [西瓜播放器](http://h5player.bytedance.com/gettingStarted)
 
 ## 推荐项目
 

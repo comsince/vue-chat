@@ -14,9 +14,14 @@
                         onerror="this.src='static/images/vue.jpg'"/>
                         <div class="content">
                             <div v-if="item.content.type === 1" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
-                            <div v-if="item.content.type !== 1 && item.content.type !== 2 && item.content.type !== 3 && item.content.type !== 8">不支持的类型，请到手机上查看</div>
+                            <div v-if="item.content.type !== 1 && item.content.type !== 2 
+                                      && item.content.type !== 3 && item.content.type !== 8
+                                      && item.content.type !== 6">不支持的类型，请到手机上查看</div>
                             <div v-if="item.content.type === 3" v-viewer>
                                 <img :src="item.content.remoteMediaUrl" class="receive-image">
+                            </div>
+                            <div v-if="item.content.type === 6" >
+                                <Xgplayer :config="videoConfig(item.content.remoteMediaUrl,index === selectedChat.protoMessages.length - 1)" @player="Player = $event"/>
                             </div>
                         </div>
                     </div>
@@ -29,11 +34,22 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import TimeUtils from '../../websocket/utils/timeUtils'
+import Xgplayer from 'xgplayer-vue';
 import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
 import Vue from 'vue'
 Vue.use(Viewer)
 export default {
+    components:{
+        Xgplayer
+    },
+
+    data(){
+        return {
+            Player: null
+        }
+    },
+    
     computed: {
         ...mapGetters([
             'selectedChat',
@@ -79,6 +95,17 @@ export default {
                }
            }
            return false;
+        },
+
+        videoConfig(remoteMediaUrl,paly = false){
+           return {
+            id: 'vs'+remoteMediaUrl,
+            url: remoteMediaUrl,
+            height: 330,
+            width: 250,
+            autoplay: paly,
+            download: true
+           }
         }
  
     },
