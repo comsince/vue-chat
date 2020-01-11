@@ -67,11 +67,20 @@ export default class LocalStore {
         return localStorage.getItem(KEY_VUE_USER_ID);
     }
 
+    static setSelectTarget(value){
+        localStorage.setItem("select_target",value);
+    }
+
+    static getSelectTarget(){
+        return localStorage.getItem("select_target");
+    }
+
     static clearLocalStore(){
         localStorage.setItem("coversations","");
         localStorage.setItem("last_message_seq","");
         localStorage.setItem("messages","");
         localStorage.setItem("send_message_count",0);
+        localStorage.setItem("select_target","");
         localStorage.setItem(KEY_VUE_USER_ID,'');
     }
 }

@@ -129,6 +129,7 @@ const mutations = {
         if(messages){
             state.messages = messages;
         }
+        state.selectTarget = LocalStore.getSelectTarget();
         state.notify = new Notify({
             effect: 'flash',
             interval: 500,
@@ -472,6 +473,16 @@ store.watch(
     state => state.messages,
     value => {
         LocalStore.saveMessages(value);
+    },
+    {
+        deep : true
+    }
+)
+
+store.watch(
+    state => state.selectTarget,
+    value => {
+        LocalStore.setSelectTarget(value);
     },
     {
         deep : true

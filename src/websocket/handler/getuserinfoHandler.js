@@ -31,7 +31,7 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
            this.vueWebsocket.sendAction("updateUserInfos",userInfos);
            this.vueWebsocket.sendAction("updateFriendList",stateFriendList);
            //更新当前会话
-           this.vueWebsocket.sendAction('selectConversation',stateFriendList[0].wxid);
+           //this.vueWebsocket.sendAction('selectConversation',stateFriendList[0].wxid);
        }
     }
 }
