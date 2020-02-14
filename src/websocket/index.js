@@ -13,6 +13,7 @@ import LocalStore from './store/localstore';
 
 export default class VueWebSocket {
     handlerList = [];
+    userDisconnect = false;
 
     constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType,vuexStore){
         this.ws_protocol = ws_protocol;
@@ -37,6 +38,7 @@ export default class VueWebSocket {
             websocketObj.pingIntervalId = setInterval(() => {
                  websocketObj.ping();
              }, websocketObj.heartbeatTimeout);
+             websocketObj.userDisconnect = false;
              //发送connect指令
              websocketObj.sendConnectMessage();
         }
@@ -49,7 +51,10 @@ export default class VueWebSocket {
             console.log("ws onclose");
             websocketObj.ws.close();
             clearInterval(websocketObj.pingIntervalId);
-            websocketObj.reconnect(event);
+            if(!websocketObj.userDisconnect){
+                console.log("reconnect websocket");
+                websocketObj.reconnect(event);
+            }
         }
         this.ws.onerror = function(event) {
             console.log("connect error");
@@ -142,6 +147,7 @@ export default class VueWebSocket {
         websocketprotomessage.content = disconnectMessage;
         console.log(websocketprotomessage.toJson());
         this.send(websocketprotomessage.toJson());
+        this.userDisconnect = true;
     }
 
     /**
