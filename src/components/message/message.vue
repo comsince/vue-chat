@@ -4,9 +4,9 @@
 		<header class="header">
 			<div class="friendname">{{selectedChat.name}}</div>
 		</header>
-		<div class="message-wrapper" ref="list">
+		<div class="message-wrapper" ref="list" @scroll="scrollEvent" @click="messageBoxClick">
 		    <ul v-if="selectedChat">
-		    	<li v-for="(item, index) in selectedChat.protoMessages" class="message-item">
+		    	<li v-bind:key = index v-for="(item, index) in selectedChat.protoMessages" class="message-item">
 		    		<div v-if="isShowTime(index,selectedChat.protoMessages)" class="time"><span>{{item.timestamp | getTimeStringAutoShort2}}</span></div>
 		    		<div class="main" :class="{ self: item.direction == 0 ? true : false }">
                         <img class="avatar" width="36" height="36" :src="item.direction == 0 ? 
@@ -67,6 +67,7 @@ export default {
     mounted() {
          //  在页面加载时让信息滚动到最下面
         setTimeout(() => this.$refs.list.scrollTop = this.$refs.list.scrollHeight, 0)
+        
     },
     watch: {
         // 发送信息后,让信息滚动到最下面
@@ -109,6 +110,18 @@ export default {
             autoplay: paly,
             download: true
            }
+        },
+        // 参考资料 https://blog.csdn.net/qq449736038/article/details/80769507
+        scrollEvent(e){
+             //console.log('scroll event '+e.srcElement.scrollTop+ ' scrollheight '+e.srcElement.scrollHeight);
+             if(e.srcElement.scrollHeight - e.srcElement.scrollTop > 389){
+                 this.$store.dispatch('clearUnreadStatus', '')
+             }
+        },
+
+        messageBoxClick(e){
+            this.$store.dispatch('clearUnreadStatus', '')
+            console.log('message box click');
         }
  
     },

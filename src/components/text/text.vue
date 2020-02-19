@@ -5,7 +5,7 @@
           <i class="icon iconfont icon-look" @click="showEmoji=!showEmoji"></i>
           <transition name="showbox">
              <div class="emojiBox" v-show="showEmoji">
-                 <li v-for="(item, index) in emojis">
+                 <li v-bind:key= index v-for="(item, index) in emojis">
                     <img :src="'static/emoji/'+item.file" :data="item.code" @click="content +=item.code">
                  </li>
              </div>

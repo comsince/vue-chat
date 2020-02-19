@@ -155,6 +155,13 @@ const mutations = {
          stateConversationInfo.conversationInfo.unreadCount.unread = 0;
        }
     },
+
+    clearUnreadStatus(state){
+        var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === state.selectTarget);
+        if(stateConversationInfo && stateConversationInfo.conversationInfo.unreadCount){
+          stateConversationInfo.conversationInfo.unreadCount.unread = 0;
+        }
+    },
     // 得知用户当前选择的是哪个好友。
     selectFriend (state, value) {
        state.selectFriendId = value
@@ -440,6 +447,7 @@ const actions = {
     },
     selectSession: ({ commit }, value) => commit('selectSession', value),
     selectConversation: ({ commit }, value) => commit('selectConversation', value),
+    clearUnreadStatus: ({ commit }, value) => commit('clearUnreadStatus', value),
     selectFriend: ({ commit }, value) => commit('selectFriend', value),
     updateFriendList: ({ commit }, value) => commit('updateFriendList', value),
     updateUserInfos: ({ commit }, value) => commit('updateUserInfos', value),
