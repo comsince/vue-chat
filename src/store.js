@@ -292,7 +292,7 @@ const mutations = {
 
 
         //更新会话消息未读数
-        if(state.selectTarget !== protoConversationInfo.target && !state.firstLogin){
+        if(!state.firstLogin){
            //统计消息未读数,注意服务端暂时还没有将透传消息发送过来，原则上这里过来的消息都不是透传消息
            var num = updateStateConverstaionInfo.conversationInfo.unreadCount.unread += 1;
            console.log("target "+protoConversationInfo.target+" unread count "+num);
