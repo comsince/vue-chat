@@ -9,14 +9,14 @@
 				<span v-if="unreadTotalCount > 0" class="unread-num">
 					{{unreadTotalCount}}
 				</span>
-				<router-link to="/conversation" class="icon iconfont icon-msg" >
+				<router-link to="/conversation" class="icon iconfont icon-dkw_xiaoxi" >
 				</router-link>
 			</div>
-	         <router-link to="/friend" class="icon iconfont icon-friend"></router-link>
+	         <router-link to="/friend" class="icon iconfont icon-xinpengyou"></router-link>
 	         <!-- <router-link to="/my" class="icon iconfont icon-collection"></router-link> -->
 	    </div>
 	    <footer>
-	        <i class="icon iconfont icon-more" @click="loginOut"></i>
+	        <i title = "退出" class="icon iconfont icon-tuichu" @click="loginOut"></i>
 	    </footer>
 	</div>
 </template>

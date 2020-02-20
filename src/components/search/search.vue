@@ -3,7 +3,7 @@
 <div class="wrapper">
 	<div class="search-wrapper">
 		<input type="text" class="searchInput" v-model="search" @keyup="change" placeholder="搜索">
-		<i class="icon iconfont icon-search" v-show="noText"></i>
+		<i class="icon iconfont icon-sousuo" v-show="noText"></i>
 		<div class="searchInput-delete" v-show="haveText" @click="del"></div>
 	</div>
 </div>
@@ -59,7 +59,7 @@ export default {
 	    outline: none
 	    &:focus
 	    	background-color: #f2efee
-	  .icon-search
+	  .icon-sousuo
 	    display: inline-block
 	    width: 24px
 	    height: 24px

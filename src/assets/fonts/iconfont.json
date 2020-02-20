@@ -1,0 +1,86 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1240490",
+      "name": "表情",
+      "font_class": "biaoqing",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "1301356",
+      "name": "表情",
+      "font_class": "biaoqing1",
+      "unicode": "e659",
+      "unicode_decimal": 58969
+    },
+    {
+      "icon_id": "1301377",
+      "name": "图片",
+      "font_class": "tupian",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "1638517",
+      "name": "视频",
+      "font_class": "shipin",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "2078817",
+      "name": "dkw_消息 ",
+      "font_class": "dkw_xiaoxi",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "2155593",
+      "name": "视频",
+      "font_class": "shipin1",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    },
+    {
+      "icon_id": "3216623",
+      "name": "图片",
+      "font_class": "tupian1",
+      "unicode": "e692",
+      "unicode_decimal": 59026
+    },
+    {
+      "icon_id": "5893499",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "10622229",
+      "name": "文件",
+      "font_class": "dilanxianxingiconyihuifu_huabanfuben",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "11432818",
+      "name": "新朋友",
+      "font_class": "xinpengyou",
+      "unicode": "e69f",
+      "unicode_decimal": 59039
+    },
+    {
+      "icon_id": "12550673",
+      "name": "搜索",
+      "font_class": "sousuo",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    }
+  ]
+}

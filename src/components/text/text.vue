@@ -2,13 +2,22 @@
 <template>
 <div class="text">
     <div class="emoji">
-          <i class="icon iconfont icon-look" @click="showEmoji=!showEmoji"></i>
-          <transition name="showbox">
-             <div class="emojiBox" v-show="showEmoji">
-                 <li v-bind:key= index v-for="(item, index) in emojis">
+        <i class="icon iconfont icon-biaoqing1" @click="showEmoji=!showEmoji"></i>
+        <i title="发送图片" class="icon iconfont icon-tupian" >
+            <input type="file" accept="image/*" id="chat-send-img">
+        </i>
+        <i title="发送文件" class="icon iconfont icon-dilanxianxingiconyihuifu_huabanfuben">
+            <input type="file" accept="*" id="chat-send-file">
+        </i>
+        <i title="发送视频" class="icon iconfont icon-shipin">
+            <input type="file" accept="video/*">
+        </i>         
+        <transition name="showbox">
+            <div class="emojiBox" v-show="showEmoji">
+                <li v-bind:key= index v-for="(item, index) in emojis">
                     <img :src="'static/emoji/'+item.file" :data="item.code" @click="content +=item.code">
-                 </li>
-             </div>
+                </li>
+            </div>
           </transition>
     </div>
     <textarea ref="text" v-model="content" @keydown.enter="sendMessage"  @click="showEmoji=false"></textarea>
@@ -126,10 +135,23 @@ export default {
         padding: 0 30px
         box-sizing: border-box
         color: #7c7c7c
-        .icon-look
+        i
+            font-size: 20px;
+            margin-right : 10px;
             cursor: pointer
+            position: relative
             &:hover
                 color: #1aad19
+        input
+            opacity: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 11;
+            font-size: 0;
+            cursor: pointer;        
         .emojiBox
             position: absolute
             display: flex
