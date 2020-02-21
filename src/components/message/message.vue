@@ -13,18 +13,28 @@
                         user.img: (userInfos.get(item.from) != null ? userInfos.get(item.from).portrait : 'static/images/vue.jpg')" 
                         onerror="this.src='static/images/vue.jpg'"/>
                         <div class="content">
-                            <div v-if="item.content.type === 1" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
-                            <div v-if="item.content.type !== 1 && item.content.type !== 2
-                                      && item.content.type !== 3 && item.content.type !== 8
-                                      && item.content.type !== 6">不支持的类型，请到手机上查看</div>
-                            <div v-if="item.content.type === 3" v-viewer>
-                                <img :src="item.content.remoteMediaUrl" class="receive-image">
-                            </div>
+                            <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
+                            <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>    
                             <div v-if="item.content.type === 2">
                                 请到手机上查看音频消息
                             </div>
+                            <div v-if="item.content.type === 3" v-viewer>
+                                <img :src="item.content.remoteMediaUrl" class="receive-image">
+                            </div>
+                            <div v-if="item.content.type === 4">
+                                [位置消息]
+                            </div>
+                            <div v-if="item.content.type === 5">
+                                [文件消息]
+                            </div>
                             <div v-if="item.content.type === 6" >
                                 <Xgplayer :config="videoConfig(item.content.remoteMediaUrl,index === selectedChat.protoMessages.length - 1)" @player="Player = $event"/>
+                            </div>
+                            <div v-if="item.content.type === 7">
+                                [表情消息]
+                            </div>
+                            <div v-if="item.content.type === 8">
+                                [图片表情]
                             </div>
                         </div>
                     </div>
@@ -87,6 +97,10 @@ export default {
                 return con;
             }
             return con;
+        },
+
+        isfaceMessage(con){
+            return con.includes('/:');
         },
 
         isShowTime(index,protoMessages){
