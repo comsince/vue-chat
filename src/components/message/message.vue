@@ -176,17 +176,17 @@ export default {
       
    .message
       width: 100%
-      height: 450px
+      height: 75%
       .header
-        height: 60px
+        height: 14%
         padding: 28px 0 0 30px
         box-sizing: border-box
         border-bottom: 1px solid #e7e7e7
         .friendname
             font-size: 18px
       .message-wrapper
-        min-height: 390px
-        max-height: 390px
+        min-height: 86%
+        max-height: 86%
         padding: 10px 15px
         box-sizing: border-box
         overflow-y: auto
@@ -215,7 +215,7 @@ export default {
                 margin-left: 10px
                 position: relative
                 padding: 6px 10px
-                max-width: 330px
+                max-width: 40%
                 min-height: 36px
                 line-height: 24px
                 box-sizing: border-box

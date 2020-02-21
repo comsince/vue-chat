@@ -160,7 +160,7 @@ export default {
 <style lang="stylus" scoped>
 .text
     position: relative
-    height: 150px
+    height: 25%
     background: #fff
     .emoji
         position: relative

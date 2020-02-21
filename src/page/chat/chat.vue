@@ -35,7 +35,8 @@ export default {
 <style lang="stylus" scoped>
 .content
   display: flex
-  width: 800px
+  width: 100%
+  height: 100%
   .msglist
     width: 250px
     background: rgb(230,230,230)

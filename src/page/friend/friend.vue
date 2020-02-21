@@ -26,7 +26,7 @@ export default{
 <style lang="stylus" scoped>
 .content
   display: flex
-  width: 800px
+  width: 100%
   .friend-wrapper
     width: 250px
     background: rgb(230,230,230)

@@ -1,6 +1,6 @@
 <!-- 聊天列表 -->
 <template>
-  <div class="msglist">
+  <div class="conversationlist">
     <ul>
         <li v-for="item in searchedConversationList" class="sessionlist" :class="{ active: item.conversationInfo.target === selectTarget }" @click="selectConversation(item.conversationInfo.target)">
             <div class="list-left">
@@ -93,8 +93,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.msglist
-  height: 540px
+.conversationlist
+  height: 100%
   overflow-y: auto
   .sessionlist
     display: flex

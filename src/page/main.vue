@@ -28,16 +28,15 @@ export default {
 #app
   display: flex
   border-radius 50px
-  margin: 20px auto
-  width: 860px
-  height: 600px
+  width: 100%
+  height: 100%
   background-color: #fff
   .sidebar
     width: 60px
-    height: 600px
+    height: 100%
     background: #2b2c2f
   .main
     flex: 1
-    height: 600px
+    height: 100%
     background: #f2f2f2
 </style>
