@@ -49,6 +49,9 @@ export default {
             var displayContent;
             if(protoConversationInfo.lastMessage){
                 displayContent = protoConversationInfo.lastMessage.content.searchableContent;
+                if(protoConversationInfo.lastMessage.content.type === 400){
+                    displayContent = '[网络电话]';
+                }
                 var isCurrentUser = protoConversationInfo.lastMessage.from === LocalStore.getUserId();
                 if(protoConversationInfo.conversationType == ConversationType.Group && !isCurrentUser){
                     var from = protoConversationInfo.lastMessage.from;

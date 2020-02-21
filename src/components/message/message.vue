@@ -36,6 +36,9 @@
                             <div v-if="item.content.type === 8">
                                 [图片表情]
                             </div>
+                            <div v-if="item.content.type === 400">
+                                [网络电话]
+                            </div>
                         </div>
                     </div>
 		    	</li>
