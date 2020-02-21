@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{fullscreen: changeFullScreenMode}">
     <div class="sidebar">
       <mycard></mycard>
     </div>
@@ -11,7 +11,7 @@
 
 <script>
 import mycard from '../components/mycard/mycard'
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import VueWebSocket from '../websocket';
 import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from '../constant/index'
 export default {
@@ -20,16 +20,25 @@ export default {
    },
    created () {
        this.$store.dispatch('initData');
+   },
+   computed: {
+       ...mapState([
+            'changeFullScreenMode'
+        ])
    }
 }
 </script>
 
 <style lang="stylus" scoped>
+
 #app
+  &.fullscreen
+    width: 100%
+    height: 100%
   display: flex
   border-radius 50px
-  width: 100%
-  height: 100%
+  width: 75%
+  height: 80%
   background-color: #fff
   .sidebar
     width: 60px

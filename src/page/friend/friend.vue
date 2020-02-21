@@ -27,6 +27,7 @@ export default{
 .content
   display: flex
   width: 100%
+  height: 100%
   .friend-wrapper
     width: 250px
     background: rgb(230,230,230)

@@ -94,7 +94,7 @@ export default {
 
 <style lang="stylus" scoped>
 .conversationlist
-  height: 100%
+  height: 87%
   overflow-y: auto
   .sessionlist
     display: flex

@@ -2,7 +2,7 @@
 <template>
 	<div class="mycard">
 	    <header>
-	    	<img :src="user.img" class="avatar">
+	    	<img :src="user.img" class="avatar" @click="changeFullScreenMode">
 	    </header>
 	    <div class="navbar" @click="clearSearch">
 			<div class="conversation-item">
@@ -38,6 +38,11 @@ export default {
 		},
 		loginOut(){
 			this.$store.dispatch('loginOut','');
+		},
+		changeFullScreenMode(){
+			var fullscreen = this.$store.state.changeFullScreenMode;
+			console.log('change screen mode '+fullscreen);
+			this.$store.state.changeFullScreenMode = !fullscreen;
 		}
     }
 }

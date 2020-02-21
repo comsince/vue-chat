@@ -35,7 +35,7 @@ export default {
 
 <style lang="stylus" scoped>
 .friendlist
-    height: 100%
+    height: 87%
     overflow-y: auto
     .frienditem
         border-top: 1px solid #dadada

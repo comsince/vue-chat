@@ -110,7 +110,9 @@ const state = {
     token: '',
     userInfos: new Map(),
     notify:'',
-    firstLogin: false
+    firstLogin: false,
+    //修改全屏模式
+    changeFullScreenMode: false
 }
 
 const mutations = {

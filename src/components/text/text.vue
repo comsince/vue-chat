@@ -165,7 +165,7 @@ export default {
     .emoji
         position: relative
         width: 100%
-        height: 40px
+        height: 26%
         line-height: 40px
         font-size: 12px
         padding: 0 30px
@@ -208,7 +208,7 @@ export default {
     textarea
         box-sizing: border-box
         padding: 0 30px
-        height: 110px
+        height: 74%
         width: 100%
         border: none
         outline: none
