@@ -12,7 +12,7 @@
                 <div class="lastmsg-info">
                     <p class="lastmsg">{{processageGroupMessage(item)}}</p>
                     <span v-if="item.conversationInfo.unreadCount && item.conversationInfo.unreadCount.unread > 0" class="unread-num">
-                        {{item.conversationInfo.unreadCount ? item.conversationInfo.unreadCount.unread : 0}}
+                        <span class="unread-num-show">{{item.conversationInfo.unreadCount ? item.conversationInfo.unreadCount.unread : 0}}</span>
                     </span>
                 </div>
 
@@ -137,13 +137,18 @@ export default {
                 vertical-align:bottom
                 margin-top: 0px
                 display: inline-block;
-                min-width: 14px;
-                height: 14px;
+                min-width: 16px;
+                height: 16px;
                 background-color: red;
                 border-radius: 8px;
                 text-align: center;
                 font-size: 12px;
                 color: #fff;
-                line-height: 14px;       
+                line-height: 16px;
+                .unread-num-show
+                   text-align: center;
+                   font-size:10px;
+                   -webkit-transform:scale(0.8);
+                   display:block;
           
 </style>

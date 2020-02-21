@@ -7,7 +7,7 @@
 	    <div class="navbar" @click="clearSearch">
 			<div class="conversation-item">
 				<span v-if="unreadTotalCount > 0" class="unread-num">
-					{{unreadTotalCount}}
+					<span class="unread-num-show">{{unreadTotalCount}}</span>
 				</span>
 				<router-link to="/conversation" class="icon iconfont icon-dkw_xiaoxi" >
 				</router-link>
@@ -78,17 +78,22 @@ export default {
 	    position:relative
 		.unread-num
 			display: inline-block
-			min-width: 14px
-			height: 14px
+			min-width: 16px
+			height: 16px
 			background-color: red
 			border-radius: 8px
 			text-align: center
 			font-size: 12px
 			color: #fff
-			line-height: 14px
+			line-height: 16px
 			position:absolute
 			top: 20px
 			right: 17px
+			z-index: 10
+			.unread-num-show
+                font-size:10px;
+                -webkit-transform:scale(0.8);
+                display:block;
 	footer
 	    position: absolute
 	    bottom: 20px
