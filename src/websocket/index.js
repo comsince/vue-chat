@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -9,6 +9,7 @@ import ReceiveMessageHandler from './handler/receiveMessageHandler';
 import NotifyMessageHandler from './handler/notifyMessageHandler';
 import GetGroupInfoHandler from './handler/getGroupInfoHandler';
 import SendMessageHandler from './handler/sendMessageHandler';
+import UploadTokenHandler from './handler/getUploadtokenHandler'
 import LocalStore from './store/localstore';
 
 export default class VueWebSocket {
@@ -100,6 +101,7 @@ export default class VueWebSocket {
         this.handlerList.push(new NotifyMessageHandler(this));
         this.handlerList.push(new GetGroupInfoHandler(this));
         this.handlerList.push(new SendMessageHandler(this));
+        this.handlerList.push(new UploadTokenHandler(this));
     }
 
     processMessage(data){
@@ -195,6 +197,13 @@ export default class VueWebSocket {
             sendMessageCount: sendMessageCount
         });
         this.send(websocketprotomessage.toJson());
+    }
+
+    getUploadToken(mediaType){
+       var content = {
+        mediaType: mediaType
+       };
+       this.sendPublishMessage(GQNUT,content);
     }
 
     /**

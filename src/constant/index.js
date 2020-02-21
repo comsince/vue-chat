@@ -1,6 +1,6 @@
 export const WS_PROTOCOL = 'ws';
-export const WS_IP = '120.79.90.245';
-// export const WS_IP = 'localhost';
+// export const WS_IP = '120.79.90.245';
+export const WS_IP = 'localhost';
 export const WS_PORT = 9326;
 export const HEART_BEAT_INTERVAL = 25 * 1000;
 export const RECONNECT_INTERVAL = 30 * 1000;
@@ -20,6 +20,7 @@ export const GPGI = 'GPGI';
 export const MP = 'MP';
 export const MS = "MS";
 export const MN = "MN";
+export const GQNUT = "GQNUT";
 
 export const LOGIN_API = "http://"+WS_IP+":8081/login";
 

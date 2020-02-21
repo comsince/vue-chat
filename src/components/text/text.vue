@@ -4,7 +4,7 @@
     <div class="emoji">
         <i class="icon iconfont icon-biaoqing1" @click="showEmoji=!showEmoji"></i>
         <i title="发送图片" class="icon iconfont icon-tupian" >
-            <input type="file" accept="image/*" id="chat-send-img">
+            <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
         </i>
         <i title="发送文件" class="icon iconfont icon-dilanxianxingiconyihuifu_huabanfuben">
             <input type="file" accept="*" id="chat-send-file">
@@ -35,6 +35,10 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import TextMessageContent from '../../websocket/message/textMessageContent'
+import ImageMessageContent from '../../websocket/message/imageMessageContent'
+import * as qiniu from 'qiniu-js'
+import MessageContentMediaType from '../../websocket/message/messageContentMediaType'
+import LocalStore from '../../websocket/store/localstore'
 export default {
     data () {
         return {
@@ -55,6 +59,38 @@ export default {
         ])
     },
     methods: {
+        sendPic(e){
+           var store = this.$store;
+           store.dispatch('getUploadToken', MessageContentMediaType.Image);
+           console.log("sendpic "+e.target.value);
+           var file = e.target.files[0];
+           var key = MessageContentMediaType.Image +"-"+localStorage.getItem('vue-user-id')+"-"+new Date().getTime()+"-"+file.name;
+           setTimeout(()=> {
+                var token = LocalStore.getImageUploadToken();
+                console.log("upload file key "+key+" token "+token);
+                if(token){
+                    var observable = qiniu.upload(file, key, token, null, null);
+                    var observer = {
+                            next(res){
+                                console.log('uploading '+res.total.percent);
+                            },
+                            error(err){
+                                console.log("upload error "+err.code +" message "+err.message);
+                            }, 
+                            complete(res){
+                                console.log("upload complete "+res);
+                                var localPath = e.target.value;
+                                var remotePath = "http://image.comsince.cn/"+key;
+                                var imageMessageContent = new ImageMessageContent(localPath,remotePath,null);
+                                store.dispatch('sendMessage', imageMessageContent);
+                            }
+                        }
+                    observable.subscribe(observer);
+                }
+                
+           },200);
+           this.$refs.uploadPic.value = null;
+        },
         // 按回车发送信息
         sendMessage (e) {
             this.send();

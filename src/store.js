@@ -377,6 +377,10 @@ const mutations = {
     changetFirstLogin(state,value){
         console.log("first login "+value);
         state.firstLogin = value;
+    },
+
+    getUploadToken(state,value){
+       state.vueSocket.getUploadToken(value);
     }
 
 }
@@ -459,6 +463,7 @@ const actions = {
     addProtoMessage: ({ commit }, value) => commit('addProtoMessage', value),
     loginOut: ({ commit }, value) => commit('loginOut', value),
     changetFirstLogin: ({ commit }, value) => commit('changetFirstLogin', value),
+    getUploadToken: ({ commit }, value) => commit('getUploadToken', value),
 }
 const store = new Vuex.Store({
   state,

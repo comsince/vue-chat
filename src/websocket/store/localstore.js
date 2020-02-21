@@ -22,6 +22,15 @@ export default class LocalStore {
         return localStorage.getItem("last_message_seq");
     }
 
+    //设置上传token，根据不同media类型存储
+    static setUploadToken(key,token){
+        localStorage.setItem(key,token);
+    }
+
+    static getImageUploadToken(){
+        return localStorage.getItem("http://image.comsince.cn/");
+    }
+
     /**
      * messageSeq为string类型
      */
