@@ -112,7 +112,8 @@ const state = {
     notify:'',
     firstLogin: false,
     //修改全屏模式
-    changeFullScreenMode: false
+    changeFullScreenMode: false,
+    appHeight: 638,
 }
 
 const mutations = {

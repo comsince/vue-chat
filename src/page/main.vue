@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="{fullscreen: changeFullScreenMode}">
+  <div id="app" :class="{fullscreen: changeFullScreenMode}" ref="appRef">
     <div class="sidebar">
       <mycard></mycard>
     </div>
@@ -25,7 +25,18 @@ export default {
        ...mapState([
             'changeFullScreenMode'
         ])
-   }
+   },
+   mounted (){
+      window.onresize = () => {
+        console.log('windown onresize');
+        var appHeight = this.$refs.appRef.offsetHeight;
+        console.log('resize app height '+appHeight);
+        this.$store.state.appHeight = appHeight;
+      }
+	 },
+	 destroyed () {
+		window.onresize = null
+	 }
 }
 </script>
 

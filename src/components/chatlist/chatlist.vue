@@ -1,6 +1,6 @@
 <!-- 聊天列表 -->
 <template>
-  <div class="conversationlist">
+  <div class="conversationlist" :style="{height: (appHeight-60) + 'px'}">
     <ul>
         <li v-for="item in searchedConversationList" class="sessionlist" :class="{ active: item.conversationInfo.target === selectTarget }" @click="selectConversation(item.conversationInfo.target)">
             <div class="list-left">
@@ -33,7 +33,8 @@ export default {
    	    ...mapState([
             'selectId',
             'selectTarget',
-            'searchText'
+            'searchText',
+            'appHeight'
         ]),
         ...mapGetters([
             'searchedConversationList'

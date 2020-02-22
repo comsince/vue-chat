@@ -1,6 +1,6 @@
 <!-- 最左边的选择框 -->
 <template>
-	<div class="mycard">
+	<div class="mycard" ref="mycardRef">
 	    <header>
 	    	<img :src="user.img" class="avatar" @click="changeFullScreenMode">
 	    </header>
@@ -42,7 +42,14 @@ export default {
 		changeFullScreenMode(){
 			var fullscreen = this.$store.state.changeFullScreenMode;
 			console.log('change screen mode '+fullscreen);
-			this.$store.state.changeFullScreenMode = !fullscreen;
+			var _this = this;
+			_this.$store.state.changeFullScreenMode = !fullscreen;
+			setTimeout(() => {
+				let mycardHeight= _this.$refs.mycardRef.offsetHeight;
+				console.log('resize mycard height '+mycardHeight);
+				_this.$store.state.appHeight = mycardHeight;
+			},200);
+			
 		}
     }
 }

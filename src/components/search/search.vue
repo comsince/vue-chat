@@ -38,7 +38,7 @@ export default {
    	      if(this.search  === '') return false
    	      return true
         }
-     }
+	 }
 }
 </script>
 
