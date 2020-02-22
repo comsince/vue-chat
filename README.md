@@ -37,6 +37,11 @@
 * 支持图片，视频消息展示
 * 群会话功能
 
+### V1.0.1
+* 增加全屏幕模式支持，点击用户头像即可切换  
+
+![image](./attachment/wechat-full-screen-mode.png)
+
 ## Build Setup
 
 **NOTE:** 项目尚在开发中，只有UI实现，具体逻辑正在开发中，敬请期待
