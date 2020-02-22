@@ -4,13 +4,13 @@
 		<header class="header">
 			<div class="friendname">{{selectedChat.name}}</div>
 		</header>
-		<div class="message-wrapper" ref="list" @scroll="scrollEvent" @click="messageBoxClick">
+		<div class="message-wrapper" ref="list" @scroll="scrollEvent" @click="messageBoxClick" :style="{height: (appHeight * 0.75-60) + 'px'}">
 		    <ul v-if="selectedChat">
 		    	<li v-bind:key = index v-for="(item, index) in selectedChat.protoMessages" class="message-item">
 		    		<div v-if="isShowTime(index,selectedChat.protoMessages)" class="time"><span>{{item.timestamp | getTimeStringAutoShort2}}</span></div>
 		    		<div class="main" :class="{ self: item.direction == 0 ? true : false }">
                         <img class="avatar" width="36" height="36" :src="item.direction == 0 ? 
-                        user.img: (userInfos.get(item.from) != null ? userInfos.get(item.from).portrait : 'static/images/vue.jpg')" 
+                        user.img: (userInfos.get(item.from) != null ? userInfos.get(item.from).portrait : 'static/images/vue.jpg')"
                         onerror="this.src='static/images/vue.jpg'"/>
                         <div class="content">
                             <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
@@ -74,7 +74,8 @@ export default {
         ]),
         ...mapState([
             'user',
-            'emojis'
+            'emojis',
+            'appHeight'
         ]),
     },
     mounted() {
@@ -180,14 +181,15 @@ export default {
       height: 75%
       .header
         height: 14%
+        max-height: 60px
+        min-height: 60px 
         padding: 28px 0 0 30px
         box-sizing: border-box
         border-bottom: 1px solid #e7e7e7
         .friendname
             font-size: 18px
       .message-wrapper
-        min-height: 86%
-        max-height: 86%
+        height: 86%
         padding: 10px 15px
         box-sizing: border-box
         overflow-y: auto
