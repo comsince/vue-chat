@@ -130,8 +130,9 @@ export default {
         },
         // 参考资料 https://blog.csdn.net/qq449736038/article/details/80769507
         scrollEvent(e){
-             //console.log('scroll event '+e.srcElement.scrollTop+ ' scrollheight '+e.srcElement.scrollHeight);
-             if(e.srcElement.scrollHeight - e.srcElement.scrollTop > 389){
+            let listheight= this.$refs.list.offsetHeight;
+            // console.log('scroll event top->'+e.srcElement.scrollTop+ ' scrollheight '+e.srcElement.scrollHeight+" list height->"+listheight);
+             if(e.srcElement.scrollHeight - e.srcElement.scrollTop > listheight){
                  this.$store.dispatch('clearUnreadStatus', '')
              }
         },
