@@ -56,7 +56,6 @@ li {
 html, body {
     width: 100%;
     height: 100%;
-    overflow-y: hidden  
 }
 body {
     -webkit-text-size-adjust: none;
@@ -64,10 +63,7 @@ body {
     background-image: url(../images/bg.png);
     background-size: cover;
 }
-/* 设置滚动条的样式 */
-::-webkit-scrollbar {
-    width: 8px;
-}
+
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
     border-radius: 6px;
