@@ -8,7 +8,9 @@
 		    <ul v-if="selectedChat">
 		    	<li v-bind:key = index v-for="(item, index) in selectedChat.protoMessages" class="message-item">
 		    		<div v-if="isShowTime(index,selectedChat.protoMessages)" class="time"><span>{{item.timestamp | getTimeStringAutoShort2}}</span></div>
-		    		<div class="main" :class="{ self: item.direction == 0 ? true : false }">
+                    <div v-if="item.content.type === 104" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div>
+                    <div v-if="item.content.type === 110" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div>
+		    		<div v-if="!isNotification(item.content.type)" class="main" :class="{ self: item.direction == 0 ? true : false }">
                         <img class="avatar" width="36" height="36" :src="item.direction == 0 ? 
                         user.img: (userInfos.get(item.from) != null ? userInfos.get(item.from).portrait : 'static/images/vue.jpg')"
                         onerror="this.src='static/images/vue.jpg'"/>
@@ -55,6 +57,7 @@ import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
 import Vue from 'vue'
 Vue.use(Viewer)
+import CryptoJS from 'crypto-js'
 export default {
     components:{
         Xgplayer
@@ -141,6 +144,26 @@ export default {
         messageBoxClick(e){
             this.$store.dispatch('clearUnreadStatus', '')
             console.log('message box click');
+        },
+
+        notification(encodeBaseStr,notifyType){
+            var notify = CryptoJS.enc.Base64.parse(encodeBaseStr).toString(CryptoJS.enc.Utf8);
+            var notifyJson = JSON.parse(notify);
+            console.log('notify '+notify);
+            var notificationContent;
+            switch (notifyType) {
+                case 104:
+                    notificationContent = '创建群组'+notifyJson.n;
+                    break;
+                case 110:
+                    notificationContent = '修改群名为'+notifyJson.n;
+                    break;    
+            }
+            return notificationContent;
+        },
+
+        isNotification(type){
+            return type >= 104 && type <= 112 
         }
  
     },
