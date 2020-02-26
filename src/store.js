@@ -114,6 +114,7 @@ const state = {
     //修改全屏模式
     changeFullScreenMode: true,
     appHeight: 638,
+    visibilityState: 'hidden'
 }
 
 const mutations = {
@@ -300,22 +301,25 @@ const mutations = {
             state.conversations.push(updateStateConverstaionInfo);
         }
 
-
+        // 消息是否属于当前会话
+        var isCurrentConversationMessage = (state.selectTarget === protoConversationInfo.target);
+        var visibilityStateVisible = (state.visibilityState === 'visible');
         //更新会话消息未读数
-        if(!state.firstLogin){
+        if(!state.firstLogin && (!isCurrentConversationMessage || (isCurrentConversationMessage && !visibilityStateVisible))){
            //统计消息未读数,注意服务端暂时还没有将透传消息发送过来，原则上这里过来的消息都不是透传消息
            var num = updateStateConverstaionInfo.conversationInfo.unreadCount.unread += 1;
            console.log("target "+protoConversationInfo.target+" unread count "+num);
+                   //notify 弹框
+           if(!state.firstLogin){
+                state.notify.notify({
+                    title: updateStateConverstaionInfo.name, // Set notification title
+                    body: protoConversationInfo.lastMessage.content.searchableContent, // Set message content
+                    icon: updateStateConverstaionInfo.img
+                });
+            }
         }
 
-        //notify 弹框
-        if(!state.firstLogin){
-            state.notify.notify({
-                title: updateStateConverstaionInfo.name, // Set notification title
-                body: protoConversationInfo.lastMessage.content.searchableContent, // Set message content
-                icon: updateStateConverstaionInfo.img
-              });
-        }
+
        
     },
 
@@ -384,6 +388,10 @@ const mutations = {
 
     getUploadToken(state,value){
        state.vueSocket.getUploadToken(value);
+    },
+
+    visibilityChange(state,value){
+       state.visibilityState = value;
     }
 
 }
@@ -467,6 +475,7 @@ const actions = {
     loginOut: ({ commit }, value) => commit('loginOut', value),
     changetFirstLogin: ({ commit }, value) => commit('changetFirstLogin', value),
     getUploadToken: ({ commit }, value) => commit('getUploadToken', value),
+    visibilityChange: ({ commit }, value) => commit('visibilityChange', value),
 }
 const store = new Vuex.Store({
   state,

@@ -33,10 +33,24 @@ export default {
         console.log('resize app height '+appHeight);
         this.$store.state.appHeight = appHeight;
       }
+      document.addEventListener('visibilitychange', this.handleVisiable);
 	 },
 	 destroyed () {
-		window.onresize = null
-	 }
+      window.onresize = null;
+      document.removeEventListener('visibilitychange', this.handleVisiable)
+   },
+
+   methods: {
+    handleVisiable(e) {
+        console.log('current visibility state '+e.target.visibilityState);
+        this.$store.dispatch('visibilityChange',e.target.visibilityState);
+        if(e.target.visibilityState === 'visible'){
+          this.$store.dispatch('clearUnreadStatus', '')
+        }
+      }  
+   }
+   
+   
 }
 </script>
 
