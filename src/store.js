@@ -112,7 +112,7 @@ const state = {
     notify:'',
     firstLogin: false,
     //修改全屏模式
-    changeFullScreenMode: true,
+    changeFullScreenMode: false,
     appHeight: 638,
     visibilityState: 'hidden'
 }

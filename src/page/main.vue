@@ -33,6 +33,8 @@ export default {
         console.log('resize app height '+appHeight);
         this.$store.state.appHeight = appHeight;
       }
+      //初始化时获取appHeight
+      this.$store.state.appHeight = this.$refs.appRef.offsetHeight;
       document.addEventListener('visibilitychange', this.handleVisiable);
 	 },
 	 destroyed () {
