@@ -241,7 +241,7 @@ export default {
                 margin-left: 10px
                 position: relative
                 padding: 6px 10px
-                max-width: 60%
+                max-width: 65%
                 min-height: 36px
                 line-height: 24px
                 box-sizing: border-box
