@@ -46,9 +46,9 @@ export default {
     handleVisiable(e) {
         console.log('current visibility state '+e.target.visibilityState);
         this.$store.dispatch('visibilityChange',e.target.visibilityState);
-        if(e.target.visibilityState === 'visible'){
-          this.$store.dispatch('clearUnreadStatus', '')
-        }
+        // if(e.target.visibilityState === 'visible'){
+        //   this.$store.dispatch('clearUnreadStatus', '')
+        // }
       }  
    }
    

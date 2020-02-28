@@ -20,7 +20,7 @@
             </div>
           </transition>
     </div>
-    <textarea ref="text" v-model="content" @keydown.enter="sendMessage"  @click="showEmoji=false"></textarea>
+    <textarea ref="text" v-model="content" @keydown.enter="sendMessage" @blur="onBlur" @focus="onFocus" @click="showEmoji=false"></textarea>
     <div class="send" @click="send">
     	<span>发送(ent)</span>
     </div>
@@ -96,6 +96,15 @@ export default {
             this.send();
             //阻止回车换行
            e.preventDefault();
+        },
+
+        onBlur(){
+           console.log('send text onblur');
+        },
+
+        onFocus(){
+           console.log('send text onfoucs');
+           this.$store.dispatch('clearUnreadStatus', '');
         },
         // 点击发送按钮发送信息
         send () {
