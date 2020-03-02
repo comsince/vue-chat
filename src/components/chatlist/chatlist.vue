@@ -7,8 +7,10 @@
             	<img class="avatar"  width="42" height="42" alt="static/images/vue.jpg" :src="item.img" onerror="this.src='static/images/vue.jpg'">
             </div>
             <div class="list-right">
-            	<p class="name">{{item.name ? item.name.substring(0,9) : ""}}</p>
-                <span class="time">{{item.conversationInfo.timestamp | getTimeStringAutoShort2}}</span>
+                <div class="title-info">
+                   <p class="name">{{item.name ? item.name : ""}}</p>
+                   <span class="time">{{item.conversationInfo.timestamp | getTimeStringAutoShort2}}</span>
+                </div>
                 <div class="lastmsg-info">
                     <p class="lastmsg">{{processageGroupMessage(item)}}</p>
                     <span v-if="item.conversationInfo.unreadCount && item.conversationInfo.unreadCount.unread > 0" class="unread-num">
@@ -97,6 +99,7 @@ export default {
 .conversationlist
   height: 87%
   overflow-y: auto
+  overflow-x: hidden
   .sessionlist
     display: flex
     padding: 12px
@@ -113,15 +116,25 @@ export default {
         position: relative
         flex: 1
         margin-top: 4px
-	    .name
-	        display: inline-block
-	        vertical-align: top
-	        font-size: 14px
-	    .time
-	        float: right
-	        color: #999
-	        font-size: 10px
-	        vertical-align: top
+        .title-info
+            display: flex
+            .name
+                flex: 1 1 auto
+                display: inline-block
+                width: 130px
+                height: 15px
+                line-height: 15px
+                font-size: 14px
+                overflow: hidden
+                white-space:nowrap
+                text-overflow:ellipsis
+            .time
+                flex: 0 0 auto
+                float: right
+                line-height: 15px
+                color: #999
+                font-size: 10px
+                vertical-align: center
         .lastmsg-info
             display: flex
             margin-top: 8px    

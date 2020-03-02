@@ -67,6 +67,10 @@ body {
     background-size: cover;
 }
 
+::-webkit-scrollbar {
+    width: 8px;
+}
+
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
     border-radius: 6px;
