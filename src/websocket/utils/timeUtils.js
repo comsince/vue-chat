@@ -91,13 +91,13 @@ export default class TimeUtils {
                                 }
                                 // 否则直接显示完整日期时间
                                 else
-                                ret = this._formatDate(srcDate, "yyyy/M/d")+timeExtraStr;
+                                ret = this._formatDate(srcDate, "yy/M/d")+timeExtraStr;
                         }
                 }
         }
         // 往年
         else{
-                ret = this._formatDate(srcDate, "yyyy/M/d")+timeExtraStr;
+                ret = this._formatDate(srcDate, "yy/M/d")+timeExtraStr;
         }
  
         return ret;
