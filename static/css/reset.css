@@ -78,3 +78,11 @@ body {
     border-radius: 6px;
     background: rgba(0,0,0,0.1);
 }
+
+video {
+    background: #222;
+    margin: 0 0 20px 0;
+    --width: 100%;
+    width: var(--width);
+    height: var(--width);
+}

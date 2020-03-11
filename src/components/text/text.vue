@@ -3,14 +3,14 @@
 <div class="text">
     <div class="emoji">
         <i class="icon iconfont icon-biaoqing1" @click="showEmoji=!showEmoji"></i>
-        <i title="发送图片" class="icon iconfont icon-tupian" >
+        <!-- <i title="发送图片" class="icon iconfont icon-tupian" >
             <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
-        </i>
-        <i title="发送文件" class="icon iconfont icon-dilanxianxingiconyihuifu_huabanfuben">
+        </i> -->
+        <!-- <i title="发送文件" class="icon iconfont icon-dilanxianxingiconyihuifu_huabanfuben">
             <input type="file" accept="*" id="chat-send-file">
-        </i>
-        <i title="发送视频" class="icon iconfont icon-shipin">
-            <input type="file" accept="video/*">
+        </i> -->
+        <i title="发送视频" class="icon iconfont icon-shipin" @click="sendVideo">
+            <!-- <input type="file" accept="video/*"> -->
         </i>         
         <transition name="showbox">
             <div class="emojiBox" v-show="showEmoji">
@@ -18,7 +18,16 @@
                     <img :src="'static/emoji/'+item.file" :data="item.code" @click="content +=item.code">
                 </li>
             </div>
-          </transition>
+        </transition>
+
+        <transition name="voice-video-chat-box">
+            <div class="chat-modal" v-show="showChatBox">
+                <div class="chat-box">
+                    <video id="video-local" playsinline autoplay muted></video>
+                </div>
+            </div>
+
+        </transition>
     </div>
     <textarea ref="text" v-model="content" @keydown.enter="sendMessage" @blur="onBlur" @focus="onFocus" @click="showEmoji=false"></textarea>
     <div class="send" @click="send">
@@ -39,6 +48,7 @@ import ImageMessageContent from '../../websocket/message/imageMessageContent'
 import * as qiniu from 'qiniu-js'
 import MessageContentMediaType from '../../websocket/message/messageContentMediaType'
 import LocalStore from '../../websocket/store/localstore'
+import VoipClient from '../../webrtc/voipclient'
 export default {
     data () {
         return {
@@ -47,6 +57,8 @@ export default {
             frequency: 0,
             warn: false,
             showEmoji: false,
+            showChatBox: false,
+            voipClient: null
         };
     },
     computed: {
@@ -137,6 +149,25 @@ export default {
                             this.content = ''
                     }
                }
+        },
+        //发送视频聊天
+        sendVideo(){
+            this.showChatBox = true;
+            if(!this.voipClient){
+                this.voipClient = new VoipClient(this.$store);
+            }
+            this.voipClient.startCall(this.$store.state.selectTarget,false);
+            // const constraints = {
+            //     audio: false,
+            //     video: true
+            // };
+            // navigator.mediaDevices.getUserMedia(constraints).then(function(localStream){
+            //     console.log('get userMedia');
+            //     var video = document.querySelector('video');
+            //     video.srcObject = localStream;
+            // }).catch(function(error){
+            //     console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+            // });
         }
     },
     // 在进入的时候 聚焦输入框
@@ -214,6 +245,32 @@ export default {
                 transition: all .5s
             &.showbox-enter,&.showbox-leave-active
                 opacity: 0
+        .chat-modal
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1001;
+            -webkit-overflow-scrolling: touch;
+            outline: 0;
+            overflow: hidden;
+            margin: 30/@rate auto;
+            background-color: rgba(0,0,0,.3);
+            .chat-box
+                position: relative;
+                left: 50%;
+                top: 5%;
+                transform: translate(-50%,0);
+                padding: 50/@rate 40/@rate;
+                background: #fff;
+                height: 800px;
+                width: 480px;
+                .video-local
+                  width: 480px;
+                  height: 800px;
+                  vertical-align: middle;
+                   
     textarea
         box-sizing: border-box
         padding: 0 30px

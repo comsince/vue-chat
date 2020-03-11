@@ -38,13 +38,15 @@
 * 群会话功能
 
 ### V1.0.1
-* 增加全屏幕模式支持，点击用户头像即可切换  
+* 增加全屏幕模式支持，点击用户头像即可切换
+
+### V1.0.2
+* 计划增加音视频聊天功能
+* 实现与android客户端音视频互通
 
 ![image](./attachment/wechat-full-screen-mode.png)
 
 ## Build Setup
-
-**NOTE:** 项目尚在开发中，只有UI实现，具体逻辑正在开发中，敬请期待
 
 ``` bash
 # install dependencies
