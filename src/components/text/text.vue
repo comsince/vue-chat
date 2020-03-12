@@ -3,14 +3,14 @@
 <div class="text">
     <div class="emoji">
         <i class="icon iconfont icon-biaoqing1" @click="showEmoji=!showEmoji"></i>
-        <!-- <i title="发送图片" class="icon iconfont icon-tupian" >
+        <i title="发送图片" class="icon iconfont icon-tupian" >
             <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
-        </i> -->
+        </i>
         <!-- <i title="发送文件" class="icon iconfont icon-dilanxianxingiconyihuifu_huabanfuben">
             <input type="file" accept="*" id="chat-send-file">
         </i> -->
         <i title="发送视频" class="icon iconfont icon-shipin" @click="sendVideo">
-            <!-- <input type="file" accept="video/*"> -->
+            <input type="file" accept="video/*">
         </i>         
         <transition name="showbox">
             <div class="emojiBox" v-show="showEmoji">

@@ -5,6 +5,7 @@ import MessageConfig from '../websocket/message/messageConfig'
 import CallAnswerMessageContent from "./message/callAnswerMessageContent";
 import CallSignalMessageContent from "./message/callSignalMessageContent";
 import CallAnswerTMessageContent from "./message/callAnswerTMessageContent";
+import CallSession from "./callSession";
 
 export default class VoipClient extends OnReceiverMessageListener{
   
@@ -16,7 +17,9 @@ export default class VoipClient extends OnReceiverMessageListener{
       };
 
     transceiver;
-
+    
+    //当前会话
+    currentSession;
 
     constructor(store){
       super();
@@ -28,11 +31,21 @@ export default class VoipClient extends OnReceiverMessageListener{
 
     startCall(target,isAudioOnly){
         //创建session
+        var newSession = this.newSession(target,isAudioOnly,target + new Date().getTime());
+        this.currentSession = newSession;
         //发送callmessage
-        var callStartMessageContent = new CallStartMessageContent(target+new Date().getTime(),target,isAudioOnly);
+        var callStartMessageContent = new CallStartMessageContent(newSession.callId,target,isAudioOnly);
         this.offerMessage(callStartMessageContent);
         //如果时视频，启动预览
         this.startPreview();
+    }
+
+    newSession(clientId, audioOnly, callId){
+       var session = new CallSession();
+       session.clientId = clientId;
+       session.audioOnly = audioOnly;
+       session.callId = callId;
+       return session;
     }
 
 
@@ -58,10 +71,44 @@ export default class VoipClient extends OnReceiverMessageListener{
         } else if(content instanceof CallAnswerTMessageContent){
            console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
         }else if(content instanceof CallSignalMessageContent){
-          console.log("payload "+content.payload);
+          console.log("call signal payload "+content.payload);
+          this.handleOfferMsg(content.payload);
         }
 
       }
+    }
+
+    async handleOfferMsg(payload){
+        var signalMessage = JSON.parse(payload);
+        var type = signalMessage.type;
+        console.log('message type '+type);
+        if(type === "candidate"){
+          var rTCIceCandidateInit = {
+            candidate: signalMessage.candidate,
+            sdpMLineIndex: signalMessage.label,
+            sdpMid: signalMessage.id
+          }
+          var candidate = new RTCIceCandidate(rTCIceCandidateInit);
+          this.log("*** Adding received ICE candidate: " + JSON.stringify(candidate));
+          this.myPeerConnection.addIceCandidate(candidate);
+        } else {
+          var desc = new RTCSessionDescription(signalMessage);
+          if(type === 'answer'){
+
+          } else if(type === 'offer'){
+              this.myPeerConnection.setRemoteDescription(desc);
+              await this.myPeerConnection.setLocalDescription(await this.myPeerConnection.createAnswer());
+              //send answer message
+              var callSignalMessageContent = new CallSignalMessageContent();
+              callSignalMessageContent.callId = this.currentSession.callId;
+              var jsonPayload = {
+                 type: 'answer',
+                 sdp: this.myPeerConnection.localDescription.sdp
+              }
+              callSignalMessageContent.payload = JSON.stringify(jsonPayload);
+              this.offerMessage(callSignalMessageContent);
+          }
+        }
     }
 
     async startPreview(){
@@ -130,40 +177,7 @@ export default class VoipClient extends OnReceiverMessageListener{
      // begin, resume, or restart ICE negotiation.
 
     async handleNegotiationNeededEvent() {
-        this.log("*** Negotiation needed");
-    
-        // try {
-        //     log("---> Creating offer");
-        //     const offer = await this.myPeerConnection.createOffer();
-        
-        //     // If the connection hasn't yet achieved the "stable" state,
-        //     // return to the caller. Another negotiationneeded event
-        //     // will be fired when the state stabilizes.
-        
-        //     if (myPeerConnection.signalingState != "stable") {
-        //         log("     -- The connection isn't stable yet; postponing...")
-        //         return;
-        //     }
-        
-        //     // Establish the offer as the local peer's current
-        //     // description.
-        
-        //     log("---> Setting local description to the offer");
-        //     await myPeerConnection.setLocalDescription(offer);
-        
-        //     // Send the offer to the remote peer.
-        
-        //     log("---> Sending the offer to the remote peer");
-        //     // sendToServer({
-        //     //     name: myUsername,
-        //     //     target: targetUsername,
-        //     //     type: "video-offer",
-        //     //     sdp: myPeerConnection.localDescription
-        //     // });
-        // } catch(err) {
-        //     log("*** The following error occurred while handling the negotiationneeded event:");
-        //     reportError(err);
-        // };
+      console.log("*** Negotiation needed");
     }
 
 
@@ -173,12 +187,17 @@ export default class VoipClient extends OnReceiverMessageListener{
     //接收来自信令服务器发送来的ICE candidate事件消息
     handleICECandidateEvent(event) {
         if (event.candidate) {
-          this.log("*** Outgoing ICE candidate: " + event.candidate.candidate);
-        //   sendToServer({
-        //     type: "new-ice-candidate",
-        //     target: targetUsername,
-        //     candidate: event.candidate
-        //   });
+          console.log("*** Outgoing ICE candidate: " + event.candidate.candidate);
+          var candidateMessageContent = new CallStartMessageContent();
+          candidateMessageContent.callId = this.currentSession.callId;
+          var candidatePayload = {
+            type: 'candidate',
+            label: event.candidate.sdpMLineIndex,
+            id: event.candidate.sdpMid,
+            candidate: event.candidate.candidate
+          }
+          candidateMessageContent.payload = JSON.stringify(candidatePayload);
+          this.offerMessage(candidateMessageContent);
         }
     }
 
@@ -189,9 +208,9 @@ export default class VoipClient extends OnReceiverMessageListener{
     // This is called when the state of the ICE agent changes.
 
     handleICEConnectionStateChangeEvent(event) {
-        this.log("*** ICE connection state changed to " + myPeerConnection.iceConnectionState);
+      console.log("*** ICE connection state changed to " + this.myPeerConnection.iceConnectionState);
     
-        switch(myPeerConnection.iceConnectionState) {
+        switch(this.myPeerConnection.iceConnectionState) {
             case "closed":
             case "failed":
             case "disconnected":
@@ -209,7 +228,7 @@ export default class VoipClient extends OnReceiverMessageListener{
 // browsers catch up with the latest version of the specification!
 
     handleSignalingStateChangeEvent(event) {
-       this.log("*** WebRTC signaling state changed to: " + myPeerConnection.signalingState);
+      console.log("*** WebRTC signaling state changed to: " + this.myPeerConnection.signalingState);
        switch(myPeerConnection.signalingState) {
          case "closed":
             closeVideoCall();
@@ -233,14 +252,14 @@ export default class VoipClient extends OnReceiverMessageListener{
 // it to the <video> element for incoming media.
 
     handleTrackEvent(event) {
-       this.log("*** Track event");
+      console.log("comming stream");
     //    document.getElementById("received_video").srcObject = event.streams[0];
     //    document.getElementById("hangup-button").disabled = false;
     }
 
 
     handleICEGatheringStateChangeEvent(event) {
-       this.log("*** ICE gathering state changed to: " + myPeerConnection.iceGatheringState);
+       console.log("*** ICE gathering state changed to: " + event);
     }
 
 
@@ -256,7 +275,7 @@ export default class VoipClient extends OnReceiverMessageListener{
     
         // Close the RTCPeerConnection
     
-        if (myPeerConnection) {
+        if (this.myPeerConnection) {
             this.log("--> Closing the peer connection");
         
             // Disconnect all our event listeners; we don't want stray events
