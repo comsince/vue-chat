@@ -6,6 +6,7 @@ import CallAnswerMessageContent from "./message/callAnswerMessageContent";
 import CallSignalMessageContent from "./message/callSignalMessageContent";
 import CallAnswerTMessageContent from "./message/callAnswerTMessageContent";
 import CallSession from "./callSession";
+import CallByeMessageContent from "./message/callByeMessageContent";
 
 export default class VoipClient extends OnReceiverMessageListener{
   
@@ -73,6 +74,10 @@ export default class VoipClient extends OnReceiverMessageListener{
         }else if(content instanceof CallSignalMessageContent){
           console.log("call signal payload "+content.payload);
           this.handleOfferMsg(content.payload);
+        } else if(content instanceof CallByeMessageContent){
+           console.log("call bye message");
+           this.closeVideoCall();
+           this.store.state.showChatBox = false;
         }
 
       }
@@ -208,13 +213,13 @@ export default class VoipClient extends OnReceiverMessageListener{
     // This is called when the state of the ICE agent changes.
 
     handleICEConnectionStateChangeEvent(event) {
-      console.log("*** ICE connection state changed to " + this.myPeerConnection.iceConnectionState);
+      console.log("*** ICE connection state changed to " + event);
     
         switch(this.myPeerConnection.iceConnectionState) {
             case "closed":
             case "failed":
             case "disconnected":
-                closeVideoCall();
+                this.closeVideoCall();
                 break;
         }
     }
@@ -231,7 +236,7 @@ export default class VoipClient extends OnReceiverMessageListener{
       console.log("*** WebRTC signaling state changed to: " + this.myPeerConnection.signalingState);
        switch(myPeerConnection.signalingState) {
          case "closed":
-            closeVideoCall();
+            this.closeVideoCall();
             break;
         }
     }

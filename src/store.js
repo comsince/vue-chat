@@ -13,6 +13,7 @@ import ProtoConversationInfo from './websocket/model/protoConversationInfo';
 import UnreadCount from './websocket/model/unReadCount';
 import StateSelectChateMessage from './websocket/model/stateSelectChatMessage';
 import Notify from '@wcjiang/notify';
+import MessageConfig from './websocket/message/messageConfig';
 
 Vue.use(Vuex)
 
@@ -114,7 +115,9 @@ const state = {
     //修改全屏模式
     changeFullScreenMode: false,
     appHeight: 638,
-    visibilityState: 'hidden'
+    visibilityState: 'hidden',
+    //是否限制音视频对话框
+    showChatBox: false
 }
 
 const mutations = {
@@ -208,19 +211,21 @@ const mutations = {
         stateConversationInfo.conversationInfo.lastMessage = protoMessage;
         stateConversationInfo.conversationInfo.timestamp = protoMessage.timestamp;
 
-        var stateChatMessage = state.messages.find(chatmessage => chatmessage.target === protoMessage.target);
-        if(!stateChatMessage){
-            stateChatMessage = new StateSelectChateMessage();
-            stateChatMessage.target = protoMessage.target;
-            var friend = state.friendlist.find(friend => friend.wxid === protoMessage.target);
-            if(friend != null){
-             stateChatMessage.name =  friend.nickname;
+        if(MessageConfig.isDisplayableMessage(protoMessage)){
+            var stateChatMessage = state.messages.find(chatmessage => chatmessage.target === protoMessage.target);
+            if(!stateChatMessage){
+                stateChatMessage = new StateSelectChateMessage();
+                stateChatMessage.target = protoMessage.target;
+                var friend = state.friendlist.find(friend => friend.wxid === protoMessage.target);
+                if(friend != null){
+                 stateChatMessage.name =  friend.nickname;
+                }
+                stateChatMessage.protoMessages.push(protoMessage);
+                state.messages.push(stateChatMessage);
             }
+            
             stateChatMessage.protoMessages.push(protoMessage);
-            state.messages.push(stateChatMessage);
         }
-        
-        stateChatMessage.protoMessages.push(protoMessage);
 
         //发送消息到对端
         state.vueSocket.sendMessage(protoMessage);

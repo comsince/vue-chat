@@ -22,7 +22,7 @@ export default class ReceiveMessageHandler extends AbstractMessageHandler {
         console.log("current "+content.current+" head "+content.head+" messageCount "+content.messageCount);
         for(var protoMessage of content.messageResponseList){
           var protoMessage = ProtoMessage.toProtoMessage(protoMessage);
-          if(this.isDisplayableMessage(protoMessage)){
+          if(MessageConfig.isDisplayableMessage(protoMessage)){
             this.addProtoMessage(protoMessage);
             this.createAndUpdateConversation(protoMessage);
           }
@@ -50,14 +50,5 @@ export default class ReceiveMessageHandler extends AbstractMessageHandler {
 
       addProtoMessage(protoMessage){
          this.vueWebsocket.sendAction('addProtoMessage',protoMessage);
-      }
-
-      isDisplayableMessage(protomessage){
-         var messageContent =  protomessage.content;
-         if(MessageConfig.getMessageContentPersitFlag(messageContent.type) == PersistFlag.Persist ||
-              MessageConfig.getMessageContentPersitFlag(messageContent.type) == PersistFlag.Persist_And_Count){
-            return true;
-         }
-         return false;
       }
 }

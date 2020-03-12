@@ -57,14 +57,14 @@ export default {
             frequency: 0,
             warn: false,
             showEmoji: false,
-            showChatBox: false,
             voipClient: null
         };
     },
     computed: {
         ...mapState([   
             'selectId',
-            'emojis'
+            'emojis',
+            'showChatBox'
         ]),
         ...mapGetters([
             'selectedChat',
@@ -152,7 +152,7 @@ export default {
         },
         //发送视频聊天
         sendVideo(){
-            this.showChatBox = true;
+            this.$store.state.showChatBox = true;
             if(!this.voipClient){
                 this.voipClient = new VoipClient(this.$store);
             }

@@ -18,7 +18,7 @@
                             <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
                             <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>    
                             <div v-if="item.content.type === 2">
-                                请到手机上查看音频消息
+                                [语音消息]
                             </div>
                             <div v-if="item.content.type === 3" v-viewer>
                                 <img :src="item.content.remoteMediaUrl" class="receive-image">

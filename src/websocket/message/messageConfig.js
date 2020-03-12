@@ -8,6 +8,8 @@ import CallAnswerMessageContent from '../../webrtc/message/callAnswerMessageCont
 import CallAnswerTMessageContent from '../../webrtc/message/callAnswerTMessageContent'
 import CallSignalMessageContent from '../../webrtc/message/callSignalMessageContent'
 import ImageMessageContent from './imageMessageContent'
+import CallByeMessageContent from '../../webrtc/message/callByeMessageContent'
+import CallModifyMessageContent from '../../webrtc/message/callModifyMessageContent'
 export default class MessageConfig{
     static getMessageContentClazz(type) {
         for (const content of MessageConfig.MessageContents) {
@@ -32,6 +34,15 @@ export default class MessageConfig{
         }
         return 0;
     }
+
+    static isDisplayableMessage(protomessage){
+        var messageContent =  protomessage.content;
+        if(MessageConfig.getMessageContentPersitFlag(messageContent.type) == PersistFlag.Persist ||
+             MessageConfig.getMessageContentPersitFlag(messageContent.type) == PersistFlag.Persist_And_Count){
+           return true;
+        }
+        return false;
+     }
 
 
     static MessageContents = [
@@ -170,6 +181,7 @@ export default class MessageConfig{
             name: 'callByeMessageContent',
             flag: PersistFlag.No_Persist,
             type: MessageContentType.VOIP_CONTENT_TYPE_END,
+            contentClazz: CallByeMessageContent,
         },
         {
             name: 'callSignalMessageContent',
@@ -181,6 +193,7 @@ export default class MessageConfig{
             name: 'callModifyMessageContent',
             flag: PersistFlag.No_Persist,
             type: MessageContentType.VOIP_CONTENT_TYPE_MODIFY,
+            contentClazz: CallModifyMessageContent,
         },
         {
             name: 'callAddParticipant',
