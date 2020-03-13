@@ -16,8 +16,6 @@ export default class VoipClient extends OnReceiverMessageListener{
         audio: true,            // We want an audio track
         video: true
       };
-
-    transceiver;
     
     //当前会话
     currentSession;
@@ -143,7 +141,7 @@ export default class VoipClient extends OnReceiverMessageListener{
     
         try {
           this.webcamStream.getTracks().forEach(
-            this.transceiver = track => this.myPeerConnection.addTransceiver(track, {streams: [this.webcamStream]})
+            track => this.myPeerConnection.addTrack(track, this.webcamStream)
           );
         } catch(err) {
           this.handleGetUserMediaError(err);
@@ -190,10 +188,10 @@ export default class VoipClient extends OnReceiverMessageListener{
    // ICE candidate (created by our local ICE agent) to the other
    // peer through the signaling server.
     //接收来自信令服务器发送来的ICE candidate事件消息
-    handleICECandidateEvent(event) {
+    handleICECandidateEvent = (event) => {
         if (event.candidate) {
           console.log("*** Outgoing ICE candidate: " + event.candidate.candidate);
-          var candidateMessageContent = new CallStartMessageContent();
+          var candidateMessageContent = new CallSignalMessageContent();
           candidateMessageContent.callId = this.currentSession.callId;
           var candidatePayload = {
             type: 'candidate',
@@ -212,7 +210,7 @@ export default class VoipClient extends OnReceiverMessageListener{
     //
     // This is called when the state of the ICE agent changes.
 
-    handleICEConnectionStateChangeEvent(event) {
+    handleICEConnectionStateChangeEvent = (event) => {
       console.log("*** ICE connection state changed to " + event);
     
         switch(this.myPeerConnection.iceConnectionState) {
@@ -232,9 +230,9 @@ export default class VoipClient extends OnReceiverMessageListener{
 // returned in the property RTCPeerConnection.connectionState when
 // browsers catch up with the latest version of the specification!
 
-    handleSignalingStateChangeEvent(event) {
+    handleSignalingStateChangeEvent = (event) => {
       console.log("*** WebRTC signaling state changed to: " + this.myPeerConnection.signalingState);
-       switch(myPeerConnection.signalingState) {
+       switch(this.myPeerConnection.signalingState) {
          case "closed":
             this.closeVideoCall();
             break;
@@ -256,14 +254,14 @@ export default class VoipClient extends OnReceiverMessageListener{
 // In our case, we're just taking the first stream found and attaching
 // it to the <video> element for incoming media.
 
-    handleTrackEvent(event) {
+    handleTrackEvent = (event) => {
       console.log("comming stream");
     //    document.getElementById("received_video").srcObject = event.streams[0];
     //    document.getElementById("hangup-button").disabled = false;
     }
 
 
-    handleICEGatheringStateChangeEvent(event) {
+    handleICEGatheringStateChangeEvent = (event) => {
        console.log("*** ICE gathering state changed to: " + event);
     }
 
@@ -295,9 +293,9 @@ export default class VoipClient extends OnReceiverMessageListener{
         
             // Stop all transceivers on the connection
         
-            this.myPeerConnection.getTransceivers().forEach(transceiver => {
-                transceiver.stop();
-            });
+            // this.myPeerConnection.getTransceivers().forEach(transceiver => {
+            //     transceiver.stop();
+            // });
         
             // Stop the webcam preview as well by pausing the <video>
             // element, then stopping each of the getUserMedia() tracks
