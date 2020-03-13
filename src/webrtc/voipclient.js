@@ -16,7 +16,7 @@ export default class VoipClient extends OnReceiverMessageListener{
         audio: true,            // We want an audio track
         video: true
       };
-    
+    sender;
     //当前会话
     currentSession;
 
@@ -93,7 +93,12 @@ export default class VoipClient extends OnReceiverMessageListener{
           }
           var candidate = new RTCIceCandidate(rTCIceCandidateInit);
           this.log("*** Adding received ICE candidate: " + JSON.stringify(candidate));
-          this.myPeerConnection.addIceCandidate(candidate);
+          try {
+            await this.myPeerConnection.addIceCandidate(candidate);
+          } catch(err){
+             this.reportError(err);
+          }
+          
         } else {
           var desc = new RTCSessionDescription(signalMessage);
           if(type === 'answer'){
@@ -141,7 +146,7 @@ export default class VoipClient extends OnReceiverMessageListener{
     
         try {
           this.webcamStream.getTracks().forEach(
-            track => this.myPeerConnection.addTrack(track, this.webcamStream)
+            track => this.sender = this.myPeerConnection.addTrack(track, this.webcamStream)
           );
         } catch(err) {
           this.handleGetUserMediaError(err);
@@ -296,6 +301,8 @@ export default class VoipClient extends OnReceiverMessageListener{
             // this.myPeerConnection.getTransceivers().forEach(transceiver => {
             //     transceiver.stop();
             // });
+
+            this.myPeerConnection.removeTrack(this.sender);
         
             // Stop the webcam preview as well by pausing the <video>
             // element, then stopping each of the getUserMedia() tracks
