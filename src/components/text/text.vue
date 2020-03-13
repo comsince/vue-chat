@@ -34,12 +34,12 @@
                 <div class="callercontent callshow" style="">
                     <div class="exchange-content">
                         <div class="playcontent left-big-content">
-                            <img class="bigavatar" src="static/images/vue.jpg" /> 
-                            <p class="calltips"> 接通中... </p> 
+                            <img id="wxCallRemoteImg" class="bigavatar" src="static/images/vue.jpg" /> 
+                            <p id="wxCallTips" class="calltips"> 接通中... </p> 
                             <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;"></video>
                         </div> 
                         <div class="playcontent right-sml-content">
-                            <img src="static/images/vue.jpg" class="bigavatar" /> 
+                            <img id = "wxCallLocalImg" src="static/images/vue.jpg" class="bigavatar" /> 
                             <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;"></video>
                         </div>
                     </div> 
@@ -181,10 +181,10 @@ export default {
         //发送视频聊天
         sendVideo(){
             this.$store.state.showChatBox = true;
-            // if(!this.voipClient){
-            //     this.voipClient = new VoipClient(this.$store);
-            // }
-            // this.voipClient.startCall(this.$store.state.selectTarget,false);
+            if(!this.voipClient){
+                this.voipClient = new VoipClient(this.$store);
+            }
+            this.voipClient.startCall(this.$store.state.selectTarget,false);
 
             // const constraints = {
             //     audio: false,

@@ -136,7 +136,10 @@ export default class VoipClient extends OnReceiverMessageListener{
     
         try {
           this.webcamStream = await navigator.mediaDevices.getUserMedia(this.mediaConstraints);
-          document.getElementById("video-local").srcObject = this.webcamStream;
+          document.getElementById("wxCallLocalVideo").srcObject = this.webcamStream;
+          document.getElementById("wxCallLocalVideo").style = null;
+          document.getElementById("wxCallLocalImg").style = 'display: none';
+          
         } catch(err) {
           this.handleGetUserMediaError(err);
           return;
@@ -261,7 +264,10 @@ export default class VoipClient extends OnReceiverMessageListener{
 
     handleTrackEvent = (event) => {
       console.log("comming stream");
-    //    document.getElementById("received_video").srcObject = event.streams[0];
+      document.getElementById("wxCallRemoteVideo").srcObject = event.streams[0];
+      document.getElementById("wxCallRemoteVideo").style = null;
+      document.getElementById("wxCallRemoteImg").style = 'display: none';
+      document.getElementById("wxCallTips").style = 'display: none';
     //    document.getElementById("hangup-button").disabled = false;
     }
 
