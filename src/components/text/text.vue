@@ -2,8 +2,6 @@
 <template>
 <div class="text">
     <div class="emoji">
-               
-
         <i class="icon iconfont icon-biaoqing1" @click="showEmoji=!showEmoji"></i>
         <i title="发送视频" class="icon iconfont icon-shipin" @click="sendVideo"></i>  
         <i title="发送图片" class="icon iconfont icon-tupian" >
@@ -21,13 +19,43 @@
         </transition>
 
         <transition name="voice-video-chat-box">
-            <div class="chat-modal" v-show="showChatBox">
+            <div class="chat-modal" v-show="false">
                 <div class="chat-box">
+                    <video id="video-remote" playsinline autoplay muted></video>
                     <video id="video-local" playsinline autoplay muted></video>
                 </div>
             </div>
 
         </transition>
+
+        
+        <div class="callContent" v-show="showChatBox">
+            <div class="">
+                <div class="callercontent callshow" style="">
+                    <div class="exchange-content">
+                        <div class="playcontent left-big-content">
+                            <img class="bigavatar" src="static/images/vue.jpg" /> 
+                            <p class="calltips"> 接通中... </p> 
+                            <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;"></video>
+                        </div> 
+                        <div class="playcontent right-sml-content">
+                            <img src="static/images/vue.jpg" class="bigavatar" /> 
+                            <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;"></video>
+                        </div>
+                    </div> 
+                    <div class="opera-content flexbox">
+                        <img class="calleravatar" src="static/images/vue.jpg" /> 
+                        <span class="flexauto overell callnick">飞驰认识</span> 
+                        <span class="flexbox"><span class="operabtn canclecall btnopacity">取消</span> <span class="operabtn canclecall btnopacity" style="display: none;">拒绝</span> <span class="operabtn upcall btnopacity" style="display: none;">接听</span></span> 
+                        <span class="talktime flexbox" style="display: none;"><i class="iconfont icon-shipinshichang"></i> <span>00:00</span></span> 
+                        <span class="operabtn canclecall btnopacity" style="display: none;"><i class="iconfont icon-guaduan"></i>挂断 </span> 
+                        <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button> 
+                        <button class="screenbtn" style="display: none;"><i class="iconfont icon-tuichuquanping iconfull"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
     </div>
     <textarea ref="text" v-model="content" @keydown.enter="sendMessage" @blur="onBlur" @focus="onFocus" @click="showEmoji=false"></textarea>
     <div class="send" @click="send">
@@ -153,10 +181,11 @@ export default {
         //发送视频聊天
         sendVideo(){
             this.$store.state.showChatBox = true;
-            if(!this.voipClient){
-                this.voipClient = new VoipClient(this.$store);
-            }
-            this.voipClient.startCall(this.$store.state.selectTarget,false);
+            // if(!this.voipClient){
+            //     this.voipClient = new VoipClient(this.$store);
+            // }
+            // this.voipClient.startCall(this.$store.state.selectTarget,false);
+
             // const constraints = {
             //     audio: false,
             //     video: true
@@ -267,10 +296,125 @@ export default {
                 height: 800px;
                 width: 480px;
                 .video-local
+                  width: 50px;
+                  height: 100px;
+                  vertical-align: middle;
+                .video-remote  
                   width: 480px;
                   height: 800px;
                   vertical-align: middle;
-                   
+        .callContent
+           .callercontent
+                width: 664px;
+                height: 414px;
+                position: absolute;
+                left: 0;
+                right: 0;
+                margin: auto;
+                top: 10;
+                bottom: 0;
+                z-index: 2000
+
+            .callercontent video
+                width: 100%;
+                background: #000
+
+            .callercontent.callnone
+                display: none
+            .callercontent.callshow
+                display: block
+            .left-big-content
+                width: 480px;
+                height: 360px;
+                position: absolute;
+                left: 0;
+                top: 0
+            .left-big-content .bigavatar
+                width: 100%;
+                height: 100%;
+                filter: blur(6px)
+
+            .left-big-content video
+                width: 100%;
+                height: 100%;
+                background: #000
+            .right-sml-content
+                width: 160px;
+                height: 120px;
+                box-shadow: 0 6px 20px 0 rgba(48,52,58,0.5);
+                border-radius: 4px;
+                position: absolute;
+                right: 0;
+                bottom: 0
+            .right-sml-content .bigavatar
+                width: 100%;
+                height: 100%;
+                border-radius: 4px
+            .opera-content
+                padding: 10px 16px;
+                box-shadow: 0 6px 20px 0 rgba(48,52,58,0.5);
+                height: 56px;
+                width: 480px;
+                background: #fff;
+                position: absolute;
+                bottom: 0;
+                left: 0
+            .opera-content .calleravatar
+                width: 36px;
+                height: 36px;
+                margin-right: 16px;
+                flex-shrink: 0;
+                border-radius: 100%
+            .opera-content .callnick
+                color: #30343a
+            .opera-content .operabtn
+                width: 72px;
+                height: 32px;
+                border-radius: 6px;
+                color: #fff;
+                text-align: center;
+                font-size: 12px;
+                line-height: 32px;
+                cursor: pointer
+            .opera-content .canclecall
+                background: #ff6161
+            .opera-content .canclecall .iconfont
+                color: #fff;
+                font-size: 16px;
+                margin-right: 8px
+            .opera-content .upcall
+                margin-left: 16px;
+                background: #39ba70
+            .calltips
+                position: absolute;
+                margin: auto;
+                text-align: center;
+                color: #fff;
+                font-size: 16px;
+                z-index: 10;
+                left: 0;
+                right: 0;
+                top: 0;
+                line-height: 360px
+            .flexshrink
+                flex-shrink: 0
+            .iconfull
+                margin-left: 16px;
+                font-size: 16px;
+                cursor: pointer
+            .screenbtn
+                background: #fff;
+                border: 0
+            .talktime span
+                font-size: 12px;
+                color: #30343a;
+                margin-left: 8px;
+                margin-right: 16px
+            .flexbox
+                display: flex;
+                align-items: center
+            .flexauto
+                flex: 1
     textarea
         box-sizing: border-box
         padding: 0 30px
