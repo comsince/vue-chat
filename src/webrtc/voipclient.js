@@ -283,7 +283,7 @@ export default class VoipClient extends OnReceiverMessageListener{
 // failure is detected.
 
     closeVideoCall() {
-        var localVideo = document.getElementById("video-local");
+        var localVideo = document.getElementById("wxCallLocalVideo");
     
         this.log("Closing the call");
     
