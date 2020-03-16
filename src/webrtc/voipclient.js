@@ -7,6 +7,7 @@ import CallSignalMessageContent from "./message/callSignalMessageContent";
 import CallAnswerTMessageContent from "./message/callAnswerTMessageContent";
 import CallSession from "./callSession";
 import CallByeMessageContent from "./message/callByeMessageContent";
+import SendMessage from "../websocket/message/sendMessage";
 
 export default class VoipClient extends OnReceiverMessageListener{
   
@@ -19,14 +20,16 @@ export default class VoipClient extends OnReceiverMessageListener{
     sender;
     //当前会话
     currentSession;
+    currentSessionCallback;
+    currentEngineCallback;
 
-    constructor(store){
+    constructor(store,engineCallback,sessionCallback){
       super();
       this.store = store;
+      this.currentSessionCallback = sessionCallback;
+      this.currentEngineCallback = engineCallback;
       ChatManager.addReceiveMessageListener(this);
     }  
-    
-    
 
     startCall(target,isAudioOnly){
         //创建session
@@ -34,8 +37,17 @@ export default class VoipClient extends OnReceiverMessageListener{
         this.currentSession = newSession;
         //发送callmessage
         var callStartMessageContent = new CallStartMessageContent(newSession.callId,target,isAudioOnly);
-        this.offerMessage(callStartMessageContent);
+        this.offerMessage(target,callStartMessageContent);
         //如果时视频，启动预览
+        this.startPreview();
+    }
+
+    answerCall(audioOnly){
+        var answerTMesage = new CallAnswerTMessageContent()
+        answerTMesage.isAudioOnly = audioOnly;
+        answerTMesage.callId = this.currentSession.callId;
+        this.offerMessage(this.currentSession.clientId,answerTMesage);
+        //start peerconnection
         this.startPreview();
     }
 
@@ -48,8 +60,8 @@ export default class VoipClient extends OnReceiverMessageListener{
     }
 
 
-    offerMessage(messageConent){
-        this.store.dispatch('sendMessage', messageConent);
+    offerMessage(target,messageConent){
+        this.store.dispatch('sendMessage', new SendMessage(target,messageConent));
     }
 
     /**
@@ -65,7 +77,10 @@ export default class VoipClient extends OnReceiverMessageListener{
           console.log('decode error');
         }
 
-        if(content instanceof CallAnswerMessageContent){
+        if(content instanceof CallStartMessageContent){
+          this.currentSession = this.newSession(protoMessage.from,content.isAudioOnly,content.callId);
+          this.currentEngineCallback.onReceiveCall(this.currentSession);
+        } else if(content instanceof CallAnswerMessageContent){
             console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
         } else if(content instanceof CallAnswerTMessageContent){
            console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
@@ -114,7 +129,7 @@ export default class VoipClient extends OnReceiverMessageListener{
                  sdp: this.myPeerConnection.localDescription.sdp
               }
               callSignalMessageContent.payload = JSON.stringify(jsonPayload);
-              this.offerMessage(callSignalMessageContent);
+              this.offerMessage(this.currentSession.clientId,callSignalMessageContent);
           }
         }
     }
@@ -124,26 +139,26 @@ export default class VoipClient extends OnReceiverMessageListener{
       if (this.myPeerConnection) {
         alert("You can't start a call because you already have one open!");
       } else {
-        // Call createPeerConnection() to create the RTCPeerConnection.
-        // When this returns, myPeerConnection is our RTCPeerConnection
-        // and webcamStream is a stream coming from the camera. They are
-        // not linked together in any way yet.
-    
-        this.createPeerConnection();
+        
     
         // Get access to the webcam stream and attach it to the
         // "preview" box (id "local_video").
     
         try {
           this.webcamStream = await navigator.mediaDevices.getUserMedia(this.mediaConstraints);
-          document.getElementById("wxCallLocalVideo").srcObject = this.webcamStream;
-          document.getElementById("wxCallLocalVideo").style = null;
-          document.getElementById("wxCallLocalImg").style = 'display: none';
+          this.currentSessionCallback.didCreateLocalVideoTrack(this.webcamStream);
           
         } catch(err) {
           this.handleGetUserMediaError(err);
           return;
         }
+
+        // Call createPeerConnection() to create the RTCPeerConnection.
+        // When this returns, myPeerConnection is our RTCPeerConnection
+        // and webcamStream is a stream coming from the camera. They are
+        // not linked together in any way yet.
+    
+        this.createPeerConnection();
     
         // Add the tracks from the stream to the RTCPeerConnection
     
@@ -208,7 +223,7 @@ export default class VoipClient extends OnReceiverMessageListener{
             candidate: event.candidate.candidate
           }
           candidateMessageContent.payload = JSON.stringify(candidatePayload);
-          this.offerMessage(candidateMessageContent);
+          this.offerMessage(this.currentSession.clientId,candidateMessageContent);
         }
     }
 
@@ -264,11 +279,7 @@ export default class VoipClient extends OnReceiverMessageListener{
 
     handleTrackEvent = (event) => {
       console.log("comming stream");
-      document.getElementById("wxCallRemoteVideo").srcObject = event.streams[0];
-      document.getElementById("wxCallRemoteVideo").style = null;
-      document.getElementById("wxCallRemoteImg").style = 'display: none';
-      document.getElementById("wxCallTips").style = 'display: none';
-    //    document.getElementById("hangup-button").disabled = false;
+      this.currentSessionCallback.didReceiveRemoteVideoTrack(event.streams[0]);
     }
 
 

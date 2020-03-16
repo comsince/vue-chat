@@ -59,14 +59,19 @@ export default class Message {
     //     return msg;
     // }
 
-    static toMessage(state,messageContent){
+    static toMessage(state,sendMessage){
         var message = new Message();
-        let stateConversationInfo =  state.conversations.find(conversation => conversation.conversationInfo.target === state.selectTarget);
+        var target = sendMessage.target;
+        if(!target){
+            target = state.selectTarget;
+        }
+        console.log("to message target "+target);
+        let stateConversationInfo =  state.conversations.find(conversation => conversation.conversationInfo.target === target);
         console.log("conversationtype "+stateConversationInfo.conversationInfo.conversationType +" target "+stateConversationInfo.conversationInfo.target);
         message.conversation = new Conversation(stateConversationInfo.conversationInfo.conversationType,
             stateConversationInfo.conversationInfo.target,
             stateConversationInfo.conversationInfo.line);
-        message.content = messageContent;
+        message.content = sendMessage.messageContent;
         message.from = state.userId;
         message.status = MessageStatus.Sending;
         message.timestamp = new Date().getTime();

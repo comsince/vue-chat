@@ -203,8 +203,8 @@ const mutations = {
         state.userInfos = userInfoMap;
     },
     // 发送信息
-    sendMessage (state, messageContent){
-        var message = Message.toMessage(state,messageContent);
+    sendMessage (state, sendMessage){
+        var message = Message.toMessage(state,sendMessage);
         var protoMessage = ProtoMessage.convertToProtoMessage(message);
         console.log("send protomessage "+JSON.stringify(protoMessage));
         var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);

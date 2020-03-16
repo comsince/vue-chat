@@ -108,7 +108,7 @@ export default {
     left: 50%;
     width: 270px;
     height: 540px;
-    padding: 0 55px;
+    padding: 0 0px;
     transform: translate(-50%, -50%);
     /* background: #fff; */
     border-radius: 6px;
@@ -147,7 +147,7 @@ export default {
     border-radius: 4px;
     outline: 0;
     border: 0;
-    width: 90%;
+    width: 100%;
     background: #d7e8fc;
   }
   /* 按钮 */

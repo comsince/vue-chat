@@ -34,19 +34,23 @@
                 <div class="callercontent callshow" style="">
                     <div class="exchange-content">
                         <div class="playcontent left-big-content">
-                            <img id="wxCallRemoteImg" class="bigavatar" src="static/images/vue.jpg" /> 
-                            <p id="wxCallTips" class="calltips"> 接通中... </p> 
-                            <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;"></video>
+                            <img id="wxCallRemoteImg" class="bigavatar" src="static/images/vue.jpg" v-show="showCallRemoteImg"/> 
+                            <p id="wxCallTips" class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
+                            <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
                         </div> 
                         <div class="playcontent right-sml-content">
-                            <img id = "wxCallLocalImg" src="static/images/vue.jpg" class="bigavatar" /> 
-                            <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;"></video>
+                            <img id = "wxCallLocalImg" src="static/images/vue.jpg" class="bigavatar" v-show="showCallLocalImg"/> 
+                            <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;" v-show="showCallLocalVideo"></video>
                         </div>
                     </div> 
                     <div class="opera-content flexbox">
                         <img class="calleravatar" src="static/images/vue.jpg" /> 
                         <span class="flexauto overell callnick">飞驰认识</span> 
-                        <span class="flexbox"><span class="operabtn canclecall btnopacity">取消</span> <span class="operabtn canclecall btnopacity" style="display: none;">拒绝</span> <span class="operabtn upcall btnopacity" style="display: none;">接听</span></span> 
+                        <span class="flexbox">
+                            <span class="operabtn canclecall btnopacity" v-show="cancelCall">取消</span> 
+                            <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall" @click="hangUp">拒绝</span> 
+                            <span class="operabtn upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>
+                        </span> 
                         <span class="talktime flexbox" style="display: none;"><i class="iconfont icon-shipinshichang"></i> <span>00:00</span></span> 
                         <span class="operabtn canclecall btnopacity" style="display: none;"><i class="iconfont icon-guaduan"></i>挂断 </span> 
                         <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button> 
@@ -77,6 +81,9 @@ import * as qiniu from 'qiniu-js'
 import MessageContentMediaType from '../../websocket/message/messageContentMediaType'
 import LocalStore from '../../websocket/store/localstore'
 import VoipClient from '../../webrtc/voipclient'
+import SessionCallback from '../../webrtc/sessionCallback'
+import EngineCallback from '../../webrtc/engineCallback'
+import SendMessage from '../../websocket/message/sendMessage'
 export default {
     data () {
         return {
@@ -85,7 +92,16 @@ export default {
             frequency: 0,
             warn: false,
             showEmoji: false,
-            voipClient: null
+            voipClient: null,
+            videoTextCallTips: '',
+            rejectCall: false,
+            cancelCall: false,
+            acceptCall: false,
+            showCallLocalImg: true,
+            showCallLocalVideo: false,
+            showCallRemoteImg: true,
+            showCallRemoteVideo: false,
+            showCallTips: true
         };
     },
     computed: {
@@ -122,7 +138,7 @@ export default {
                                 var localPath = e.target.value;
                                 var remotePath = "http://image.comsince.cn/"+key;
                                 var imageMessageContent = new ImageMessageContent(localPath,remotePath,null);
-                                store.dispatch('sendMessage', imageMessageContent);
+                                this.sendMessageToStore(new SendMessage(null,imageMessageContent));
                             }
                         }
                     observable.subscribe(observer);
@@ -149,7 +165,6 @@ export default {
         // 点击发送按钮发送信息
         send () {
             console.log("send message "+this.content);
-
             if(this.content.length <= 1){
                 this.warn = true
                 this.content = ''
@@ -157,51 +172,56 @@ export default {
                     this.warn = false;
                   }, 1000)
                }else{
-                    if(this.selectedChat.name === '机器人'){
-                        this.$http.get(`https://zhaoplus.com/api/AI?search=${this.content}`).then(res => {
-                            this.reply = res.data.result.text
-                            if(this.content.includes('/:')){
-                                this.reply = '嘻嘻'
-                            }
-                            var msg = {
-                                content: this.content,
-                                reply: this.reply
-                            }
-                            this.$store.dispatch('sendMessage', msg)
-                            this.content = ''
-                       })
-                    }else{
-                        //进行消息类型包装
-                        var textMessageContent = new TextMessageContent(this.content);
-                        this.$store.dispatch('sendMessage', textMessageContent)
-                            this.content = ''
-                    }
+                    //进行消息类型包装
+                    var textMessageContent = new TextMessageContent(this.content);
+                    this.sendMessageToStore(new SendMessage(null,textMessageContent));
+                    this.content = '';
                }
         },
         //发送视频聊天
         sendVideo(){
             this.$store.state.showChatBox = true;
-            if(!this.voipClient){
-                this.voipClient = new VoipClient(this.$store);
-            }
             this.voipClient.startCall(this.$store.state.selectTarget,false);
+        },
+        hangUp(){
+            
 
-            // const constraints = {
-            //     audio: false,
-            //     video: true
-            // };
-            // navigator.mediaDevices.getUserMedia(constraints).then(function(localStream){
-            //     console.log('get userMedia');
-            //     var video = document.querySelector('video');
-            //     video.srcObject = localStream;
-            // }).catch(function(error){
-            //     console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
-            // });
+        },
+        accept(){
+            this.voipClient.answerCall(false);
+        },
+        sendMessageToStore(sendMessage){
+           this.$store.dispatch('sendMessage', sendMessage)
         }
     },
     // 在进入的时候 聚焦输入框
     mounted() {
-            this.$refs.text.focus()
+        this.$refs.text.focus()
+        if(!this.voipClient){
+            var sessionCallback = new SessionCallback();
+            var engineCallback = new EngineCallback();
+            engineCallback.onReceiveCall = session => {
+                this.$store.state.showChatBox = true;
+                this.videoTextCallTips = '对方邀请您进行视频通话';
+                this.rejectCall = true;
+                this.cancelCall = false;
+                this.acceptCall = true;
+            }
+
+            sessionCallback.didCreateLocalVideoTrack = (stream) => {
+                this.showCallLocalImg = false;
+                this.showCallLocalVideo = true;
+                document.getElementById("wxCallLocalVideo").srcObject = stream;
+            }
+
+            sessionCallback.didReceiveRemoteVideoTrack = stream => {
+                this.showCallRemoteImg = false;
+                this.showCallTips = false;
+                this.showCallRemoteVideo = true;
+                document.getElementById("wxCallRemoteVideo").srcObject = stream;
+            }
+            this.voipClient = new VoipClient(this.$store,engineCallback,sessionCallback);
+        }
     },
     watch: {
         // 在选择其它对话的时候 聚焦输入框

@@ -3,6 +3,7 @@ export default class CallSession{
     clientId;
     audioOnly;
     startTime;
+    sessionCallback;
 
     constructor(){
         this.startTime = new Date().getTime();
