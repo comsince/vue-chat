@@ -207,11 +207,12 @@ const mutations = {
         var message = Message.toMessage(state,sendMessage);
         var protoMessage = ProtoMessage.convertToProtoMessage(message);
         console.log("send protomessage "+JSON.stringify(protoMessage));
-        var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
-        stateConversationInfo.conversationInfo.lastMessage = protoMessage;
-        stateConversationInfo.conversationInfo.timestamp = protoMessage.timestamp;
-
+        
         if(MessageConfig.isDisplayableMessage(protoMessage)){
+            var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
+            stateConversationInfo.conversationInfo.lastMessage = protoMessage;
+            stateConversationInfo.conversationInfo.timestamp = protoMessage.timestamp;
+
             var stateChatMessage = state.messages.find(chatmessage => chatmessage.target === protoMessage.target);
             if(!stateChatMessage){
                 stateChatMessage = new StateSelectChateMessage();

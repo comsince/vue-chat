@@ -49,6 +49,7 @@ export default class VoipClient extends OnReceiverMessageListener{
       var byeMessage = new CallByeMessageContent();
       byeMessage.callId = this.currentSession.callId;
       this.offerMessage(this.currentSession.clientId,byeMessage);
+      this.store.state.showChatBox = false;
       this.closeVideoCall();
     }
 
@@ -113,8 +114,7 @@ export default class VoipClient extends OnReceiverMessageListener{
           this.handleSignalMsg(content.payload);
         } else if(content instanceof CallByeMessageContent){
            console.log("call bye message");
-           this.closeVideoCall();
-           this.store.state.showChatBox = false;
+           this.cancelCall();
         }
 
       }

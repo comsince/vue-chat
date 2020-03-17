@@ -184,6 +184,7 @@ export default {
             this.$store.state.showChatBox = true;
             this.rejectCall = false;
             this.acceptCall = false;
+            this.hangUpCall = false;
             this.cancelCall = true;
             this.voipClient.startCall(this.$store.state.selectTarget,false);
         },
