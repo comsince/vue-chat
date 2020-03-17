@@ -2,7 +2,7 @@
 <template>
   <div class="conversationlist" :style="{height: (appHeight-60) + 'px'}">
     <ul>
-        <li v-for="item in searchedConversationList" class="sessionlist" :class="{ active: item.conversationInfo.target === selectTarget }" @click="selectConversation(item.conversationInfo.target)">
+        <li v-bind:key = index v-for="(item,index) in searchedConversationList" class="sessionlist" :class="{ active: item.conversationInfo.target === selectTarget }" @click="selectConversation(item.conversationInfo.target)">
             <div class="list-left">
             	<img class="avatar"  width="42" height="42" alt="static/images/vue.jpg" :src="item.img" onerror="this.src='static/images/vue.jpg'">
             </div>
