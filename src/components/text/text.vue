@@ -2,12 +2,13 @@
 <template>
 <div class="text">
     <div class="emoji">
-        <i class="icon iconfont icon-biaoqing1" @click="showEmoji=!showEmoji"></i>
-        <i title="视频聊天" class="icon iconfont icon-shipin" v-show="isSingleConversation" @click="sendVideo"></i>  
+        <i class="icon iconfont icon-biaoqing" @click="showEmoji=!showEmoji"></i>
+        <i title="语音聊天" class="icon iconfont icon-dianhua" v-show="isSingleConversation"></i>
+        <i title="视频聊天" class="icon iconfont icon-ai-video" v-show="isSingleConversation" @click="sendVideo"></i>
         <i title="发送图片" class="icon iconfont icon-tupian" >
             <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
         </i>
-        <i title="发送文件" class="icon iconfont icon-dilanxianxingiconyihuifu_huabanfuben">
+        <i title="发送文件" class="icon iconfont icon-wenjian">
             <input type="file" accept="*" id="chat-send-file">
         </i>
         <transition name="showbox">
@@ -34,7 +35,7 @@
                 <div class="callercontent callshow" style="">
                     <div class="exchange-content">
                         <div class="playcontent left-big-content">
-                            <img id="wxCallRemoteImg" class="bigavatar" src="static/images/vue.jpg" v-show="showCallRemoteImg"/> 
+                            <img id="wxCallRemoteImg" class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
                             <p id="wxCallTips" class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
                             <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
                         </div> 
@@ -45,7 +46,7 @@
                     </div> 
                     <div class="opera-content flexbox">
                         <img class="calleravatar" src="static/images/vue.jpg" /> 
-                        <span class="flexauto overell callnick">飞驰认识</span> 
+                        <span class="flexauto overell callnick" v-text="callDisplayName"></span> 
                         <span class="flexbox">
                             <span class="operabtn canclecall btnopacity" v-show="cancelCall" @click="cancel">取消</span> 
                             <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span> 
@@ -103,6 +104,8 @@ export default {
             showCallRemoteImg: true,
             showCallRemoteVideo: false,
             showCallTips: true,
+            callRemoteImg: 'static/images/vue.jpg',
+            callDisplayName: ''
         };
     },
     computed: {
@@ -113,7 +116,8 @@ export default {
         ]),
         ...mapGetters([
             'selectedChat',
-            'isSingleConversation'
+            'isSingleConversation',
+            'userInfos'
         ])
     },
     methods: {
@@ -140,7 +144,7 @@ export default {
                                 var localPath = e.target.value;
                                 var remotePath = "http://image.comsince.cn/"+key;
                                 var imageMessageContent = new ImageMessageContent(localPath,remotePath,null);
-                                this.sendMessageToStore(new SendMessage(null,imageMessageContent));
+                                store.dispatch('sendMessage', new SendMessage(null,imageMessageContent))
                             }
                         }
                     observable.subscribe(observer);
@@ -187,7 +191,25 @@ export default {
             this.acceptCall = false;
             this.hangUpCall = false;
             this.cancelCall = true;
+            this.showCallRemoteVideo = false;
+            this.showCallRemoteImg = true;
+            this.showCallTips = true;
+            this.videoTextCallTips = "正在接通，请稍候...";
+            this.initCallUserInfo(this.$store.state.selectTarget);
             this.voipClient.startCall(this.$store.state.selectTarget,false);
+        },
+        initCallUserInfo(target){
+            var portrait = this.getUserPortrait(target);
+            if(portrait){
+                this.callRemoteImg = portrait;
+            }
+            this.callDisplayName = this.getDisplayName(target);
+        },
+        getUserPortrait(target){
+            return this.userInfos.get(target).portrait;
+        },
+        getDisplayName(target){
+            return this.userInfos.get(target).displayName;
         },
         hangUp(){
             this.voipClient.cancelCall();
@@ -202,7 +224,6 @@ export default {
            this.voipClient.answerCall(false);
         },
         cancel(){
-           this.$store.state.showChatBox = false;
            this.voipClient.cancelCall();
         },
         sendMessageToStore(sendMessage){
@@ -222,6 +243,12 @@ export default {
                 this.cancelCall = false;
                 this.acceptCall = true;
                 this.hangUpCall = false;
+                this.showCallLocalImg = true;
+                this.showCallLocalVideo = false;
+                this.showCallRemoteImg = true;
+                this.showCallRemoteVideo = false;
+                this.showCallTips = true;
+                this.initCallUserInfo(session.clientId);
                 //取消textarea焦点聚焦
                 document.getElementById('sendText').blur();
             }

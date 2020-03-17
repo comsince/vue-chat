@@ -12,7 +12,7 @@
 				<router-link to="/conversation" class="icon iconfont icon-dkw_xiaoxi" >
 				</router-link>
 			</div>
-	         <router-link to="/friend" class="icon iconfont icon-xinpengyou"></router-link>
+	         <router-link to="/friend" class="icon iconfont icon-pengyou"></router-link>
 	         <!-- <router-link to="/my" class="icon iconfont icon-collection"></router-link> -->
 	    </div>
 	    <footer>

@@ -25,7 +25,7 @@ const state = {
 	// 当前登录用户
     user: {
     	name: 'ratel',
-    	img: 'static/images/UserAvatar.jpg'
+    	img: 'static/images/vue.jpg'
     },
     // 好友列表
     friendlist: [

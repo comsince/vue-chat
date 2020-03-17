@@ -38,6 +38,7 @@ export default class VoipClient extends OnReceiverMessageListener{
         //创建session
         var newSession = this.newSession(target,isAudioOnly,target + new Date().getTime());
         this.currentSession = newSession;
+        console.log("create new session "+this.currentSession.clientId+" callId "+this.currentSession.callId);
         //发送callmessage
         var callStartMessageContent = new CallStartMessageContent(newSession.callId,target,isAudioOnly);
         this.offerMessage(target,callStartMessageContent);
