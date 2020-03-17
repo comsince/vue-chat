@@ -406,6 +406,11 @@ const getters = {
     searchedConversationList(){
        return state.conversations.filter(conversationInfo => conversationInfo.name ? conversationInfo.name.includes(state.searchText): false);
     },
+    //当前会话是否为单聊会话
+    isSingleConversation(){
+       let stateConversation = state.conversations.find(stateConversation => stateConversation.conversationInfo.target === state.selectTarget);
+       return stateConversation.conversationInfo.conversationType === ConversationType.Single; 
+    },
     // 筛选出含有搜索值的好友列表
     searchedFriendlist (state) {
        let friends = state.friendlist.filter(friends => friends.remark.includes(state.searchText));

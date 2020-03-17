@@ -3,7 +3,7 @@
 <div class="text">
     <div class="emoji">
         <i class="icon iconfont icon-biaoqing1" @click="showEmoji=!showEmoji"></i>
-        <i title="发送视频" class="icon iconfont icon-shipin" @click="sendVideo"></i>  
+        <i title="视频聊天" class="icon iconfont icon-shipin" v-show="isSingleConversation" @click="sendVideo"></i>  
         <i title="发送图片" class="icon iconfont icon-tupian" >
             <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
         </i>
@@ -113,6 +113,7 @@ export default {
         ]),
         ...mapGetters([
             'selectedChat',
+            'isSingleConversation'
         ])
     },
     methods: {
