@@ -47,12 +47,12 @@
                         <img class="calleravatar" src="static/images/vue.jpg" /> 
                         <span class="flexauto overell callnick">飞驰认识</span> 
                         <span class="flexbox">
-                            <span class="operabtn canclecall btnopacity" v-show="cancelCall">取消</span> 
-                            <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall" @click="hangUp">拒绝</span> 
+                            <span class="operabtn canclecall btnopacity" v-show="cancelCall" @click="cancel">取消</span> 
+                            <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span> 
                             <span class="operabtn upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>
                         </span> 
                         <span class="talktime flexbox" style="display: none;"><i class="iconfont icon-shipinshichang"></i> <span>00:00</span></span> 
-                        <span class="operabtn canclecall btnopacity" style="display: none;"><i class="iconfont icon-guaduan"></i>挂断 </span> 
+                        <span class="operabtn canclecall btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span> 
                         <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button> 
                         <button class="screenbtn" style="display: none;"><i class="iconfont icon-tuichuquanping iconfull"></i></button>
                     </div>
@@ -61,7 +61,7 @@
         </div> 
 
     </div>
-    <textarea ref="text" v-model="content" @keydown.enter="sendMessage" @blur="onBlur" @focus="onFocus" @click="showEmoji=false"></textarea>
+    <textarea id="sendText" ref="text" v-model="content" @keydown.enter="sendMessage" @focus="onFocus" @click="showEmoji=false"></textarea>
     <div class="send" @click="send">
     	<span>发送(ent)</span>
     </div>
@@ -97,11 +97,12 @@ export default {
             rejectCall: false,
             cancelCall: false,
             acceptCall: false,
+            hangUpCall: false,
             showCallLocalImg: true,
             showCallLocalVideo: false,
             showCallRemoteImg: true,
             showCallRemoteVideo: false,
-            showCallTips: true
+            showCallTips: true,
         };
     },
     computed: {
@@ -181,14 +182,26 @@ export default {
         //发送视频聊天
         sendVideo(){
             this.$store.state.showChatBox = true;
+            this.rejectCall = false;
+            this.acceptCall = false;
+            this.cancelCall = true;
             this.voipClient.startCall(this.$store.state.selectTarget,false);
         },
         hangUp(){
-            
-
+            this.voipClient.cancelCall();
+        },
+        reject(){
+           this.voipClient.cancelCall();
         },
         accept(){
-            this.voipClient.answerCall(false);
+           this.acceptCall = false;
+           this.rejectCall = false;
+           this.hangUpCall = true;
+           this.voipClient.answerCall(false);
+        },
+        cancel(){
+           this.$store.state.showChatBox = false;
+           this.voipClient.cancelCall();
         },
         sendMessageToStore(sendMessage){
            this.$store.dispatch('sendMessage', sendMessage)
@@ -206,6 +219,9 @@ export default {
                 this.rejectCall = true;
                 this.cancelCall = false;
                 this.acceptCall = true;
+                this.hangUpCall = false;
+                //取消textarea焦点聚焦
+                document.getElementById('sendText').blur();
             }
 
             sessionCallback.didCreateLocalVideoTrack = (stream) => {

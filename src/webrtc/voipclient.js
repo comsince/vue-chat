@@ -18,6 +18,8 @@ export default class VoipClient extends OnReceiverMessageListener{
         video: true
       };
     sender;
+    //是否为createOff发起人
+    isInitiator;
     //当前会话
     currentSession;
     currentSessionCallback;
@@ -32,6 +34,7 @@ export default class VoipClient extends OnReceiverMessageListener{
     }  
 
     startCall(target,isAudioOnly){
+        this.isInitiator = false;
         //创建session
         var newSession = this.newSession(target,isAudioOnly,target + new Date().getTime());
         this.currentSession = newSession;
@@ -42,12 +45,20 @@ export default class VoipClient extends OnReceiverMessageListener{
         this.startPreview();
     }
 
+    cancelCall(){
+      var byeMessage = new CallByeMessageContent();
+      byeMessage.callId = this.currentSession.callId;
+      this.offerMessage(this.currentSession.clientId,byeMessage);
+      this.closeVideoCall();
+    }
+
     answerCall(audioOnly){
+        this.isInitiator = true;
+        console.log("isInitiator "+this.isInitiator);
         var answerTMesage = new CallAnswerTMessageContent()
         answerTMesage.isAudioOnly = audioOnly;
         answerTMesage.callId = this.currentSession.callId;
         this.offerMessage(this.currentSession.clientId,answerTMesage);
-        //start peerconnection
         this.startPreview();
     }
 
@@ -62,6 +73,17 @@ export default class VoipClient extends OnReceiverMessageListener{
 
     offerMessage(target,messageConent){
         this.store.dispatch('sendMessage', new SendMessage(target,messageConent));
+    }
+
+    offerMessageByType(type){
+      var callSignalMessageContent = new CallSignalMessageContent();
+              callSignalMessageContent.callId = this.currentSession.callId;
+              var jsonPayload = {
+                 type: type,
+                 sdp: this.myPeerConnection.localDescription.sdp
+              }
+      callSignalMessageContent.payload = JSON.stringify(jsonPayload);
+      this.offerMessage(this.currentSession.clientId,callSignalMessageContent);
     }
 
     /**
@@ -81,12 +103,14 @@ export default class VoipClient extends OnReceiverMessageListener{
           this.currentSession = this.newSession(protoMessage.from,content.isAudioOnly,content.callId);
           this.currentEngineCallback.onReceiveCall(this.currentSession);
         } else if(content instanceof CallAnswerMessageContent){
+          this.isInitiator = false;
             console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
         } else if(content instanceof CallAnswerTMessageContent){
+          this.isInitiator = false;
            console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
         }else if(content instanceof CallSignalMessageContent){
           console.log("call signal payload "+content.payload);
-          this.handleOfferMsg(content.payload);
+          this.handleSignalMsg(content.payload);
         } else if(content instanceof CallByeMessageContent){
            console.log("call bye message");
            this.closeVideoCall();
@@ -96,7 +120,7 @@ export default class VoipClient extends OnReceiverMessageListener{
       }
     }
 
-    async handleOfferMsg(payload){
+    async handleSignalMsg(payload){
         var signalMessage = JSON.parse(payload);
         var type = signalMessage.type;
         console.log('message type '+type);
@@ -117,9 +141,9 @@ export default class VoipClient extends OnReceiverMessageListener{
         } else {
           var desc = new RTCSessionDescription(signalMessage);
           if(type === 'answer'){
-
+              await this.myPeerConnection.setRemoteDescription(desc);
           } else if(type === 'offer'){
-              this.myPeerConnection.setRemoteDescription(desc);
+              await this.myPeerConnection.setRemoteDescription(desc);
               await this.myPeerConnection.setLocalDescription(await this.myPeerConnection.createAnswer());
               //send answer message
               var callSignalMessageContent = new CallSignalMessageContent();
@@ -132,6 +156,40 @@ export default class VoipClient extends OnReceiverMessageListener{
               this.offerMessage(this.currentSession.clientId,callSignalMessageContent);
           }
         }
+    }
+
+    async handleOfferMessage(){
+      console.log("*** Negotiation needed "+this.isInitiator);
+      if(!this.isInitiator){
+        return;
+      }
+      try {
+        console.log("---> Creating offer");
+        const offer = await this.myPeerConnection.createOffer();
+    
+        // If the connection hasn't yet achieved the "stable" state,
+        // return to the caller. Another negotiationneeded event
+        // will be fired when the state stabilizes.
+    
+        if (this.myPeerConnection.signalingState != "stable") {
+          console.log("     -- The connection isn't stable yet; postponing...")
+          return;
+        }
+    
+        // Establish the offer as the local peer's current
+        // description.
+    
+        console.log("---> Setting local description to the offer");
+        await this.myPeerConnection.setLocalDescription(offer);
+    
+        // Send the offer to the remote peer.
+    
+        console.log("---> Sending the offer to the remote peer");
+        this.offerMessageByType('offer');
+      } catch(err) {
+        console.log("*** The following error occurred while handling the negotiationneeded event:");
+        this.reportError(err);
+      };
     }
 
     async startPreview(){
@@ -202,8 +260,8 @@ export default class VoipClient extends OnReceiverMessageListener{
       // Called by the WebRTC layer to let us know when it's time to
      // begin, resume, or restart ICE negotiation.
 
-    async handleNegotiationNeededEvent() {
-      console.log("*** Negotiation needed");
+    handleNegotiationNeededEvent = () =>  {
+       this.handleOfferMessage();
     }
 
 
@@ -294,10 +352,7 @@ export default class VoipClient extends OnReceiverMessageListener{
 // failure is detected.
 
     closeVideoCall() {
-        var localVideo = document.getElementById("wxCallLocalVideo");
-    
         this.log("Closing the call");
-    
         // Close the RTCPeerConnection
     
         if (this.myPeerConnection) {
@@ -324,6 +379,8 @@ export default class VoipClient extends OnReceiverMessageListener{
             // Stop the webcam preview as well by pausing the <video>
             // element, then stopping each of the getUserMedia() tracks
             // on it.
+            var localVideo = document.getElementById("wxCallLocalVideo");
+
         
             if (localVideo.srcObject) {
                 localVideo.pause();
