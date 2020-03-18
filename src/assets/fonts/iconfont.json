@@ -1,6 +1,6 @@
 {
-  "id": "",
-  "name": "",
+  "id": "1698562",
+  "name": "vue-chat",
   "font_family": "iconfont",
   "css_prefix_text": "icon-",
   "description": "",
@@ -67,6 +67,13 @@
       "font_class": "wenjian",
       "unicode": "e61b",
       "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "10515201",
+      "name": "挂断",
+      "font_class": "guaduan",
+      "unicode": "e640",
+      "unicode_decimal": 58944
     }
   ]
 }

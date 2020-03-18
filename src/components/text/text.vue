@@ -69,13 +69,13 @@
                 </div> 
                 <div class="audiomain">
                     <img class="audio-avatar" src="https://res.t-io.org/user/base/avatar/20200115/1/1432481217333797117370368.png" /> 
-                    <p class="callnick">飞驰认识</p> 
+                    <p class="callnick">显示名称</p> 
                     <p class="call-time" style="display: none;">00:00</p> 
                     <p class="waiting-msg"> 接通中... </p> 
                     <div class="call-opera flexbox">
                         <span class="cancleaudio btnopacity" style="display: none;"><i class="iconfont icon-guaduan"></i>挂断 </span> 
                         <div class="loadingcall flexbox">
-                            <span class="cancleaudio callercanle btnopacity"><i class="iconfont icon-guaduan"></i>取消 </span> 
+                            <span class="cancleaudio callercanle btnopacity" style="display: none;"><i class="iconfont icon-guaduan"></i>取消 </span> 
                             <span class="cancleaudio btnopacity" style="display: none;">拒绝</span> 
                             <span class="upcall btnopacity" style="display: none;">接听</span>
                         </div>
@@ -405,6 +405,8 @@ export default {
                   width: 480px;
                   height: 800px;
                   vertical-align: middle;
+        .btnopacity:hover
+	        opacity: .8          
         .callContent
            .callercontent
                 width: 664px;
@@ -518,6 +520,9 @@ export default {
             .flexauto
                 flex: 1
         .audioContent
+            .flexbox
+                display: flex;
+                align-items: center
             .callshow
 	            display: block
             .audioBody
@@ -577,6 +582,8 @@ export default {
                 border-radius: 6px;
                 cursor: pointer
             .audioBody .audiomain .call-opera span .iconfont
+                &:hover
+                   pointer-events: none
                 font-size: 16px;
                 margin-right: 8px
             .audioBody .audiomain .call-opera .nomuted
