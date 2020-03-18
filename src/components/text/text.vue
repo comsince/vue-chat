@@ -59,7 +59,36 @@
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
+
+        <div class="audioContent" v-show="showAudioBox">
+            <div class="audioBody callshow" style="">
+                <div class="audioBg">
+                    <img class="callavatar" src="https://res.t-io.org/user/base/avatar/20200115/1/1432481217333797117370368.png" /> 
+                    <div class="blackbg"></div>
+                </div> 
+                <div class="audiomain">
+                    <img class="audio-avatar" src="https://res.t-io.org/user/base/avatar/20200115/1/1432481217333797117370368.png" /> 
+                    <p class="callnick">飞驰认识</p> 
+                    <p class="call-time" style="display: none;">00:00</p> 
+                    <p class="waiting-msg"> 接通中... </p> 
+                    <div class="call-opera flexbox">
+                        <span class="cancleaudio btnopacity" style="display: none;"><i class="iconfont icon-guaduan"></i>挂断 </span> 
+                        <div class="loadingcall flexbox">
+                            <span class="cancleaudio callercanle btnopacity"><i class="iconfont icon-guaduan"></i>取消 </span> 
+                            <span class="cancleaudio btnopacity" style="display: none;">拒绝</span> 
+                            <span class="upcall btnopacity" style="display: none;">接听</span>
+                        </div>
+                    </div>
+                </div> 
+                <div style="display: none;">
+                    <audio id="wxCallRemoteAudio" autoplay="autoplay"></audio>
+                </div> 
+                <div style="display: none;">
+                    <audio id="wxCallLocalAudio" autoplay="autoplay" muted="muted"></audio>
+                </div>
+            </div>
+        </div>
 
     </div>
     <textarea id="sendText" ref="text" v-model="content" @keydown.enter="sendMessage" @focus="onFocus" @click="showEmoji=false"></textarea>
@@ -112,7 +141,8 @@ export default {
         ...mapState([   
             'selectId',
             'emojis',
-            'showChatBox'
+            'showChatBox',
+            'showAudioBox'
         ]),
         ...mapGetters([
             'selectedChat',
@@ -171,7 +201,7 @@ export default {
         // 点击发送按钮发送信息
         send () {
             console.log("send message "+this.content);
-            if(this.content.length <= 1){
+            if(this.content.length < 1){
                 this.warn = true
                 this.content = ''
                 setTimeout(() => {
@@ -487,6 +517,81 @@ export default {
                 align-items: center
             .flexauto
                 flex: 1
+        .audioContent
+            .callshow
+	            display: block
+            .audioBody
+                width: 280px;
+                height: 344px;
+                position: absolute;
+                left: 0;
+                right: 0;
+                margin: auto;
+                top: 10;
+                bottom: 0;
+                z-index: 2000;
+                border-radius: 3px
+            .audioBody .audioBg
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                border-radius: 3px
+            .audioBody .audioBg .callavatar
+                width: 100%;
+                height: 100%;
+                filter: blur(4px)
+            .audioBody .audioBg .blackbg
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                z-index: 5;
+                top: 0;
+                left: 0;
+                background: #000;
+                opacity: .5
+            .audioBody .audiomain
+                position: relative;
+                z-index: 6;
+                text-align: center;
+                color: #fff
+            .audioBody .audiomain .audio-avatar
+                width: 73px;
+                border-radius: 100%;
+                margin-top: 64px;
+                margin-bottom: 12px
+            .audioBody .audiomain .callnick
+                font-size: 16px;
+                line-height: 22px
+            .audioBody .audiomain .call-time
+                line-height: 20px;
+                margin-top: 4px
+            .audioBody .audiomain .call-opera
+                justify-content: center
+            .audioBody .audiomain .call-opera span
+                width: 96px;
+                height: 32px;
+                margin: 66px 12px 0;
+                line-height: 32px;
+                border-radius: 6px;
+                cursor: pointer
+            .audioBody .audiomain .call-opera span .iconfont
+                font-size: 16px;
+                margin-right: 8px
+            .audioBody .audiomain .call-opera .nomuted
+                border: 1px solid #fff
+            .audioBody .audiomain .call-opera .muted
+                background: #fff;
+                color: #30343a
+            .audioBody .audiomain .call-opera .cancleaudio
+                background: #ff6161
+            .audioBody .audiomain .call-opera .callercanle
+                width: 128px
+            .audioBody .loadingcall
+                justify-content: center
+            .audioBody .loadingcall .upcall
+                background: #39ba70             
     textarea
         box-sizing: border-box
         padding: 0 30px

@@ -117,7 +117,8 @@ const state = {
     appHeight: 638,
     visibilityState: 'hidden',
     //是否限制音视频对话框
-    showChatBox: false
+    showChatBox: false,
+    showAudioBox: false
 }
 
 const mutations = {
