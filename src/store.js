@@ -409,6 +409,9 @@ const getters = {
     //当前会话是否为单聊会话
     isSingleConversation(){
        let stateConversation = state.conversations.find(stateConversation => stateConversation.conversationInfo.target === state.selectTarget);
+       if(!stateConversation){
+          return false;
+       }
        return stateConversation.conversationInfo.conversationType === ConversationType.Single; 
     },
     // 筛选出含有搜索值的好友列表

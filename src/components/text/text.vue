@@ -206,7 +206,10 @@ export default {
             this.callDisplayName = this.getDisplayName(target);
         },
         getUserPortrait(target){
-            return this.userInfos.get(target).portrait;
+            if(this.userInfos){
+                return this.userInfos.get(target).portrait;
+            }
+            return null;
         },
         getDisplayName(target){
             return this.userInfos.get(target).displayName;
@@ -250,7 +253,11 @@ export default {
                 this.showCallTips = true;
                 this.initCallUserInfo(session.clientId);
                 //取消textarea焦点聚焦
-                document.getElementById('sendText').blur();
+                try {
+                   document.getElementById('sendText').blur();
+                } catch(error){
+                   console.error("get sendText error "+error);
+                }
             }
 
             sessionCallback.didCreateLocalVideoTrack = (stream) => {

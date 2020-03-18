@@ -92,32 +92,33 @@ export default class VoipClient extends OnReceiverMessageListener{
      * 接收信令服务传递过来的消息
      */
     onReceiveMessage(protoMessage){
-      let contentClazz = MessageConfig.getMessageContentClazz(protoMessage.content.type);
-      if(contentClazz){
-        let content = new contentClazz();
-        try {
-            content.decode(protoMessage.content);
-        } catch(err){
-          console.log('decode error');
+      if(new Date().getTime() - protoMessage.timestamp < 90000){
+        let contentClazz = MessageConfig.getMessageContentClazz(protoMessage.content.type);
+        if(contentClazz){
+          let content = new contentClazz();
+          try {
+              content.decode(protoMessage.content);
+          } catch(err){
+            console.log('decode error');
+          }
+  
+          if(content instanceof CallStartMessageContent){
+            this.currentSession = this.newSession(protoMessage.from,content.isAudioOnly,content.callId);
+            this.currentEngineCallback.onReceiveCall(this.currentSession);
+          } else if(content instanceof CallAnswerMessageContent){
+            this.isInitiator = false;
+              console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
+          } else if(content instanceof CallAnswerTMessageContent){
+            this.isInitiator = false;
+             console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
+          }else if(content instanceof CallSignalMessageContent){
+            console.log("call signal payload "+content.payload);
+            this.handleSignalMsg(content.payload);
+          } else if(content instanceof CallByeMessageContent){
+             console.log("call bye message");
+             this.cancelCall();
+          }
         }
-
-        if(content instanceof CallStartMessageContent){
-          this.currentSession = this.newSession(protoMessage.from,content.isAudioOnly,content.callId);
-          this.currentEngineCallback.onReceiveCall(this.currentSession);
-        } else if(content instanceof CallAnswerMessageContent){
-          this.isInitiator = false;
-            console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
-        } else if(content instanceof CallAnswerTMessageContent){
-          this.isInitiator = false;
-           console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
-        }else if(content instanceof CallSignalMessageContent){
-          console.log("call signal payload "+content.payload);
-          this.handleSignalMsg(content.payload);
-        } else if(content instanceof CallByeMessageContent){
-           console.log("call bye message");
-           this.cancelCall();
-        }
-
       }
     }
 
