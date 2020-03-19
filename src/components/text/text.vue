@@ -52,7 +52,7 @@
                             <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span> 
                             <span class="operabtn upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>
                         </span> 
-                        <span class="talktime flexbox" style="display: none;"><i class="iconfont icon-shipinshichang"></i> <span>00:00</span></span> 
+                        <span class="talktime flexbox" style="display: none;" v-show="showTalkTime"><i class="iconfont icon-ai-video"></i> <span v-text="talkTime">00:00</span></span> 
                         <span class="operabtn canclecall btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span> 
                         <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button> 
                         <button class="screenbtn" style="display: none;"><i class="iconfont icon-tuichuquanping iconfull"></i></button>
@@ -70,7 +70,7 @@
                 <div class="audiomain">
                     <img class="audio-avatar" :src="callRemoteImg" /> 
                     <p class="callnick" v-text="callDisplayName"></p> 
-                    <p class="call-time" style="display: none;">00:00</p> 
+                    <p class="call-time" style="display: none;" v-show="showTalkTime" v-text="talkTime">00:00</p> 
                     <p class="waiting-msg" v-show="waitingMsg" v-text="waitingMsgTips"> 接通中... </p> 
                     <div class="call-opera flexbox">
                         <span class="cancleaudio btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span> 
@@ -138,7 +138,11 @@ export default {
             callDisplayName: '',
             waitingMsg: false,
             isAudioOnly: false,
-            waitingMsgTips: ''
+            waitingMsgTips: '',
+            showTalkTime: false,
+            talkInterval: 0,
+            talkTime: '00:00',
+            talkTimerInterval: null
         };
     },
     computed: {
@@ -319,19 +323,28 @@ export default {
             }
 
             sessionCallback.didChangeState = state => {
-                if(this.isAudioOnly){
-                    if(state === CallState.STATUS_CONNECTED){
+                if(state === CallState.STATUS_CONNECTED){
+                    if(this.isAudioOnly){
+                        this.cancelCall = false;
                         this.rejectCall = false;
                         this.acceptCall = false;
                         this.hangUpCall = true;
                         this.waitingMsg = false;
-                    }
-                } else {
-                    if(state === CallState.STATUS_CONNECTED){
+                    } else {
+                        this.cancelCall = false;
                         this.acceptCall = false;
                         this.rejectCall = false;
                         this.hangUpCall = true;
-                    }  
+                    }
+                    this.showTalkTime = true;
+                    this.talkTimerInterval = setInterval(() => {
+                        this.talkInterval += 1;
+                        var min = Math.floor(this.talkInterval / 60 % 60);
+                        var sec = Math.floor(this.talkInterval % 60);
+                        sec = sec < 10 ? "0"+sec : sec;
+                        min = min < 10 ? "0"+min : min;
+                        this.talkTime = min + ":"+ sec;
+                    },1000)
                 }
             }
 
@@ -344,6 +357,11 @@ export default {
                     this.$store.state.showAudioBox = false;
                 } else {
                    this.$store.state.showChatBox = false;
+                }
+                if(this.talkTimerInterval){
+                    this.showTalkTime = false;
+                    this.talkInterval = 0;
+                    clearInterval(this.talkTimerInterval);
                 }
             }
 
