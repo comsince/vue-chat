@@ -3,7 +3,7 @@
 <div class="text">
     <div class="emoji">
         <i class="icon iconfont icon-biaoqing" @click="showEmoji=!showEmoji"></i>
-        <i title="语音聊天" class="icon iconfont icon-dianhua" v-show="isSingleConversation"></i>
+        <i title="语音聊天" class="icon iconfont icon-dianhua" v-show="isSingleConversation" @click="sendAudio"></i>
         <i title="视频聊天" class="icon iconfont icon-ai-video" v-show="isSingleConversation" @click="sendVideo"></i>
         <i title="发送图片" class="icon iconfont icon-tupian" >
             <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
@@ -45,7 +45,7 @@
                         </div>
                     </div> 
                     <div class="opera-content flexbox">
-                        <img class="calleravatar" src="static/images/vue.jpg" /> 
+                        <img class="calleravatar" :src="callRemoteImg" /> 
                         <span class="flexauto overell callnick" v-text="callDisplayName"></span> 
                         <span class="flexbox">
                             <span class="operabtn canclecall btnopacity" v-show="cancelCall" @click="cancel">取消</span> 
@@ -64,20 +64,20 @@
         <div class="audioContent" v-show="showAudioBox">
             <div class="audioBody callshow" style="">
                 <div class="audioBg">
-                    <img class="callavatar" src="https://res.t-io.org/user/base/avatar/20200115/1/1432481217333797117370368.png" /> 
+                    <img class="callavatar" :src="callRemoteImg" /> 
                     <div class="blackbg"></div>
                 </div> 
                 <div class="audiomain">
-                    <img class="audio-avatar" src="https://res.t-io.org/user/base/avatar/20200115/1/1432481217333797117370368.png" /> 
-                    <p class="callnick">显示名称</p> 
+                    <img class="audio-avatar" :src="callRemoteImg" /> 
+                    <p class="callnick" v-text="callDisplayName"></p> 
                     <p class="call-time" style="display: none;">00:00</p> 
-                    <p class="waiting-msg"> 接通中... </p> 
+                    <p class="waiting-msg" v-show="waitingMsg" v-text="waitingMsgTips"> 接通中... </p> 
                     <div class="call-opera flexbox">
-                        <span class="cancleaudio btnopacity" style="display: none;"><i class="iconfont icon-guaduan"></i>挂断 </span> 
+                        <span class="cancleaudio btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span> 
                         <div class="loadingcall flexbox">
-                            <span class="cancleaudio callercanle btnopacity" style="display: none;"><i class="iconfont icon-guaduan"></i>取消 </span> 
-                            <span class="cancleaudio btnopacity" style="display: none;">拒绝</span> 
-                            <span class="upcall btnopacity" style="display: none;">接听</span>
+                            <span class="cancleaudio callercanle btnopacity" style="display: none;" v-show="cancelCall" @click="cancel"><i class="iconfont icon-guaduan"></i>取消 </span> 
+                            <span class="cancleaudio btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span> 
+                            <span class="upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>
                         </div>
                     </div>
                 </div> 
@@ -114,6 +114,7 @@ import VoipClient from '../../webrtc/voipclient'
 import SessionCallback from '../../webrtc/sessionCallback'
 import EngineCallback from '../../webrtc/engineCallback'
 import SendMessage from '../../websocket/message/sendMessage'
+import CallState from '../../webrtc/callState'
 export default {
     data () {
         return {
@@ -134,7 +135,10 @@ export default {
             showCallRemoteVideo: false,
             showCallTips: true,
             callRemoteImg: 'static/images/vue.jpg',
-            callDisplayName: ''
+            callDisplayName: '',
+            waitingMsg: false,
+            isAudioOnly: false,
+            waitingMsgTips: ''
         };
     },
     computed: {
@@ -214,6 +218,18 @@ export default {
                     this.content = '';
                }
         },
+        //发送语音聊天
+        sendAudio(){
+            this.$store.state.showAudioBox = true;
+            this.waitingMsg = true;
+            this.rejectCall = false;
+            this.acceptCall = false;
+            this.hangUpCall = false;
+            this.cancelCall = true;
+            this.initCallUserInfo(this.$store.state.selectTarget);
+            this.isAudioOnly = true;
+            this.voipClient.startCall(this.$store.state.selectTarget,this.isAudioOnly);
+        },
         //发送视频聊天
         sendVideo(){
             this.$store.state.showChatBox = true;
@@ -226,7 +242,8 @@ export default {
             this.showCallTips = true;
             this.videoTextCallTips = "正在接通，请稍候...";
             this.initCallUserInfo(this.$store.state.selectTarget);
-            this.voipClient.startCall(this.$store.state.selectTarget,false);
+            this.isAudioOnly = false;
+            this.voipClient.startCall(this.$store.state.selectTarget,this.isAudioOnly);
         },
         initCallUserInfo(target){
             var portrait = this.getUserPortrait(target);
@@ -251,10 +268,7 @@ export default {
            this.voipClient.cancelCall();
         },
         accept(){
-           this.acceptCall = false;
-           this.rejectCall = false;
-           this.hangUpCall = true;
-           this.voipClient.answerCall(false);
+           this.voipClient.answerCall(this.isAudioOnly);
         },
         cancel(){
            this.voipClient.cancelCall();
@@ -270,23 +284,66 @@ export default {
             var sessionCallback = new SessionCallback();
             var engineCallback = new EngineCallback();
             engineCallback.onReceiveCall = session => {
-                this.$store.state.showChatBox = true;
-                this.videoTextCallTips = '对方邀请您进行视频通话';
-                this.rejectCall = true;
-                this.cancelCall = false;
-                this.acceptCall = true;
-                this.hangUpCall = false;
-                this.showCallLocalImg = true;
-                this.showCallLocalVideo = false;
-                this.showCallRemoteImg = true;
-                this.showCallRemoteVideo = false;
-                this.showCallTips = true;
-                this.initCallUserInfo(session.clientId);
+                this.isAudioOnly = session.audioOnly;
+                console.log("receive isAudioOnly "+session.audioOnly);
+                if(!this.isAudioOnly){
+                    this.$store.state.showChatBox = true;
+                    this.videoTextCallTips = '对方邀请您进行视频通话';
+                    this.rejectCall = true;
+                    this.cancelCall = false;
+                    this.acceptCall = true;
+                    this.hangUpCall = false;
+                    this.showCallLocalImg = true;
+                    this.showCallLocalVideo = false;
+                    this.showCallRemoteImg = true;
+                    this.showCallRemoteVideo = false;
+                    this.showCallTips = true;
+                    this.initCallUserInfo(session.clientId);
+                } else {
+                    this.$store.state.showAudioBox = true;
+                    this.waitingMsg = true;
+                    this.waitingMsgTips = '对方邀请你进行语音通话';
+                    this.rejectCall = true;
+                    this.acceptCall = true;
+                    this.cancelCall = false;
+                    this.hangUpCall = false;
+                    this.initCallUserInfo(session.clientId);
+                }
+                
                 //取消textarea焦点聚焦
                 try {
                    document.getElementById('sendText').blur();
                 } catch(error){
                    console.error("get sendText error "+error);
+                }
+            }
+
+            sessionCallback.didChangeState = state => {
+                if(this.isAudioOnly){
+                    if(state === CallState.STATUS_CONNECTED){
+                        this.rejectCall = false;
+                        this.acceptCall = false;
+                        this.hangUpCall = true;
+                        this.waitingMsg = false;
+                    }
+                } else {
+                    if(state === CallState.STATUS_CONNECTED){
+                        this.acceptCall = false;
+                        this.rejectCall = false;
+                        this.hangUpCall = true;
+                    }  
+                }
+            }
+
+            sessionCallback.didReceiveRemoteAudioTrack = stream => {
+                document.getElementById("wxCallRemoteAudio").srcObject = stream;
+            }
+            
+            sessionCallback.didCallEndWithReason = callEndReason => {
+                if(this.isAudioOnly){
+                    this.$store.state.showAudioBox = false;
+                } else {
+                   this.$store.state.showChatBox = false;
                 }
             }
 
@@ -563,7 +620,10 @@ export default {
                 color: #fff
             .audioBody .audiomain .audio-avatar
                 width: 73px;
-                border-radius: 100%;
+                height: 73px; 
+                position: relative;
+                border-radius: 50%;
+                overflow: hidden;
                 margin-top: 64px;
                 margin-bottom: 12px
             .audioBody .audiomain .callnick

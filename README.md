@@ -1,6 +1,6 @@
 # vue-chat
 
-基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯
+基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯，支持文本，图片类型发送，支持实时音视频，支持音视频与[android-chat](https://github.com/comsince/android-chat)客户端互通
 
 # 项目截图
 * 消息提示
@@ -73,6 +73,7 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 ## 依赖组件
 * [常用的 vue 视频插件](https://wangchaoke.cn/?p=372)
 * [西瓜播放器](http://h5player.bytedance.com/gettingStarted)
+* [图标Icon支持](https://www.iconfont.cn/manage/index?spm=a313x.7781069.1998910419.11&manage_type=myprojects&projectId=1698562)
 
 ## 推荐项目
 

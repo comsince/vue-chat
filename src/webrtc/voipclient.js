@@ -8,6 +8,8 @@ import CallAnswerTMessageContent from "./message/callAnswerTMessageContent";
 import CallSession from "./callSession";
 import CallByeMessageContent from "./message/callByeMessageContent";
 import SendMessage from "../websocket/message/sendMessage";
+import CallState from "./callState";
+import CallEndReason from "./callEndReason";
 
 export default class VoipClient extends OnReceiverMessageListener{
   
@@ -37,6 +39,7 @@ export default class VoipClient extends OnReceiverMessageListener{
         this.isInitiator = false;
         //创建session
         var newSession = this.newSession(target,isAudioOnly,target + new Date().getTime());
+        newSession.setState(CallState.STATUS_OUTGOING);
         this.currentSession = newSession;
         console.log("create new session "+this.currentSession.clientId+" callId "+this.currentSession.callId);
         //发送callmessage
@@ -50,8 +53,8 @@ export default class VoipClient extends OnReceiverMessageListener{
       var byeMessage = new CallByeMessageContent();
       byeMessage.callId = this.currentSession.callId;
       this.offerMessage(this.currentSession.clientId,byeMessage);
-      this.store.state.showChatBox = false;
-      this.closeVideoCall();
+      this.currentSession.endCall(CallEndReason.REASON_Hangup);
+      this.closeCall();
     }
 
     answerCall(audioOnly){
@@ -69,6 +72,7 @@ export default class VoipClient extends OnReceiverMessageListener{
        session.clientId = clientId;
        session.audioOnly = audioOnly;
        session.callId = callId;
+       session.sessionCallback = this.currentSessionCallback;
        return session;
     }
 
@@ -103,14 +107,17 @@ export default class VoipClient extends OnReceiverMessageListener{
           }
   
           if(content instanceof CallStartMessageContent){
-            this.currentSession = this.newSession(protoMessage.from,content.isAudioOnly,content.callId);
+            console.log("receive call startmessage");
+            this.currentSession = this.newSession(protoMessage.from,content.audioOnly,content.callId);
             this.currentEngineCallback.onReceiveCall(this.currentSession);
           } else if(content instanceof CallAnswerMessageContent){
             this.isInitiator = false;
-              console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
+            console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
+            this.currentSession.setState(CallState.STATUS_CONNECTING);
           } else if(content instanceof CallAnswerTMessageContent){
             this.isInitiator = false;
-             console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
+            this.currentSession.setState(CallState.STATUS_CONNECTING);
+            console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
           }else if(content instanceof CallSignalMessageContent){
             console.log("call signal payload "+content.payload);
             this.handleSignalMsg(content.payload);
@@ -205,8 +212,14 @@ export default class VoipClient extends OnReceiverMessageListener{
         // "preview" box (id "local_video").
     
         try {
+          this.mediaConstraints = {
+            audio: true,            // We want an audio track
+            video: !this.currentSession.isAudioOnly
+          }
           this.webcamStream = await navigator.mediaDevices.getUserMedia(this.mediaConstraints);
-          this.currentSessionCallback.didCreateLocalVideoTrack(this.webcamStream);
+          if(!this.currentSession.isAudioOnly){
+            this.currentSessionCallback.didCreateLocalVideoTrack(this.webcamStream);
+          }
           
         } catch(err) {
           this.handleGetUserMediaError(err);
@@ -297,10 +310,13 @@ export default class VoipClient extends OnReceiverMessageListener{
       console.log("*** ICE connection state changed to " + event);
     
         switch(this.myPeerConnection.iceConnectionState) {
+            case "connected":
+                this.currentSession.setState(CallState.STATUS_CONNECTED); 
+              break;
             case "closed":
             case "failed":
             case "disconnected":
-                this.closeVideoCall();
+                this.closeCall();
                 break;
         }
     }
@@ -317,7 +333,7 @@ export default class VoipClient extends OnReceiverMessageListener{
       console.log("*** WebRTC signaling state changed to: " + this.myPeerConnection.signalingState);
        switch(this.myPeerConnection.signalingState) {
          case "closed":
-            this.closeVideoCall();
+            this.closeCall();
             break;
         }
     }
@@ -339,7 +355,11 @@ export default class VoipClient extends OnReceiverMessageListener{
 
     handleTrackEvent = (event) => {
       console.log("comming stream");
-      this.currentSessionCallback.didReceiveRemoteVideoTrack(event.streams[0]);
+      if(this.currentSession.isAudioOnly){
+         this.currentSessionCallback.didReceiveRemoteAudioTrack(event.streams[0]);
+      } else {
+        this.currentSessionCallback.didReceiveRemoteVideoTrack(event.streams[0]);
+      }
     }
 
 
@@ -353,7 +373,7 @@ export default class VoipClient extends OnReceiverMessageListener{
 // when the user hangs up, the other user hangs up, or if a connection
 // failure is detected.
 
-    closeVideoCall() {
+    closeCall() {
         this.log("Closing the call");
         // Close the RTCPeerConnection
     
@@ -381,15 +401,23 @@ export default class VoipClient extends OnReceiverMessageListener{
             // Stop the webcam preview as well by pausing the <video>
             // element, then stopping each of the getUserMedia() tracks
             // on it.
-            var localVideo = document.getElementById("wxCallLocalVideo");
 
-        
-            if (localVideo.srcObject) {
-                localVideo.pause();
-                localVideo.srcObject.getTracks().forEach(track => {
-                track.stop();
-                });
+            if(!this.currentSession.isAudioOnly){
+              var localVideo = document.getElementById("wxCallLocalVideo");
+              if (localVideo.srcObject) {
+                  localVideo.pause();
+                  localVideo.srcObject.getTracks().forEach(track => {
+                  track.stop();
+                  });
+              }
+            } else {
+              this.webcamStream.getTracks.forEach(
+                track => {
+                  track.stop();
+                }
+              )
             }
+            
         
             // Close the peer connection
         
