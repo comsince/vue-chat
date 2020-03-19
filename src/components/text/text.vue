@@ -40,7 +40,7 @@
                             <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
                         </div> 
                         <div class="playcontent right-sml-content">
-                            <img id = "wxCallLocalImg" src="static/images/vue.jpg" class="bigavatar" v-show="showCallLocalImg"/> 
+                            <img id = "wxCallLocalImg" :src="callLocalImg" class="bigavatar" v-show="showCallLocalImg"/> 
                             <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;" v-show="showCallLocalVideo"></video>
                         </div>
                     </div> 
@@ -135,6 +135,7 @@ export default {
             showCallRemoteVideo: false,
             showCallTips: true,
             callRemoteImg: 'static/images/vue.jpg',
+            callLocalImg: 'static/images/vue.jpg',
             callDisplayName: '',
             waitingMsg: false,
             isAudioOnly: false,
@@ -155,7 +156,7 @@ export default {
         ...mapGetters([
             'selectedChat',
             'isSingleConversation',
-            'userInfos'
+            'userInfos',
         ])
     },
     methods: {
@@ -254,6 +255,7 @@ export default {
             if(portrait){
                 this.callRemoteImg = portrait;
             }
+            this.callLocalImg = this.$store.state.user.img;
             this.callDisplayName = this.getDisplayName(target);
         },
         getUserPortrait(target){
