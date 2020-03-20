@@ -42,11 +42,11 @@ export default class VoipClient extends OnReceiverMessageListener{
         newSession.setState(CallState.STATUS_OUTGOING);
         this.currentSession = newSession;
         console.log("create new session "+this.currentSession.clientId+" callId "+this.currentSession.callId);
-        //如果时视频，启动预览
-        this.startPreview();
         //发送callmessage
         var callStartMessageContent = new CallStartMessageContent(newSession.callId,target,isAudioOnly);
         this.offerMessage(target,callStartMessageContent);
+        //如果时视频，启动预览
+        this.startPreview();
     }
 
     cancelCall(){
