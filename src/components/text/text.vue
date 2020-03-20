@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import adapter from 'webrtc-adapter'
 import { mapGetters, mapState } from 'vuex'
 import TextMessageContent from '../../websocket/message/textMessageContent'
 import ImageMessageContent from '../../websocket/message/imageMessageContent'
