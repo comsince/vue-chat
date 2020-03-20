@@ -131,8 +131,8 @@ export default class VoipClient extends OnReceiverMessageListener{
               if(this.currentSession.callState === CallState.STATUS_CONNECTING || this.currentSession.callState === CallState.STATUS_CONNECTED){
                 this.handleSignalMsg(content.payload);
               } else {
-                //  this.currentSession.endCall(CallEndReason.REASON_AcceptByOtherClient);
-                this.currentSession.sessionCallback.didCallEndWithReason(CallEndReason.REASON_AcceptByOtherClient);
+                 this.currentSession.endCall(CallEndReason.REASON_AcceptByOtherClient);
+                // this.currentSession.sessionCallback.didCallEndWithReason(CallEndReason.REASON_AcceptByOtherClient);
               }
             }
           } else if(content instanceof CallByeMessageContent){
