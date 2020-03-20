@@ -1,3 +1,4 @@
+import CallState from "./callState";
 export default class CallSession{
     callId;
     clientId;
@@ -5,9 +6,11 @@ export default class CallSession{
     startTime;
     sessionCallback;
     callState;
+    voipClient;
 
-    constructor(){
+    constructor(voipClient){
         this.startTime = new Date().getTime();
+        this.voipClient = voipClient;
     }
 
     setState(state){
@@ -18,6 +21,9 @@ export default class CallSession{
     }
 
     endCall(endCallReason){
+       this.setState(CallState.STATUS_IDLE);
+       this.voipClient.closeCall();
+       this.voipClient.currentSession = null;
        if(this.sessionCallback){
          this.sessionCallback.didCallEndWithReason(endCallReason);
        }

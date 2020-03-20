@@ -42,24 +42,24 @@ export default class VoipClient extends OnReceiverMessageListener{
         newSession.setState(CallState.STATUS_OUTGOING);
         this.currentSession = newSession;
         console.log("create new session "+this.currentSession.clientId+" callId "+this.currentSession.callId);
+        //如果时视频，启动预览
+        this.startPreview();
         //发送callmessage
         var callStartMessageContent = new CallStartMessageContent(newSession.callId,target,isAudioOnly);
         this.offerMessage(target,callStartMessageContent);
-        //如果时视频，启动预览
-        this.startPreview();
     }
 
     cancelCall(){
       var byeMessage = new CallByeMessageContent();
       byeMessage.callId = this.currentSession.callId;
       this.offerMessage(this.currentSession.clientId,byeMessage);
-      this.currentSession.endCall(CallEndReason.REASON_Hangup);
-      this.closeCall();
+      this.currentSession.endCall(CallEndReason.REASON_RemoteHangup);
     }
 
     answerCall(audioOnly){
         this.isInitiator = true;
         console.log("isInitiator "+this.isInitiator);
+        this.currentSession.setState(CallState.STATUS_CONNECTING);
         var answerTMesage = new CallAnswerTMessageContent()
         answerTMesage.isAudioOnly = audioOnly;
         answerTMesage.callId = this.currentSession.callId;
@@ -68,7 +68,7 @@ export default class VoipClient extends OnReceiverMessageListener{
     }
 
     newSession(clientId, audioOnly, callId){
-       var session = new CallSession();
+       var session = new CallSession(this);
        session.clientId = clientId;
        session.audioOnly = audioOnly;
        session.callId = callId;
@@ -96,7 +96,8 @@ export default class VoipClient extends OnReceiverMessageListener{
      * 接收信令服务传递过来的消息
      */
     onReceiveMessage(protoMessage){
-      if(new Date().getTime() - protoMessage.timestamp < 90000){
+      //只处理接收消息，对于同一用户不同session会话忽略
+      if(new Date().getTime() - protoMessage.timestamp < 90000 && protoMessage.direction === 1){
         let contentClazz = MessageConfig.getMessageContentClazz(protoMessage.content.type);
         if(contentClazz){
           let content = new contentClazz();
@@ -109,20 +110,36 @@ export default class VoipClient extends OnReceiverMessageListener{
           if(content instanceof CallStartMessageContent){
             console.log("receive call startmessage");
             this.currentSession = this.newSession(protoMessage.from,content.audioOnly,content.callId);
+            this.currentSession.setState(CallState.STATUS_INCOMING);
             this.currentEngineCallback.onReceiveCall(this.currentSession);
-          } else if(content instanceof CallAnswerMessageContent){
+          } else if(content instanceof CallAnswerMessageContent || content instanceof CallAnswerTMessageContent){
             this.isInitiator = false;
-            console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
-            this.currentSession.setState(CallState.STATUS_CONNECTING);
-          } else if(content instanceof CallAnswerTMessageContent){
-            this.isInitiator = false;
-            this.currentSession.setState(CallState.STATUS_CONNECTING);
-            console.log("callId "+content.callId+" isAudioOnly "+content.audioOnly);
-          }else if(content instanceof CallSignalMessageContent){
-            console.log("call signal payload "+content.payload);
-            this.handleSignalMsg(content.payload);
+            if(this.currentSession  && this.currentSession.callState != CallState.STATUS_IDLE){
+              console.log(" CallAnswerMessageContent callState "+this.currentSession.callState);
+              if(protoMessage.from === this.currentSession.clientId && content.callId === this.currentSession.callId){
+                if(this.currentSession.callState != CallState.STATUS_OUTGOING){
+
+                  // this.rejectOtherCall(this.currentSession.callId,this.currentSession.clientId);
+                } else if(this.currentSession.callState === CallState.STATUS_OUTGOING){
+                  this.currentSession.setState(CallState.STATUS_CONNECTING);
+                }
+              }
+            }
+          } else if(content instanceof CallSignalMessageContent){
+            if(this.currentSession && this.currentSession.callState != CallState.STATUS_IDLE){
+              console.log("call signal payload "+content.payload);
+              if(this.currentSession.callState === CallState.STATUS_CONNECTING || this.currentSession.callState === CallState.STATUS_CONNECTED){
+                this.handleSignalMsg(content.payload);
+              } else {
+                //  this.currentSession.endCall(CallEndReason.REASON_AcceptByOtherClient);
+                this.currentSession.sessionCallback.didCallEndWithReason(CallEndReason.REASON_AcceptByOtherClient);
+              }
+            }
           } else if(content instanceof CallByeMessageContent){
-             console.log("call bye message");
+             if(!this.currentSession || this.currentSession.callState === CallState.STATUS_IDLE || protoMessage.from != this.currentSession.clientId || content.callId != this.currentSession.callId){
+               return;
+             }
+             console.log("call bye message state "+this.currentSession.callState);
              this.cancelCall();
           }
         }
@@ -455,6 +472,7 @@ export default class VoipClient extends OnReceiverMessageListener{
           alert("Error opening your camera and/or microphone: " + e.message);
           break;
       }
+      this.cancelCall();
     }
 
 
