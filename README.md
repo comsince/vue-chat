@@ -40,11 +40,19 @@
 ### V1.0.1
 * 增加全屏幕模式支持，点击用户头像即可切换
 
+![image](./attachment/wechat-full-screen-mode.png)
+
 ### V1.0.2
 * 计划增加音视频聊天功能
 * 实现与android客户端音视频互通
 
-![image](./attachment/wechat-full-screen-mode.png)
+> 语音通话
+
+![image](./attachment/vue-chat-rtc-audio.png)
+
+> 视频通话
+
+![image](./attachment/vue-chat-rtc-video.png)
 
 ## Build Setup
 
