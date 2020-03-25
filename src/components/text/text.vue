@@ -275,6 +275,9 @@ export default {
            this.voipClient.cancelCall();
         },
         accept(){
+           this.rejectCall = false;
+           this.acceptCall = false;
+           this.hangUpCall = true;
            this.voipClient.answerCall(this.isAudioOnly);
         },
         cancel(){

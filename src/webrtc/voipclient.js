@@ -53,6 +53,7 @@ export default class VoipClient extends OnReceiverMessageListener{
       var byeMessage = new CallByeMessageContent();
       byeMessage.callId = this.currentSession.callId;
       this.offerMessage(this.currentSession.clientId,byeMessage);
+      console.log("send bye message");
       this.currentSession.endCall(CallEndReason.REASON_RemoteHangup);
     }
 
