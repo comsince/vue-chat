@@ -15,6 +15,7 @@ export default class CallSession{
 
     setState(state){
        this.callState = state;
+       console.log("set current call state "+this.callState);
        if(this.sessionCallback){
            this.sessionCallback.didChangeState(this.callState);
        }

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from './router'
 import VueWebSocket from './websocket';
+import VoipClient from './webrtc/voipclient'
 import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE, KEY_VUE_USER_ID, KEY_VUE_TOKEN} from './constant/index'
 import StateConversationInfo from './websocket/model/stateConversationInfo';
 import StateChatMessage from './websocket/model/stateSelectChatMessage'
@@ -102,6 +103,7 @@ const state = {
     // 得知当前选择的是哪个好友
     selectFriendId: 0,
     vueSocket: null,
+    voipClient: null,
     //会话列表
     conversations: [],
     //消息列表
@@ -129,6 +131,8 @@ const mutations = {
         const vueSocket = new VueWebSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE,store);
         vueSocket.connect(true);
         state.vueSocket = vueSocket;
+        //voip client
+        state.voipClient = new VoipClient(store);
         let conversations = LocalStore.getConversations();
         if(conversations){
             state.conversations = conversations;

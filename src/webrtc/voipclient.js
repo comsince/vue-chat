@@ -27,13 +27,19 @@ export default class VoipClient extends OnReceiverMessageListener{
     currentSessionCallback;
     currentEngineCallback;
 
-    constructor(store,engineCallback,sessionCallback){
+    constructor(store){
       super();
       this.store = store;
-      this.currentSessionCallback = sessionCallback;
-      this.currentEngineCallback = engineCallback;
       ChatManager.addReceiveMessageListener(this);
-    }  
+    }
+    
+    setCurrentSessionCallback(sessionCallback){
+       this.currentSessionCallback = sessionCallback;
+    }
+
+    setCurrentEngineCallback(engineCallback){
+        this.currentEngineCallback = engineCallback;
+    }
 
     startCall(target,isAudioOnly){
         this.isInitiator = false;
@@ -55,6 +61,7 @@ export default class VoipClient extends OnReceiverMessageListener{
       this.offerMessage(this.currentSession.clientId,byeMessage);
       console.log("send bye message");
       this.currentSession.endCall(CallEndReason.REASON_RemoteHangup);
+      this.currentSession = null;
     }
 
     answerCall(audioOnly){
@@ -107,7 +114,9 @@ export default class VoipClient extends OnReceiverMessageListener{
           } catch(err){
             console.log('decode error');
           }
-  
+          if(this.currentSession){
+            console.log("current call state "+this.currentSession.callState);
+          }
           if(content instanceof CallStartMessageContent){
             console.log("receive call startmessage");
             this.currentSession = this.newSession(protoMessage.from,content.audioOnly,content.callId);
@@ -128,7 +137,7 @@ export default class VoipClient extends OnReceiverMessageListener{
             }
           } else if(content instanceof CallSignalMessageContent){
             if(this.currentSession && this.currentSession.callState != CallState.STATUS_IDLE){
-              console.log("call signal payload "+content.payload);
+              console.log("current state "+this.currentSession.callState+" call signal payload "+content.payload);
               if(this.currentSession.callState === CallState.STATUS_CONNECTING || this.currentSession.callState === CallState.STATUS_CONNECTED){
                 this.handleSignalMsg(content.payload);
               } else {
@@ -140,7 +149,6 @@ export default class VoipClient extends OnReceiverMessageListener{
              if(!this.currentSession || this.currentSession.callState === CallState.STATUS_IDLE || protoMessage.from != this.currentSession.clientId || content.callId != this.currentSession.callId){
                return;
              }
-             console.log("call bye message state "+this.currentSession.callState);
              this.cancelCall();
           }
         }

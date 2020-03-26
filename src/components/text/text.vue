@@ -111,7 +111,6 @@ import ImageMessageContent from '../../websocket/message/imageMessageContent'
 import * as qiniu from 'qiniu-js'
 import MessageContentMediaType from '../../websocket/message/messageContentMediaType'
 import LocalStore from '../../websocket/store/localstore'
-import VoipClient from '../../webrtc/voipclient'
 import SessionCallback from '../../webrtc/sessionCallback'
 import EngineCallback from '../../webrtc/engineCallback'
 import SendMessage from '../../websocket/message/sendMessage'
@@ -124,8 +123,8 @@ export default {
             frequency: 0,
             warn: false,
             showEmoji: false,
-            voipClient: null,
             videoTextCallTips: '',
+            voipClient: null,
             rejectCall: false,
             cancelCall: false,
             acceptCall: false,
@@ -290,101 +289,101 @@ export default {
     // 在进入的时候 聚焦输入框
     mounted() {
         this.$refs.text.focus()
-        if(!this.voipClient){
-            var sessionCallback = new SessionCallback();
-            var engineCallback = new EngineCallback();
-            engineCallback.onReceiveCall = session => {
-                this.isAudioOnly = session.audioOnly;
-                console.log("receive isAudioOnly "+session.audioOnly);
-                if(!this.isAudioOnly){
-                    this.$store.state.showChatBox = true;
-                    this.videoTextCallTips = '对方邀请您进行视频通话';
-                    this.rejectCall = true;
-                    this.cancelCall = false;
-                    this.acceptCall = true;
-                    this.hangUpCall = false;
-                    this.showCallLocalImg = true;
-                    this.showCallLocalVideo = false;
-                    this.showCallRemoteImg = true;
-                    this.showCallRemoteVideo = false;
-                    this.showCallTips = true;
-                    this.initCallUserInfo(session.clientId);
-                } else {
-                    this.$store.state.showAudioBox = true;
-                    this.waitingMsg = true;
-                    this.waitingMsgTips = '对方邀请你进行语音通话';
-                    this.rejectCall = true;
-                    this.acceptCall = true;
-                    this.cancelCall = false;
-                    this.hangUpCall = false;
-                    this.initCallUserInfo(session.clientId);
-                }
-                
-                //取消textarea焦点聚焦
-                try {
-                   document.getElementById('sendText').blur();
-                } catch(error){
-                   console.error("get sendText error "+error);
-                }
+        var sessionCallback = new SessionCallback();
+        var engineCallback = new EngineCallback();
+        engineCallback.onReceiveCall = session => {
+            this.isAudioOnly = session.audioOnly;
+            console.log("receive isAudioOnly "+session.audioOnly);
+            if(!this.isAudioOnly){
+                this.$store.state.showChatBox = true;
+                this.videoTextCallTips = '对方邀请您进行视频通话';
+                this.rejectCall = true;
+                this.cancelCall = false;
+                this.acceptCall = true;
+                this.hangUpCall = false;
+                this.showCallLocalImg = true;
+                this.showCallLocalVideo = false;
+                this.showCallRemoteImg = true;
+                this.showCallRemoteVideo = false;
+                this.showCallTips = true;
+                this.initCallUserInfo(session.clientId);
+            } else {
+                this.$store.state.showAudioBox = true;
+                this.waitingMsg = true;
+                this.waitingMsgTips = '对方邀请你进行语音通话';
+                this.rejectCall = true;
+                this.acceptCall = true;
+                this.cancelCall = false;
+                this.hangUpCall = false;
+                this.initCallUserInfo(session.clientId);
             }
-
-            sessionCallback.didChangeState = state => {
-                if(state === CallState.STATUS_CONNECTED){
-                    if(this.isAudioOnly){
-                        this.cancelCall = false;
-                        this.rejectCall = false;
-                        this.acceptCall = false;
-                        this.hangUpCall = true;
-                        this.waitingMsg = false;
-                    } else {
-                        this.cancelCall = false;
-                        this.acceptCall = false;
-                        this.rejectCall = false;
-                        this.hangUpCall = true;
-                    }
-                    this.showTalkTime = true;
-                    this.talkTimerInterval = setInterval(() => {
-                        this.talkInterval += 1;
-                        var min = Math.floor(this.talkInterval / 60 % 60);
-                        var sec = Math.floor(this.talkInterval % 60);
-                        sec = sec < 10 ? "0"+sec : sec;
-                        min = min < 10 ? "0"+min : min;
-                        this.talkTime = min + ":"+ sec;
-                    },1000)
-                }
+                    
+        //取消textarea焦点聚焦
+            try {
+                document.getElementById('sendText').blur();
+            } catch(error){
+                console.error("get sendText error "+error);
             }
-
-            sessionCallback.didReceiveRemoteAudioTrack = stream => {
-                document.getElementById("wxCallRemoteAudio").srcObject = stream;
-            }
-            
-            sessionCallback.didCallEndWithReason = callEndReason => {
-                if(this.isAudioOnly){
-                    this.$store.state.showAudioBox = false;
-                } else {
-                   this.$store.state.showChatBox = false;
-                }
-                if(this.talkTimerInterval){
-                    this.showTalkTime = false;
-                    this.talkInterval = 0;
-                    clearInterval(this.talkTimerInterval);
-                }
-            }
-
-            sessionCallback.didCreateLocalVideoTrack = (stream) => {
-                this.showCallLocalImg = false;
-                this.showCallLocalVideo = true;
-                document.getElementById("wxCallLocalVideo").srcObject = stream;
-            }
-
-            sessionCallback.didReceiveRemoteVideoTrack = stream => {
-                this.showCallRemoteImg = false;
-                this.showCallTips = false;
-                this.showCallRemoteVideo = true;
-                document.getElementById("wxCallRemoteVideo").srcObject = stream;
-            }
-            this.voipClient = new VoipClient(this.$store,engineCallback,sessionCallback);
         }
+
+        sessionCallback.didChangeState = state => {
+            if(state === CallState.STATUS_CONNECTED){
+                if(this.isAudioOnly){
+                    this.cancelCall = false;
+                    this.rejectCall = false;
+                    this.acceptCall = false;
+                    this.hangUpCall = true;
+                    this.waitingMsg = false;
+                } else {
+                    this.cancelCall = false;
+                    this.acceptCall = false;
+                    this.rejectCall = false;
+                    this.hangUpCall = true;
+                }
+                this.showTalkTime = true;
+                this.talkTimerInterval = setInterval(() => {
+                    this.talkInterval += 1;
+                    var min = Math.floor(this.talkInterval / 60 % 60);
+                    var sec = Math.floor(this.talkInterval % 60);
+                    sec = sec < 10 ? "0"+sec : sec;
+                    min = min < 10 ? "0"+min : min;
+                    this.talkTime = min + ":"+ sec;
+                },1000)
+            }
+        }
+
+        sessionCallback.didReceiveRemoteAudioTrack = stream => {
+            document.getElementById("wxCallRemoteAudio").srcObject = stream;
+        }
+            
+        sessionCallback.didCallEndWithReason = callEndReason => {
+            if(this.isAudioOnly){
+                this.$store.state.showAudioBox = false;
+            } else {
+                this.$store.state.showChatBox = false;
+            }
+            if(this.talkTimerInterval){
+                this.showTalkTime = false;
+                this.talkInterval = 0;
+                clearInterval(this.talkTimerInterval);
+            }
+        }
+
+        sessionCallback.didCreateLocalVideoTrack = (stream) => {
+            this.showCallLocalImg = false;
+            this.showCallLocalVideo = true;
+            document.getElementById("wxCallLocalVideo").srcObject = stream;
+        }
+
+        sessionCallback.didReceiveRemoteVideoTrack = stream => {
+            this.showCallRemoteImg = false;
+            this.showCallTips = false;
+            this.showCallRemoteVideo = true;
+            document.getElementById("wxCallRemoteVideo").srcObject = stream;
+        }
+        this.voipClient = this.$store.state.voipClient;
+        this.voipClient.setCurrentSessionCallback(sessionCallback);
+        this.voipClient.setCurrentEngineCallback(engineCallback);
     },
     watch: {
         // 在选择其它对话的时候 聚焦输入框
