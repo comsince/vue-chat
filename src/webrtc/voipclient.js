@@ -83,7 +83,13 @@ export default class VoipClient extends OnReceiverMessageListener{
        session.sessionCallback = this.currentSessionCallback;
        return session;
     }
-
+    
+    rejectOtherCall(callId,clientId){
+      var byeMessage = new CallByeMessageContent();
+      byeMessage.callId = callId;
+      this.log('reject other callId '+callId +" clientId "+clientId);
+      this.offerMessage(clientId,byeMessage);
+    }
 
     offerMessage(target,messageConent){
         this.store.dispatch('sendMessage', new SendMessage(target,messageConent));
@@ -119,9 +125,14 @@ export default class VoipClient extends OnReceiverMessageListener{
           }
           if(content instanceof CallStartMessageContent){
             console.log("receive call startmessage");
-            this.currentSession = this.newSession(protoMessage.from,content.audioOnly,content.callId);
-            this.currentSession.setState(CallState.STATUS_INCOMING);
-            this.currentEngineCallback.onReceiveCall(this.currentSession);
+            if(this.currentSession && this.currentSession.callState !== CallState.STATUS_IDLE){
+              this.rejectOtherCall(content.callId,protoMessage.from);
+            } else {
+              this.currentSession = this.newSession(protoMessage.from,content.audioOnly,content.callId);
+              this.currentSession.setState(CallState.STATUS_INCOMING);
+              this.currentEngineCallback.onReceiveCall(this.currentSession);
+            }
+            
           } else if(content instanceof CallAnswerMessageContent || content instanceof CallAnswerTMessageContent){
             this.isInitiator = false;
             if(this.currentSession  && this.currentSession.callState != CallState.STATUS_IDLE){
@@ -139,7 +150,9 @@ export default class VoipClient extends OnReceiverMessageListener{
             if(this.currentSession && this.currentSession.callState != CallState.STATUS_IDLE){
               console.log("current state "+this.currentSession.callState+" call signal payload "+content.payload);
               if(this.currentSession.callState === CallState.STATUS_CONNECTING || this.currentSession.callState === CallState.STATUS_CONNECTED){
-                this.handleSignalMsg(content.payload);
+                if(protoMessage.from === this.currentSession.clientId && content.callId === this.currentSession.callId){
+                  this.handleSignalMsg(content.payload);
+                }
               } else {
                  this.currentSession.endCall(CallEndReason.REASON_AcceptByOtherClient);
                 // this.currentSession.sessionCallback.didCallEndWithReason(CallEndReason.REASON_AcceptByOtherClient);
@@ -173,6 +186,8 @@ export default class VoipClient extends OnReceiverMessageListener{
              this.reportError(err);
           }
           
+        } else if(type === 'remove-candidates'){
+           this.log("remove candidates ");
         } else {
           var desc = new RTCSessionDescription(signalMessage);
           if(type === 'answer'){
@@ -333,7 +348,7 @@ export default class VoipClient extends OnReceiverMessageListener{
     // This is called when the state of the ICE agent changes.
 
     handleICEConnectionStateChangeEvent = (event) => {
-      console.log("*** ICE connection state changed to " + event);
+      console.log("*** ICE connection state changed to " + this.myPeerConnection.iceConnectionState);
     
         switch(this.myPeerConnection.iceConnectionState) {
             case "connected":
