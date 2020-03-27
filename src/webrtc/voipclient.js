@@ -357,7 +357,7 @@ export default class VoipClient extends OnReceiverMessageListener{
             case "closed":
             case "failed":
             case "disconnected":
-                this.closeCall();
+                this.cancelCall();
                 break;
         }
     }
@@ -374,7 +374,7 @@ export default class VoipClient extends OnReceiverMessageListener{
       console.log("*** WebRTC signaling state changed to: " + this.myPeerConnection.signalingState);
        switch(this.myPeerConnection.signalingState) {
          case "closed":
-            this.closeCall();
+            this.cancelCall();
             break;
         }
     }

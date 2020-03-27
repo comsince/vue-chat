@@ -15,6 +15,8 @@ import UnreadCount from './websocket/model/unReadCount';
 import StateSelectChateMessage from './websocket/model/stateSelectChatMessage';
 import Notify from '@wcjiang/notify';
 import MessageConfig from './websocket/message/messageConfig';
+import ChatManager from './websocket/chatManager';
+import ProtoMessageContent from './websocket/message/protomessageContent';
 
 Vue.use(Vuex)
 
@@ -321,12 +323,16 @@ const mutations = {
         if(!state.firstLogin && (!isCurrentConversationMessage || (isCurrentConversationMessage && !visibilityStateVisible)) && isShowSendingMessage){
            //统计消息未读数,注意服务端暂时还没有将透传消息发送过来，原则上这里过来的消息都不是透传消息
            var num = updateStateConverstaionInfo.conversationInfo.unreadCount.unread += 1;
-           console.log("target "+protoConversationInfo.target+" unread count "+num);
-                   //notify 弹框
+           var notifyBody = protoConversationInfo.lastMessage.content.searchableContent;
+           console.log("target "+protoConversationInfo.target+" unread count "+num+ " notify body "+notifyBody);
+           if(!notifyBody){
+              notifyBody = ProtoMessageContent.typeToContent(protoConversationInfo.lastMessage.content);
+           }
+           //notify 弹框
            if(!state.firstLogin){
                 state.notify.notify({
                     title: updateStateConverstaionInfo.name, // Set notification title
-                    body: protoConversationInfo.lastMessage.content.searchableContent, // Set message content
+                    body: notifyBody, // Set message content
                     icon: updateStateConverstaionInfo.img
                 });
             }
@@ -387,9 +393,11 @@ const mutations = {
         state.selectTarget = '',
         state.vueSocket.sendDisConnectMessage();
         state.vueSocket = null;
+        state.voipClient = null;
         state.conversations = [],
         state.messages = [],
         LocalStore.clearLocalStore();
+        ChatManager.removeOnReceiveMessageListener();
         //发送断开消息，清除session，防止同一个设备切换登录导致的验证失败
         router.push({path: '/login'})
     },

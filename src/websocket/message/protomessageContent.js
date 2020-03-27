@@ -1,3 +1,5 @@
+import MessageContentType from "./messageContentType";
+
 export default class ProtoMessageContent{
     type;
     searchableContent;
@@ -25,5 +27,24 @@ export default class ProtoMessageContent{
         protoMessageContent.mentionedType = content.mentionedType;
         protoMessageContent.mentionedTargets = content.mentionedTargets;
         return protoMessageContent;
+    }
+
+    static typeToContent(messageContent){
+        var showText = "未知类型";
+        switch(messageContent.type){
+            case MessageContentType.Image:
+                showText = "[图片]";
+                break;
+            case MessageContentType.File:
+                showText = "[文件]";
+                break;
+            case MessageContentType.Video:
+                showText = "[视频]";
+                break;
+            case MessageContentType.VOIP_CONTENT_TYPE_START:
+                showText = "[网络电话]";
+                break;
+        }
+        return showText;
     }
 }

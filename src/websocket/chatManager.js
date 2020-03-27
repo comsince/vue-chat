@@ -10,4 +10,8 @@ export default class ChatManager {
              messageListener.onReceiveMessage(protoMessage);
          }
     }
+
+    static removeOnReceiveMessageListener(){
+        ChatManager.onReceiveMessageListeners = [];
+    }
 }
