@@ -91,9 +91,9 @@
         </div>
 
     </div>
-    <textarea id="sendText" ref="text" v-model="content" @keydown.enter="sendMessage" @focus="onFocus" @click="showEmoji=false"></textarea>
-    <div class="send" @click="send">
-    	<span>发送(ent)</span>
+    <textarea id="sendText" ref="text" v-model="content" @keydown.enter.exact="sendMessage" @keydown.ctrl.enter="newline" @focus="onFocus" @click="showEmoji=false"></textarea>
+    <div class="send" @click="send" ref="sendBtn" v-bind:class="{disable : sendBtnDisabled}">
+    	<span>发送</span>
     </div>
     <transition name="appear">
 	    <div class="warn" v-show="warn">
@@ -119,6 +119,7 @@ export default {
     data () {
         return {
             content: '',
+            sendBtnDisabled: true,
             reply: '未找到',  
             frequency: 0,
             warn: false,
@@ -194,8 +195,17 @@ export default {
         },
         // 按回车发送信息
         sendMessage (e) {
-            this.send();
-            //阻止回车换行
+            console.log("send code "+e.keyCode);
+            if(e.keyCode === 13){
+              this.send();
+              //阻止回车换行
+              e.preventDefault();
+            }
+            
+        },
+
+        newline(e){
+           this.content = this.content + '\n';
            e.preventDefault();
         },
 
@@ -221,6 +231,7 @@ export default {
                     var textMessageContent = new TextMessageContent(this.content);
                     this.sendMessageToStore(new SendMessage(null,textMessageContent));
                     this.content = '';
+                    this.$refs.text.focus();
                }
         },
         //发送语音聊天
@@ -395,13 +406,13 @@ export default {
         // 当输入框中的值为空时 弹出提示  并在一秒后消失
         content() {
             if(this.content === ''){
-                if( this.frequency === 0){
-                  this.warn = true;
-                  this.frequency++
-                  setTimeout(() => {
-                    this.warn = false;
-                  }, 1000)
-                }
+                this.$refs.sendBtn.style.background = "#f5f5f5";
+                this.$refs.sendBtn.style.color = '#7c7c7c';
+                this.sendBtnDisabled = true;
+            } else {
+                this.$refs.sendBtn.style.background = "rgb(18,150,17)";
+                this.$refs.sendBtn.style.color = '#fff';
+                this.sendBtnDisabled = false;
             }
         }
     }
@@ -732,4 +743,7 @@ export default {
             border: 7px solid transparent
             border-top-color: #fff
             filter:drop-shadow(1px 3px 2px #bdbdbd)
+    
+    .disable
+        pointer-events: none; 
 </style>

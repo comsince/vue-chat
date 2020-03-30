@@ -18,10 +18,10 @@
     "stylus-loader": "^3.0.1",
     "uuid-js": "^0.7.5",
     "v-viewer": "^1.5.1",
-    "vue": "^2.2.6",
+    "vue": "^2.5.2",
     "vue-axios": "^2.1.4",
-    "vue-router": "^2.3.1",
-    "vuex": "^2.3.1",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1",
     "webrtc-adapter": "^7.5.1",
     "xgplayer": "^2.4.7",
     "xgplayer-vue": "^1.1.5"
