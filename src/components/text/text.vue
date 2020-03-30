@@ -701,7 +701,7 @@ export default {
         border: none
         outline: none
         font-family: "Micrsofot Yahei"
-        font-size: 14px
+        font-size: 13px
         resize: none
     .send
         position: absolute
