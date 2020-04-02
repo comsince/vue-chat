@@ -54,6 +54,9 @@
 
 ![image](./attachment/vue-chat-rtc-video.png)
 
+### V1.0.3
+* 增加好友搜索，好友添加功能，形成功能闭环
+
 ## Build Setup
 
 ``` bash

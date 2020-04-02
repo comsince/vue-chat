@@ -366,10 +366,16 @@ const mutations = {
 
     addProtoMessage(state,protoMessage){
        var added = false;
+       var isExistMessage = false;
        for(var stateChatMessage of state.messages){
            if(protoMessage.target == stateChatMessage.target){
                added = true;
-               stateChatMessage.protoMessages.push(protoMessage);
+               var isSameProtoMessage = stateChatMessage.protoMessages.find(message => message.messageId === protoMessage.messageId);
+               if(!isSameProtoMessage){
+                stateChatMessage.protoMessages.push(protoMessage);
+               } else {
+                   isExistMessage = true;
+               }
            }
        }
        if(!added){
@@ -381,6 +387,20 @@ const mutations = {
           stateChatMessage.target = protoMessage.target;
           stateChatMessage.protoMessages.push(protoMessage);
           state.messages.push(stateChatMessage);
+       }
+       console.log("current message "+protoMessage.messageId +" isExist "+isExistMessage);
+       if(!isExistMessage){
+           var protoConversationInfo = new ProtoConversationInfo();
+           protoConversationInfo.conversationType = protoMessage.conversationType;
+           protoConversationInfo.target = protoMessage.target;
+           protoConversationInfo.line = 0;
+           protoConversationInfo.top = false;
+           protoConversationInfo.slient = false;
+           protoConversationInfo.timestamp = protoMessage.timestamp;
+           protoConversationInfo.lastMessage = protoMessage;
+           protoConversationInfo.unreadCount = new UnreadCount();
+
+           this.commit('updateConversationInfo',protoConversationInfo);
        }
        
     },

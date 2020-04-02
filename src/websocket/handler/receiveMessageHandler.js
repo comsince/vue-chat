@@ -24,29 +24,11 @@ export default class ReceiveMessageHandler extends AbstractMessageHandler {
           var protoMessage = ProtoMessage.toProtoMessage(protoMessage);
           if(MessageConfig.isDisplayableMessage(protoMessage)){
             this.addProtoMessage(protoMessage);
-            this.createAndUpdateConversation(protoMessage);
           }
           ChatManager.onReceiveMessage(protoMessage);
         } 
         this.vueWebsocket.sendAction('changetFirstLogin',false);     
       }
-
-      /**
-       * 根据消息动态创建与更新会话列表
-       */
-      createAndUpdateConversation(protoMessage){
-         var protoConversationInfo = new ProtoConversationInfo();
-         protoConversationInfo.conversationType = protoMessage.conversationType;
-         protoConversationInfo.target = protoMessage.target;
-         protoConversationInfo.line = 0;
-         protoConversationInfo.top = false;
-         protoConversationInfo.slient = false;
-         protoConversationInfo.timestamp = protoMessage.timestamp;
-         protoConversationInfo.lastMessage = protoMessage;
-         protoConversationInfo.unreadCount = new UnreadCount();
-         this.vueWebsocket.sendAction('updateConversationInfo',protoConversationInfo);
-      }
-
 
       addProtoMessage(protoMessage){
          this.vueWebsocket.sendAction('addProtoMessage',protoMessage);
