@@ -14,6 +14,9 @@
 			</div>
 	         <router-link to="/friend" class="icon iconfont icon-pengyou"></router-link>
 	         <!-- <router-link to="/my" class="icon iconfont icon-collection"></router-link> -->
+			<div class="icon iconfont icon-pengyou" @click="showAddRequestTip = !showAddRequestTip">
+				<addtip v-show="showAddRequestTip"></addtip>
+			</div> 
 	    </div>
 	    <footer>
 	        <i title = "退出" class="icon iconfont icon-tuichu" @click="loginOut"></i>
@@ -23,7 +26,16 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import addtip from '../../components/menu/addtip'
 export default {
+	components: {
+		addtip
+	},
+	data() {
+		return {
+			showAddRequestTip: false
+		}
+	},
     computed: {
        ...mapState([
        	  'user',
