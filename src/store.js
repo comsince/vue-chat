@@ -122,7 +122,8 @@ const state = {
     visibilityState: 'hidden',
     //是否限制音视频对话框
     showChatBox: false,
-    showAudioBox: false
+    showAudioBox: false,
+    showSearchFriendDialog: false
 }
 
 const mutations = {

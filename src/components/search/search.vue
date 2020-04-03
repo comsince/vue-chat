@@ -45,8 +45,10 @@ export default {
 <style lang="stylus" scoped>
 .wrapper
     max-height: 60px
-    height: 13%
-    .padding-wrapper
+    min-height: 60px 
+    height: 60px
+	.padding-wrapper
+	    border-right: 1px solid #e7e7e7
 	    padding: 22px 12px 12px 12px
 		.search-wrapper
 			position: relative

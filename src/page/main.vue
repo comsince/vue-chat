@@ -74,5 +74,5 @@ export default {
   .main
     flex: 1
     height: 100%
-    background: #f2f2f2
+    background: #ffffff
 </style>

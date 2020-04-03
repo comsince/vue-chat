@@ -6,6 +6,10 @@ import router from './router'
 import store from './store'
 import './permission' // permission control
 Vue.config.productionTip = false
+
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI);
 /* eslint-disable no-new */
 const vm = new Vue({
   el: '#app',

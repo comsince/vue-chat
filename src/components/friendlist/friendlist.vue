@@ -1,8 +1,8 @@
 <!-- 好友列表 -->
 <template>
- <div class="friendlist">
+ <div class="friendlist" :style="{height: (appHeight-60) + 'px'}">
  	<ul>
-        <li v-for="item in searchedFriendlist" class="frienditem"  :class="{ noborder: !item.initial}">
+        <li v-bind:key = index v-for="(item, index) in searchedFriendlist" class="frienditem"  :class="{ noborder: !item.initial}">
             <div class="list_title" v-if="item.initial">{{item.initial}}</div>
             <div class="friend-info" :class="{ active: item.id === selectFriendId }" @click="selectFriend(item.id)">
                 <img class="avatar"  width="36" height="36" :src="item.img" onerror="this.src='static/images/vue.jpg'">
@@ -19,7 +19,8 @@ export default {
     computed: {
         ...mapState([
             'selectFriendId',
-            'searchText'
+            'searchText',
+            'appHeight'
         ]),
         ...mapGetters([
             'searchedFriendlist'
@@ -37,6 +38,9 @@ export default {
 .friendlist
     height: 87%
     overflow-y: auto
+    border-top: 1px solid #e7e7e7
+    border-right: 1px solid #e7e7e7
+    background: #f2f2f2
     .frienditem
         border-top: 1px solid #dadada
         &:first-child,&.noborder

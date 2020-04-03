@@ -1,7 +1,7 @@
 <template>
  <div class="add-content">
    <div>
-    <a class="iconsize wx-chat-icon"><i class="iconfont icon-pengyou iconhover"></i> 添加好友 </a>
+    <a @click="showSearchFriendDialog" class="iconsize wx-chat-icon"><i class="iconfont icon-pengyou iconhover"></i> 添加好友 </a>
    </div> 
    <div>
     <a class="iconsize wx-chat-icon"><i class="iconfont icon-pengyou iconhover"></i> 创建群聊 </a>
@@ -11,7 +11,12 @@
 
 <script>
 export default {
-    name: 'addtip'    
+	name: 'addtip',
+	methods: {
+		showSearchFriendDialog(){
+             this.$store.state.showSearchFriendDialog = true;
+		}
+	}    
 }
 </script>
 

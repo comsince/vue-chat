@@ -208,7 +208,6 @@ export default {
         min-height: 60px 
         padding: 28px 0 0 30px
         box-sizing: border-box
-        border-bottom: 1px solid #e7e7e7
         .friendname
             font-size: 18px
       .message-wrapper
@@ -216,7 +215,9 @@ export default {
         padding: 10px 15px
         box-sizing: border-box
         overflow-y: auto
+        border-top: 1px solid #e7e7e7
         border-bottom: 1px solid #e7e7e7
+        background: #f2f2f2
         .message
             margin-bottom: 15px
         .time

@@ -39,7 +39,7 @@ export default {
   height: 100%
   .msglist
     width: 250px
-    background: rgb(230,230,230)
+    background: #fff
   .chatbox
     flex: 1
 </style>

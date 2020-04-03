@@ -1,8 +1,49 @@
 <!-- 好友信息 -->
 <template>
    <div class="Info-wrapper">
-        <div class="newfriend" v-show="selectedFriend.id === 0">
+        <div class="newfriend">
 			<div class="nickname">{{selectedFriend.nickname}}</div>
+		</div>
+		<div class="friendrequest" v-show="selectedFriend.id === 0">
+           <el-table
+            :data="friendRequestData"
+            :show-header="false"
+            style="width: 100%;margin-top:10px">
+            <el-table-column
+                prop="image"
+                label="头像"
+                width="50">
+                <template slot-scope="scope">
+                    <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                </template>
+            </el-table-column>
+            <el-table-column
+                prop="name"
+                label="姓名"
+                width="280">
+                <template>
+                    <div>
+                        <p>13269013653</p>
+                        <p>北京 北京市</p>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column
+                label="加好友"
+                align="right"
+                >
+                <template slot-scope="scope">
+                    <el-button
+                        size="mini"
+                        type="info"
+                        @click="handleEdit(scope.$index, scope.row)">拒绝</el-button>
+                    <el-button
+                        size="mini"
+                        type="success"
+                        @click="handleDelete(scope.$index, scope.row)">同意</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
 		</div>
         <div class="friendInfo" v-show="selectedFriend.id > 0">
 	   	    <div class="esInfo" >
@@ -33,6 +74,20 @@
 import router from '../../router'
 import { mapGetters } from 'vuex'
 export default {
+	data() {
+        return {
+			friendRequestData: [{
+                image: '2016-05-02',
+                name: '王小虎'
+            },{
+                image: '2016-05-02',
+                name: '王小虎'
+            },{
+                image: '2016-05-02',
+                name: '王小虎'
+            }]
+		}
+	},
     computed: {
         ...mapGetters([
             'selectedFriend'
@@ -42,7 +97,8 @@ export default {
     	send () {
     		this.$store.dispatch('send')
     		this.$store.dispatch('search', '')
-    	}
+		},
+		
     }
 }
 </script>
@@ -52,11 +108,14 @@ export default {
     height: 60px
     padding: 28px 0 0 30px
     box-sizing: border-box
-    border-bottom: 1px solid #e7e7e7
     .nickname
         font-size: 18px
+.friendrequest
+    border-top: 1px solid #e7e7e7
+    padding: 10px        
 .friendInfo
     padding: 0 90px
+    border-top: 1px solid #e7e7e7
 	.esInfo
 	    display: flex
 	    align-items: center
