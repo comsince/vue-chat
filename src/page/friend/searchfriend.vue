@@ -2,19 +2,22 @@
     <div>
         <el-dialog
         title="添加好友"
-        :visible="showSearchFriendDialog"
-        width="40%"
-        :show-close="false"
+        :visible.sync="showSearchFriendDialog"
+        width="30%"
+        :show-close="true"
         center>
         <el-input v-model="friendInput" prefix-icon="el-icon-search" placeholder="请输入手机号码或昵称"></el-input>
         <el-table
             :data="friendData"
             :show-header="false"
+            :fit="true"
+            :highlight-current-row="false"
             style="width: 100%;margin-top:10px">
             <el-table-column
                 prop="image"
                 label="头像"
-                width="50">
+                width="50"
+                >
                 <template slot-scope="scope">
                     <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
                 </template>
@@ -22,7 +25,7 @@
             <el-table-column
                 prop="name"
                 label="姓名"
-                width="250">
+                width="120">
                 <template>
                     <div>
                         <p>13269013653</p>
@@ -40,7 +43,7 @@
             </el-table-column>
         </el-table>
         <span slot="footer" class="dialog-footer">
-            <el-button class="search-friend-btn" size="medium" type="info" plain round @click="changeSearchFriendDialog">取 消</el-button>
+            <!-- <el-button class="search-friend-btn" size="medium" type="info" plain round @click="changeSearchFriendDialog">取 消</el-button> -->
             <!-- <el-button class="search-friend-btn"  size="medium" type="success" plain round @click="changeSearchFriendDialog">确 定</el-button> -->
         </span>
         </el-dialog>
@@ -65,9 +68,14 @@ export default {
       }
    },
    computed: {
-     ...mapState([   
-            'showSearchFriendDialog',
-        ]),
+     showSearchFriendDialog : {
+         get () {
+             return this.$store.state.showSearchFriendDialog;
+         },
+         set(val) {
+             this.$store.state.showSearchFriendDialog = val;
+         }
+     }
    }
 }
 </script>
