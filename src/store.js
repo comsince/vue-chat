@@ -110,6 +110,8 @@ const state = {
     conversations: [],
     //消息列表
     messages: [],
+    //搜索用户列表
+    searchUsers: [],
     deviceId: '',
     userId: '',
     token: '',
@@ -434,6 +436,18 @@ const mutations = {
 
     visibilityChange(state,value){
        state.visibilityState = value;
+    },
+
+    searchUser(state,value){
+       state.vueSocket.searchUser(value);
+    },
+
+    updateSearchUser(state,value){
+       state.searchUsers = value;
+    },
+
+    sendFriendAddRequest(state,value){
+       state.vueSocket.sendFriendAddRequest(value);
     }
 
 }
@@ -501,7 +515,7 @@ const getters = {
             state.notify.setTitle('你有新的消息未读');
         }
         return total;
-    }
+    },
 }
 
 const actions = {
@@ -526,6 +540,9 @@ const actions = {
     changetFirstLogin: ({ commit }, value) => commit('changetFirstLogin', value),
     getUploadToken: ({ commit }, value) => commit('getUploadToken', value),
     visibilityChange: ({ commit }, value) => commit('visibilityChange', value),
+    searchUser: ({ commit }, value) => commit('searchUser', value),
+    updateSearchUser: ({ commit }, value) => commit('updateSearchUser', value),
+    sendFriendAddRequest: ({ commit }, value) => commit('sendFriendAddRequest', value),
 }
 const store = new Vuex.Store({
   state,

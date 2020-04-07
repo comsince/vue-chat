@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -11,6 +11,8 @@ import GetGroupInfoHandler from './handler/getGroupInfoHandler';
 import SendMessageHandler from './handler/sendMessageHandler';
 import UploadTokenHandler from './handler/getUploadtokenHandler'
 import LocalStore from './store/localstore';
+import SearchUserResultHandler from './handler/searchUserResultHandler';
+import FriendAddRequestHandler from './handler/friendAddRequestHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -102,6 +104,8 @@ export default class VueWebSocket {
         this.handlerList.push(new GetGroupInfoHandler(this));
         this.handlerList.push(new SendMessageHandler(this));
         this.handlerList.push(new UploadTokenHandler(this));
+        this.handlerList.push(new SearchUserResultHandler(this));
+        this.handlerList.push(new FriendAddRequestHandler(this));
     }
 
     processMessage(data){
@@ -161,6 +165,19 @@ export default class VueWebSocket {
         websocketprotomessage.setSubSignal(FP);
         websocketprotomessage.setContent({version : 0});
         this.send(websocketprotomessage.toJson());
+    }
+
+    searchUser(keyword){
+        var content = {
+            keyword: keyword,
+            fuzzy: 1,
+            page: 0
+        }
+        this.sendPublishMessage(US,content);
+    }
+
+    sendFriendAddRequest(value){
+        this.sendPublishMessage(FAR,value);
     }
     
     /**

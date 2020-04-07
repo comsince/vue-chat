@@ -14,7 +14,7 @@
 			</div>
 	         <router-link to="/friend" class="icon iconfont icon-pengyou"></router-link>
 	         <!-- <router-link to="/my" class="icon iconfont icon-collection"></router-link> -->
-			<div class="icon iconfont icon-pengyou" @click="showAddRequestTip = !showAddRequestTip">
+			<div class="icon iconfont icon-yaoqinghaoyou" @click="showAddRequestTip = !showAddRequestTip">
 				<addtip v-show="showAddRequestTip"></addtip>
 			</div> 
 	    </div>

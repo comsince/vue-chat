@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "3315144",
+      "name": "邀请好友",
+      "font_class": "yaoqinghaoyou",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "6683016",
+      "name": "加好友",
+      "font_class": "jiahaoyou",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
       "icon_id": "795513",
       "name": "视频",
       "font_class": "ai-video",

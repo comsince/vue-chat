@@ -1,8 +1,8 @@
 {
   "name": "wechat",
-  "version": "1.0.0",
-  "description": "A Vue.js project",
-  "author": "hcn",
+  "version": "1.0.3",
+  "description": "基于unverse-push的开源即时通讯web客户端",
+  "author": "comsince",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",

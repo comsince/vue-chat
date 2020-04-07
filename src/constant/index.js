@@ -21,6 +21,8 @@ export const MP = 'MP';
 export const MS = "MS";
 export const MN = "MN";
 export const GQNUT = "GQNUT";
+export const US = "US";
+export const FAR =  "FAR";
 
 export const LOGIN_API = "http://"+WS_IP+":8081/login";
 
