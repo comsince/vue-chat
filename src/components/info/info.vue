@@ -4,11 +4,12 @@
         <div class="newfriend">
 			<div class="nickname">{{selectedFriend.nickname}}</div>
 		</div>
-		<div class="friendrequest" v-show="selectedFriend.id === 0">
+		<div class="friendrequest" v-show="selectedFriend.id === 0" :style="{height: (appHeight -60) + 'px'}">
            <el-table
-            :data="friendRequestData"
+            :data="friendRequests"
             :show-header="false"
-            style="width: 100%;margin-top:10px">
+            :max-height="appHeight - 71"
+            style="width: 100%;height:100%;margin-top:10px">
             <el-table-column
                 prop="image"
                 label="头像"
@@ -21,10 +22,10 @@
                 prop="name"
                 label="姓名"
                 width="280">
-                <template>
+                <template slot-scope="scope">
                     <div>
-                        <p>13269013653</p>
-                        <p>北京 北京市</p>
+                        <p>{{scope.row.target}}</p>
+                        <p>{{scope.row.reason}}</p>
                     </div>
                 </template>
             </el-table-column>
@@ -33,17 +34,18 @@
                 align="right"
                 >
                 <template slot-scope="scope">
-                    <el-button
+                    <!-- <el-button
                         size="mini"
                         type="info"
-                        @click="handleEdit(scope.$index, scope.row)">拒绝</el-button>
+                        @click="handleEdit(scope.$index, scope.row)">拒绝</el-button> -->
                     <el-button
                         size="mini"
                         type="success"
-                        @click="handleDelete(scope.$index, scope.row)">同意</el-button>
+                        :disabled="scope.row.status === 1"
+                        @click="handleFriendRequest(scope.row)">{{requestBtnMessage(scope.row.status)}}</el-button>
                 </template>
             </el-table-column>
-        </el-table>
+           </el-table>
 		</div>
         <div class="friendInfo" v-show="selectedFriend.id > 0">
 	   	    <div class="esInfo" >
@@ -72,32 +74,37 @@
 
 <script>
 import router from '../../router'
-import { mapGetters } from 'vuex'
+import { mapGetters,mapState } from 'vuex'
 export default {
-	data() {
-        return {
-			friendRequestData: [{
-                image: '2016-05-02',
-                name: '王小虎'
-            },{
-                image: '2016-05-02',
-                name: '王小虎'
-            },{
-                image: '2016-05-02',
-                name: '王小虎'
-            }]
-		}
-	},
     computed: {
         ...mapGetters([
             'selectedFriend'
-        ])
+        ]),
+        ...mapState([
+          'friendRequests',
+          'appHeight'
+        ]),
     },
     methods: {
     	send () {
     		this.$store.dispatch('send')
     		this.$store.dispatch('search', '')
-		},
+        },
+        requestBtnMessage(status){
+           if(status === 1){
+              return "已添加";
+           } else if(status === 2){
+              return "已拒绝"
+           } else if(status === 0){
+              return "同意"
+           }
+        },
+        handleFriendRequest(request){
+            this.$store.dispatch('handleFriendRequest', {
+                targetUid: request.target,
+                status: 1
+            })  
+        }
 		
     }
 }
@@ -112,7 +119,6 @@ export default {
         font-size: 18px
 .friendrequest
     border-top: 1px solid #e7e7e7
-    padding: 10px        
 .friendInfo
     padding: 0 90px
     border-top: 1px solid #e7e7e7

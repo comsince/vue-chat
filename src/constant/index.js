@@ -23,6 +23,9 @@ export const MN = "MN";
 export const GQNUT = "GQNUT";
 export const US = "US";
 export const FAR =  "FAR";
+export const FRN = "FRN";
+export const FHR = "FHR";
+export const FN = "FN";
 
 export const LOGIN_API = "http://"+WS_IP+":8081/login";
 

@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -13,6 +13,9 @@ import UploadTokenHandler from './handler/getUploadtokenHandler'
 import LocalStore from './store/localstore';
 import SearchUserResultHandler from './handler/searchUserResultHandler';
 import FriendAddRequestHandler from './handler/friendAddRequestHandler';
+import NotifyFriendRequestHandler from './handler/notifyFriendRequestHandler';
+import FriendRequestHandler from './handler/friendRequestHandler';
+import HandleFriendRequestHandler from './handler/handleFriendRequestHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -106,6 +109,9 @@ export default class VueWebSocket {
         this.handlerList.push(new UploadTokenHandler(this));
         this.handlerList.push(new SearchUserResultHandler(this));
         this.handlerList.push(new FriendAddRequestHandler(this));
+        this.handlerList.push(new NotifyFriendRequestHandler(this));
+        this.handlerList.push(new FriendRequestHandler(this));
+        this.handlerList.push(new HandleFriendRequestHandler(this));
     }
 
     processMessage(data){
@@ -160,11 +166,7 @@ export default class VueWebSocket {
      * 获取朋友列表
      */
     getFriend(){
-        var  websocketprotomessage  = new WebSocketProtoMessage();
-        websocketprotomessage.setSignal(PUBLISH);
-        websocketprotomessage.setSubSignal(FP);
-        websocketprotomessage.setContent({version : 0});
-        this.send(websocketprotomessage.toJson());
+        this.sendPublishMessage(FP,{version : 0});
     }
 
     searchUser(keyword){
@@ -179,17 +181,22 @@ export default class VueWebSocket {
     sendFriendAddRequest(value){
         this.sendPublishMessage(FAR,value);
     }
+
+    getFriendRequest(version){
+        this.sendPublishMessage(FRP,{
+            version: version
+        });
+    }
+
+    handleFriendRequest(value){
+        this.sendPublishMessage(FHR,value);
+    }
     
     /**
      * 获取用户详细信息
      */
     getUserInfos(userIds){
-        var websocketprotomessage = new WebSocketProtoMessage();
-        websocketprotomessage.setSignal(PUBLISH);
-        websocketprotomessage.setSubSignal(UPUI);
-        websocketprotomessage.setContent(userIds);
-        // console.log("getUserInfos "+websocketprotomessage.toJson());
-        this.send(websocketprotomessage.toJson());
+        this.sendPublishMessage(UPUI,userIds);
     }
 
     /**
@@ -204,16 +211,12 @@ export default class VueWebSocket {
     }
 
     pullMessage(messageId,type = 0,pullType = 0,sendMessageCount = 0){
-        var websocketprotomessage =  new WebSocketProtoMessage();
-        websocketprotomessage.setSignal(PUBLISH);
-        websocketprotomessage.setSubSignal(MP);
-        websocketprotomessage.setContent({
+        this.sendPublishMessage(MP,{
             messageId: messageId,
             type: type,
             pullType : pullType,
             sendMessageCount: sendMessageCount
         });
-        this.send(websocketprotomessage.toJson());
     }
 
     getUploadToken(mediaType){
@@ -233,15 +236,10 @@ export default class VueWebSocket {
         websocketprotomessage.setSignal(PUBLISH);
         websocketprotomessage.setSubSignal(subsignal);
         websocketprotomessage.setContent(content);
-        // console.log("sendPublishMessage "+websocketprotomessage.toJson());
         this.send(websocketprotomessage.toJson());
     }
 
     sendMessage(protoMessage){
-       var websocketprotomessage = new WebSocketProtoMessage();
-       websocketprotomessage.setSignal(PUBLISH);
-       websocketprotomessage.setSubSignal(MS);
-       websocketprotomessage.setContent(protoMessage);
-       this.send(websocketprotomessage.toJson());
+       this.sendPublishMessage(MS,protoMessage);
     }
 }

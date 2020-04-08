@@ -10,6 +10,7 @@
 		    		<div v-if="isShowTime(index,selectedChat.protoMessages)" class="time"><span>{{item.timestamp | getTimeStringAutoShort2}}</span></div>
                     <div v-if="item.content.type === 104" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div>
                     <div v-if="item.content.type === 110" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div>
+                    <div v-if="item.content.type === 90" class="time"><span>{{item.content.content}}</span></div>
 		    		<div v-if="!isNotification(item.content.type)" class="main" :class="{ self: item.direction == 0 ? true : false }">
                         <img class="avatar" width="36" height="36" :src="item.direction == 0 ? 
                         user.img: (userInfos.get(item.from) != null ? userInfos.get(item.from).portrait : 'static/images/vue.jpg')"
@@ -163,7 +164,7 @@ export default {
         },
 
         isNotification(type){
-            return type >= 104 && type <= 112 
+            return type >= 80 && type <= 117 
         }
  
     },

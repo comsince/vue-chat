@@ -112,6 +112,7 @@ const state = {
     messages: [],
     //搜索用户列表
     searchUsers: [],
+    friendRequests: [],
     deviceId: '',
     userId: '',
     token: '',
@@ -182,6 +183,9 @@ const mutations = {
     // 得知用户当前选择的是哪个好友。
     selectFriend (state, value) {
        state.selectFriendId = value
+       if(value === 0){
+          state.vueSocket.getFriendRequest(0);
+       }
     },
 
     //更新朋友列表
@@ -194,7 +198,14 @@ const mutations = {
                 state.friendlist.push(value[i]);
             }    
         }
-        
+        //更新会话信息
+        for(var stateConversationInfo of state.conversations){
+            var friend = state.friendlist.find(friend => friend.wxid === stateConversationInfo.conversationInfo.target);
+            if(friend){
+                stateConversationInfo.name = friend.nickname;
+                stateConversationInfo.img = friend.img;
+            }
+        }
     },
 
     updateUserInfos(state,userInfos){
@@ -293,6 +304,7 @@ const mutations = {
             state.conversations.splice(currentConversationInfoIndex,1);
             state.conversations.unshift(updateStateConverstaionInfo);
         }
+        console.log("protoConversationInfo " +protoConversationInfo.target +" update "+update+" updateStateConverstaionInfo "+updateStateConverstaionInfo.name);
         if(!update){
            updateStateConverstaionInfo = new StateConversationInfo();
            updateStateConverstaionInfo.conversationInfo = protoConversationInfo;
@@ -301,10 +313,10 @@ const mutations = {
            if(protoConversationInfo.conversationType == ConversationType.Single){
                 var friend = state.friendlist.find(friend => friend.wxid === protoConversationInfo.target);
                 if(friend != null){
-                var name = friend.nickname;
-                var img = friend.img == null ? 'static/images/vue.jpg': friend.img;
-                updateStateConverstaionInfo.name = name;
-                updateStateConverstaionInfo.img = img;
+                    var name = friend.nickname;
+                    var img = friend.img == null ? 'static/images/vue.jpg': friend.img;
+                    updateStateConverstaionInfo.name = name;
+                    updateStateConverstaionInfo.img = img;
                 }
             } else {
                 //群聊会话
@@ -443,11 +455,27 @@ const mutations = {
     },
 
     updateSearchUser(state,value){
-       state.searchUsers = value;
+        state.searchUsers = [];
+        for(var searchUser of value){
+            var friend = state.friendlist.find(friend => friend.wxid === searchUser.uid);
+            if(!friend && searchUser.uid !== state.userId){
+               state.searchUsers.push(searchUser);
+            }
+       }
     },
 
     sendFriendAddRequest(state,value){
        state.vueSocket.sendFriendAddRequest(value);
+    },
+
+    updateFriendRequest(state,value){
+       state.friendRequests = value;
+    },
+
+    handleFriendRequest(state,value){
+        var friendRequest = state.friendRequests.find(friendRequest => friendRequest.target === value.targetUid);
+        friendRequest.status = 1;
+       state.vueSocket.handleFriendRequest(value);
     }
 
 }
@@ -543,6 +571,8 @@ const actions = {
     searchUser: ({ commit }, value) => commit('searchUser', value),
     updateSearchUser: ({ commit }, value) => commit('updateSearchUser', value),
     sendFriendAddRequest: ({ commit }, value) => commit('sendFriendAddRequest', value),
+    updateFriendRequest: ({ commit }, value) => commit('updateFriendRequest', value),
+    handleFriendRequest: ({ commit }, value) => commit('handleFriendRequest', value),
 }
 const store = new Vuex.Store({
   state,
