@@ -244,9 +244,10 @@ const mutations = {
                 }
                 stateChatMessage.protoMessages.push(protoMessage);
                 state.messages.push(stateChatMessage);
+            } else {
+                stateChatMessage.protoMessages.push(protoMessage);
             }
             
-            stateChatMessage.protoMessages.push(protoMessage);
         }
 
         //发送消息到对端
@@ -304,7 +305,6 @@ const mutations = {
             state.conversations.splice(currentConversationInfoIndex,1);
             state.conversations.unshift(updateStateConverstaionInfo);
         }
-        console.log("protoConversationInfo " +protoConversationInfo.target +" update "+update+" updateStateConverstaionInfo "+updateStateConverstaionInfo.name);
         if(!update){
            updateStateConverstaionInfo = new StateConversationInfo();
            updateStateConverstaionInfo.conversationInfo = protoConversationInfo;
