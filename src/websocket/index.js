@@ -16,6 +16,7 @@ import FriendAddRequestHandler from './handler/friendAddRequestHandler';
 import NotifyFriendRequestHandler from './handler/notifyFriendRequestHandler';
 import FriendRequestHandler from './handler/friendRequestHandler';
 import HandleFriendRequestHandler from './handler/handleFriendRequestHandler';
+import NotifyFriendHandler from './handler/notifyFriendHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -112,6 +113,7 @@ export default class VueWebSocket {
         this.handlerList.push(new NotifyFriendRequestHandler(this));
         this.handlerList.push(new FriendRequestHandler(this));
         this.handlerList.push(new HandleFriendRequestHandler(this));
+        this.handlerList.push(new NotifyFriendHandler(this));
     }
 
     processMessage(data){

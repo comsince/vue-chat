@@ -44,6 +44,8 @@ export default class ProtoMessageContent{
             case MessageContentType.VOIP_CONTENT_TYPE_START:
                 showText = "[网络电话]";
                 break;
+            case MessageContentType.Tip_Notification:
+                showText =  '[通知消息]';   
         }
         return showText;
     }

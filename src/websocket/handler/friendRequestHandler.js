@@ -13,7 +13,7 @@ export default class FriendRequestHandler extends AbstractMessageHandler {
             var friendRequests = JSON.parse(proto.content);
             var validRequest = [];
             for(var friendRequest of friendRequests){
-               if(friendRequest.target != LocalStore.getUserId()){
+               if(friendRequest.from != LocalStore.getUserId()){
                   validRequest.push(friendRequest);
                }
             }

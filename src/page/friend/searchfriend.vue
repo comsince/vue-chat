@@ -74,6 +74,7 @@ export default {
         return {
             friendInput: '',
             friendRequest: '',
+            currentSearchUser: null,
             innerVisible: false
         }
     },
@@ -93,14 +94,15 @@ export default {
       },
       sendFriendRequest(){
           this.innerVisible=false;
+          this.$store.dispatch("sendFriendAddRequest",{
+            reason: this.friendRequest,
+            targetUserId: this.currentSearchUser.uid
+        });
       },
-      showFriendRequestDialog(searchUser){
+      showFriendRequestDialog(currentSearchUser){
         this.innerVisible=true;
         this.friendRequest = "我是"+this.$store.state.user.name;
-        this.$store.dispatch("sendFriendAddRequest",{
-            reason: this.friendRequest,
-            targetUserId: searchUser.uid
-        });
+        this.currentSearchUser = currentSearchUser;
       }
    },
    computed: {

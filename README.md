@@ -55,6 +55,7 @@
 ![image](./attachment/vue-chat-rtc-video.png)
 
 ### V1.0.3
+* [待解决]同一浏览器只允许登录一个账户
 * 增加好友搜索，好友添加功能，形成功能闭环
 
 ## Build Setup

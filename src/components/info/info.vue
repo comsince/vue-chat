@@ -9,7 +9,7 @@
             :data="friendRequests"
             :show-header="false"
             :max-height="appHeight - 71"
-            style="width: 100%;height:100%;margin-top:10px">
+            style="width: 100%;height:100%;">
             <el-table-column
                 prop="image"
                 label="头像"
@@ -24,7 +24,7 @@
                 width="280">
                 <template slot-scope="scope">
                     <div>
-                        <p>{{scope.row.target}}</p>
+                        <p>{{scope.row.from}}</p>
                         <p>{{scope.row.reason}}</p>
                     </div>
                 </template>
@@ -42,7 +42,7 @@
                         size="mini"
                         type="success"
                         :disabled="scope.row.status === 1"
-                        @click="handleFriendRequest(scope.row)">{{requestBtnMessage(scope.row.status)}}</el-button>
+                        @click="handleFriendRequest(scope.row)">{{requestBtnMessage(scope.row)}}</el-button>
                 </template>
             </el-table-column>
            </el-table>
@@ -75,6 +75,7 @@
 <script>
 import router from '../../router'
 import { mapGetters,mapState } from 'vuex'
+import LocalStore from '../../websocket/store/localstore'
 export default {
     computed: {
         ...mapGetters([
@@ -90,18 +91,18 @@ export default {
     		this.$store.dispatch('send')
     		this.$store.dispatch('search', '')
         },
-        requestBtnMessage(status){
-           if(status === 1){
+        requestBtnMessage(request){
+           if(request.status === 1){
               return "已添加";
-           } else if(status === 2){
+           } else if(request.status === 2){
               return "已拒绝"
-           } else if(status === 0){
-              return "同意"
+           } else if(request.status === 0){
+              return "接受"
            }
         },
         handleFriendRequest(request){
             this.$store.dispatch('handleFriendRequest', {
-                targetUid: request.target,
+                targetUid: request.from,
                 status: 1
             })  
         }

@@ -317,6 +317,9 @@ const mutations = {
                     var img = friend.img == null ? 'static/images/vue.jpg': friend.img;
                     updateStateConverstaionInfo.name = name;
                     updateStateConverstaionInfo.img = img;
+                } else {
+                    updateStateConverstaionInfo.name = protoConversationInfo.target;
+                    updateStateConverstaionInfo.img = 'static/images/vue.jpg';
                 }
             } else {
                 //群聊会话
@@ -473,7 +476,7 @@ const mutations = {
     },
 
     handleFriendRequest(state,value){
-        var friendRequest = state.friendRequests.find(friendRequest => friendRequest.target === value.targetUid);
+        var friendRequest = state.friendRequests.find(friendRequest => friendRequest.from === value.targetUid);
         friendRequest.status = 1;
        state.vueSocket.handleFriendRequest(value);
     }
