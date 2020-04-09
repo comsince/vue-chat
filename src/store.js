@@ -416,7 +416,7 @@ const mutations = {
 
            var stateChatMessage = state.messages.find(stateChatMessage => stateChatMessage.target === groupInfo.target);
            if(stateChatMessage){
-               stateChatMessage.name = groupInfo.name;
+               stateChatMessage.name = groupInfo.name+"("+groupInfo.memberCount+")";
            }
         }
     },
