@@ -19,8 +19,7 @@
 				</router-link>
 			</div>
 			
-	         <!-- <router-link to="/my" class="icon iconfont icon-collection"></router-link> -->
-			<div class="icon iconfont icon-yaoqinghaoyou" @click="showAddRequestTip = !showAddRequestTip">
+			<div class="icon iconfont icon-jiahaoyou" @click="showAddRequestTip = !showAddRequestTip">
 				<addtip v-show="showAddRequestTip"></addtip>
 			</div> 
 	    </div>
@@ -70,7 +69,16 @@ export default {
 			},200);
 			
 		}
-    }
+	},
+	
+	mounted(){
+		document.addEventListener("click",e=>{
+			var isString = typeof(e.target.className) == 'string'
+			if (isString && e.target.className.search('icon-jiahaoyou') == -1 && e.target.className !== 'add-content' && this.showAddRequestTip) {
+                this.showAddRequestTip = false;
+            }
+		});
+	}
 }
 </script>
 

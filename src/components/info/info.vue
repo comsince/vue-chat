@@ -8,7 +8,7 @@
            <el-table
             :data="friendRequests"
             :show-header="false"
-            :max-height="appHeight - 71"
+            :max-height="appHeight - 61"
             style="width: 100%;height:100%;">
             <el-table-column
                 prop="image"

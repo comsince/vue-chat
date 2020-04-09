@@ -12,7 +12,7 @@
       <label style="margin-top: 50px">手机号码：</label>
       <input v-model="mobile" type="tel" pattern="^\d{11}$" title="请输入账号">
       <label>验证码：</label>
-      <input v-model="code" type="num" title="请输入密码">
+      <input v-model="code" type="num" title="请输入密码" @keydown.enter="loginEnter">
       <input class="bt" @click="login" type="submit" value="登录">
     </div>
   </div>
@@ -69,7 +69,12 @@ export default {
           }).catch((error) => {
             console.log(error)
           })
-    }  
+    },
+    loginEnter(e){
+        if(e.keyCode === 13 && this.mobile != '' && this.code != ''){
+            this.login();
+        }
+    }
   }
 }
 </script>

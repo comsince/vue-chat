@@ -1,7 +1,7 @@
 <template>
  <div class="add-content">
    <div>
-    <a @click="showSearchFriendDialog" class="iconsize wx-chat-icon"><i class="iconfont icon-pengyou iconhover"></i> 添加好友 </a>
+    <a @click="showSearchFriendDialog" class="iconsize wx-chat-icon"><i class="iconfont icon-jiahaoyou iconhover"></i> 添加好友 </a>
    </div> 
    <div>
     <a class="iconsize wx-chat-icon"><i class="iconfont icon-pengyou iconhover"></i> 创建群聊 </a>
@@ -14,9 +14,9 @@ export default {
 	name: 'addtip',
 	methods: {
 		showSearchFriendDialog(){
-             this.$store.state.showSearchFriendDialog = true;
+            this.$store.state.showSearchFriendDialog = true;
 		}
-	}    
+	},
 }
 </script>
 
@@ -50,18 +50,18 @@ export default {
 }
 
 .add-content a:hover {
-	color: #09ab9b
+	color: rgb(0,220,65)
 }
 
 .add-content a:hover i {
-	color: #09ab9b
+	color: rgb(0,220,65)
 }
 
 .iconhover:hover {
-	color: #09ab9b
+	color: rgb(0,220,65)
 }
 
 .iconhover.on:hover {
-	color: #009788
+	color: rgb(0,220,65)
 }
 </style>

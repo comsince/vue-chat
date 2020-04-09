@@ -445,7 +445,7 @@ const mutations = {
           stateChatMessage.protoMessages.push(protoMessage);
           state.messages.push(stateChatMessage);
        }
-       console.log("current message "+protoMessage.messageId +" isExist "+isExistMessage);
+       //console.log("current message "+protoMessage.messageId +" isExist "+isExistMessage);
        if(!isExistMessage){
            var protoConversationInfo = new ProtoConversationInfo();
            protoConversationInfo.conversationType = protoMessage.conversationType;
