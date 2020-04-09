@@ -12,7 +12,13 @@
 				<router-link to="/conversation" class="icon iconfont icon-dkw_xiaoxi" >
 				</router-link>
 			</div>
-	         <router-link to="/friend" class="icon iconfont icon-pengyou"></router-link>
+			<div class="friend-item">
+				<span v-if="newFriendRequestCount > 0" class="unread-friend-request-num">
+				</span>
+				<router-link to="/friend" class="icon iconfont icon-pengyou">	
+				</router-link>
+			</div>
+			
 	         <!-- <router-link to="/my" class="icon iconfont icon-collection"></router-link> -->
 			<div class="icon iconfont icon-yaoqinghaoyou" @click="showAddRequestTip = !showAddRequestTip">
 				<addtip v-show="showAddRequestTip"></addtip>
@@ -38,10 +44,11 @@ export default {
 	},
     computed: {
        ...mapState([
-       	  'user',
+			 'user',
+			 'newFriendRequestCount'
 	   ]),
 	   ...mapGetters([
-		   'unreadTotalCount'
+		   'unreadTotalCount',
 	   ])
     },
     methods: {
@@ -98,6 +105,22 @@ export default {
 	        font-size: 22px
 	    .icon-msg
 	        padding: 0 19px
+	.friend-item
+	    position:relative
+		.unread-friend-request-num
+			display: inline-block
+			min-width: 5px
+			height: 5px
+			background-color: red
+			border-radius: 8px
+			text-align: center
+			font-size: 12px
+			color: #fff
+			line-height: 16px
+			position:absolute
+			top: 25px
+			right: 17px
+			z-index: 10	
 	.conversation-item
 	    position:relative
 		.unread-num

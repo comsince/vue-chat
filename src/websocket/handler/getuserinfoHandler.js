@@ -13,7 +13,7 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
            var stateFriendList = [];
            var userInfos = [];
            for(var i in userInfoList){
-               var displayName = userInfoList[i].displayName == null ? userInfoList[i].mobile : userInfoList[i].displayName;
+               var displayName = userInfoList[i].displayName === '' ? userInfoList[i].mobile : userInfoList[i].displayName;
                stateFriendList.push({
                 id: parseInt(i) + 1,
                 wxid: userInfoList[i].uid, //微信号
@@ -27,11 +27,9 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
                });
                userInfos.push(UserInfo.convert2UserInfo(userInfoList[i]));
            }
-           console.log("stateFriendList "+stateFriendList.length);
+           console.log("state user size "+stateFriendList.length);
            this.vueWebsocket.sendAction("updateUserInfos",userInfos);
            this.vueWebsocket.sendAction("updateFriendList",stateFriendList);
-           //更新当前会话
-           //this.vueWebsocket.sendAction('selectConversation',stateFriendList[0].wxid);
        }
     }
 }

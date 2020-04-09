@@ -17,6 +17,7 @@ import Notify from '@wcjiang/notify';
 import MessageConfig from './websocket/message/messageConfig';
 import ChatManager from './websocket/chatManager';
 import ProtoMessageContent from './websocket/message/protomessageContent';
+import Logger from './websocket/utils/logger';
 
 Vue.use(Vuex)
 
@@ -45,6 +46,7 @@ const state = {
         }
         
     ],
+    friendIds: [],
     //emoji表情
     emojis: [
         { file: '100.gif', code: '/::)', title: '微笑',reg:/\/::\)/g },
@@ -113,6 +115,7 @@ const state = {
     //搜索用户列表
     searchUsers: [],
     friendRequests: [],
+    newFriendRequestCount: 0,
     deviceId: '',
     userId: '',
     token: '',
@@ -184,18 +187,46 @@ const mutations = {
     selectFriend (state, value) {
        state.selectFriendId = value
        if(value === 0){
-          state.vueSocket.getFriendRequest(0);
+          state.newFriendRequestCount = 0;
+          state.vueSocket.getFriendRequest(LocalStore.getFriendRequestVersion());
        }
     },
 
     //更新朋友列表
     updateFriendList(state,value){
-        var first = state.friendlist[0];
-        state.friendlist = [];
-        state.friendlist.push(first);
+        if(state.friendlist.length === 0){
+           state.friendlist.push({
+            id: 0,
+            wxid: "new", //微信号
+            initial: '新的朋友', //姓名首字母
+            img: 'static/images/newfriend.jpg', //头像
+            signature: "", //个性签名
+            nickname: "新的朋友",  //昵称
+            sex: 0,   //性别 1为男，0为女
+            remark: "新的朋友",  //备注
+            area: "",  //地区
+            });
+        }
         for(var i in value){
-            if(value[i].wxid != state.userId){
-                state.friendlist.push(value[i]);
+            var currentUser = value[i];
+            if(currentUser.wxid != state.userId){
+                var friendUid = state.friendIds.find(friendUid => friendUid === currentUser.wxid);
+                Logger.log("current user id "+friendUid+" state friend length "+state.friendlist.length);
+                if(friendUid){
+                  var isExist = false;
+                  for(var j in state.friendlist){
+                      var friend = state.friendlist[j];
+                      if(friend.wxid === currentUser.wxid){
+                         isExist = true;
+                         state.friendlist.splice(j,1,currentUser);
+                         break;
+                      }
+                  }
+                  Logger.log("uid "+friendUid +" isExist "+isExist);
+                  if(!isExist){
+                    state.friendlist.push(currentUser);
+                  }
+                }
             }    
         }
         //更新会话信息
@@ -204,6 +235,14 @@ const mutations = {
             if(friend){
                 stateConversationInfo.name = friend.nickname;
                 stateConversationInfo.img = friend.img;
+            }
+        }
+
+        //更新消息列表信息
+        for(var stateChatMessage of state.messages){
+            var friend = state.friendlist.find(friend => friend.wxid === stateChatMessage.target);
+            if(friend){
+                stateChatMessage.name = friend.nickname;
             }
         }
     },
@@ -432,8 +471,10 @@ const mutations = {
         state.vueSocket.sendDisConnectMessage();
         state.vueSocket = null;
         state.voipClient = null;
-        state.conversations = [],
-        state.messages = [],
+        state.conversations = [];
+        state.messages = [];
+        state.friendlist = [];
+        state.friendIds = [];
         LocalStore.clearLocalStore();
         ChatManager.removeOnReceiveMessageListener();
         //发送断开消息，清除session，防止同一个设备切换登录导致的验证失败
@@ -472,13 +513,26 @@ const mutations = {
     },
 
     updateFriendRequest(state,value){
-       state.friendRequests = value;
+        for(var newFriendRequst of value){
+            var friendRequest = state.friendRequests.find(friendRequest => friendRequest.from === newFriendRequst.from);
+            if(friendRequest){
+               friendRequest.status = newFriendRequst.status;
+            } else {
+                state.newFriendRequestCount += 1;
+                state.friendRequests.push(newFriendRequst);
+            }
+        }
     },
 
     handleFriendRequest(state,value){
         var friendRequest = state.friendRequests.find(friendRequest => friendRequest.from === value.targetUid);
         friendRequest.status = 1;
-       state.vueSocket.handleFriendRequest(value);
+        state.vueSocket.handleFriendRequest(value);
+    },
+    updateFriendIds(state,value){
+       if(value){
+           state.friendIds = value;
+       }
     }
 
 }
@@ -576,6 +630,7 @@ const actions = {
     sendFriendAddRequest: ({ commit }, value) => commit('sendFriendAddRequest', value),
     updateFriendRequest: ({ commit }, value) => commit('updateFriendRequest', value),
     handleFriendRequest: ({ commit }, value) => commit('handleFriendRequest', value),
+    updateFriendIds: ({ commit }, value) => commit('updateFriendIds', value),
 }
 const store = new Vuex.Store({
   state,

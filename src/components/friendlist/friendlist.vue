@@ -5,7 +5,12 @@
         <li v-bind:key = index v-for="(item, index) in searchedFriendlist" class="frienditem"  :class="{ noborder: !item.initial}">
             <div class="list_title" v-if="item.initial">{{item.initial}}</div>
             <div class="friend-info" :class="{ active: item.id === selectFriendId }" @click="selectFriend(item.id)">
-                <img class="avatar"  width="36" height="36" :src="item.img" onerror="this.src='static/images/vue.jpg'">
+                <div class="friend-item">
+                    <span v-if="newFriendRequestCount > 0 && item.id === 0" class="unread-friend-request-num">
+                            <span class="unread-num-show">{{newFriendRequestCount}}</span>
+                    </span>
+                    <img class="avatar"  width="36" height="36" :src="item.img" onerror="this.src='static/images/vue.jpg'">
+			    </div>
                 <div class="remark">{{item.remark}}</div>
             </div>
         </li>
@@ -20,10 +25,11 @@ export default {
         ...mapState([
             'selectFriendId',
             'searchText',
-            'appHeight'
+            'appHeight',
+            'newFriendRequestCount'
         ]),
         ...mapGetters([
-            'searchedFriendlist'
+            'searchedFriendlist',
         ])
     },
     methods: {
@@ -66,7 +72,26 @@ export default {
             .remark
                 font-size: 14px
                 line-height: 36px
-
+            .friend-item
+                position:relative
+                .unread-friend-request-num
+                    display: inline-block
+                    min-width: 16px
+                    height: 16px
+                    background-color: red
+                    border-radius: 8px
+                    text-align: center
+                    font-size: 12px
+                    color: #fff
+                    line-height: 16px
+                    position:absolute
+                    top: -5px
+                    right: 5px
+                    z-index: 10
+                    .unread-num-show
+                        font-size:10px;
+                        -webkit-transform:scale(0.8);
+                        display:block;	
 
 
 </style>
