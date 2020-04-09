@@ -518,7 +518,9 @@ const mutations = {
             if(friendRequest){
                friendRequest.status = newFriendRequst.status;
             } else {
-                state.newFriendRequestCount += 1;
+                if(newFriendRequst.status == 0){
+                    state.newFriendRequestCount += 1;
+                }
                 state.friendRequests.push(newFriendRequst);
             }
         }
