@@ -2,7 +2,8 @@
 <template>
 	<div class="mycard" ref="mycardRef">
 	    <header>
-	    	<img :src="user.img" class="avatar" @click="changeFullScreenMode">
+	    	<img :src="user.img" class="avatar" @click="showPersonalCard = !showPersonalCard" @dblclick="changeFullScreenMode">
+			<personcard v-if="showPersonalCard" v-bind:userId="userId"></personcard>
 	    </header>
 	    <div class="navbar" @click="clearSearch">
 			<div class="conversation-item">
@@ -32,18 +33,22 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import addtip from '../../components/menu/addtip'
+import personcard from '../../components/menu/personalCard'
 export default {
 	components: {
-		addtip
+		addtip,
+		personcard
 	},
 	data() {
 		return {
-			showAddRequestTip: false
+			showAddRequestTip: false,
+			showPersonalCard: false
 		}
 	},
     computed: {
        ...mapState([
 			 'user',
+			 'userId',
 			 'newFriendRequestCount'
 	   ]),
 	   ...mapGetters([

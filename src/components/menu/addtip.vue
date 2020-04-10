@@ -26,7 +26,8 @@ export default {
 	background: #fff;
 	width: 112px;
 	text-align: center;
-	top: 230px;
+	top: 200px;
+	left: 60px;
 	z-index: 20;
 	padding: 8px 0;
 	box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
