@@ -1,6 +1,7 @@
-export const WS_PROTOCOL = 'ws';
-export const WS_IP = '120.79.90.245';
-// export const WS_IP = '172.16.46.201';
+export const WS_PROTOCOL = 'wss';
+//export const WS_IP = '120.79.90.245';
+export const WS_IP = 'github.comsince.cn';
+// export const WS_IP = 'localhost';
 export const WS_PORT = 9326;
 export const HEART_BEAT_INTERVAL = 25 * 1000;
 export const RECONNECT_INTERVAL = 30 * 1000;
@@ -28,7 +29,7 @@ export const FHR = "FHR";
 export const FN = "FN";
 export const MMI = "MMI";
 
-export const LOGIN_API = "http://"+WS_IP+":8081/login";
+export const LOGIN_API = "https://"+WS_IP+":8443/login";
 
 export const KEY_VUE_DEVICE_ID = 'vue-device-id';
 export const KEY_VUE_USER_ID = 'vue-user-id'; 
