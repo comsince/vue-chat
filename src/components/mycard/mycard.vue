@@ -81,6 +81,10 @@ export default {
 			var isString = typeof(e.target.className) == 'string'
 			if (isString && e.target.className.search('icon-jiahaoyou') == -1 && e.target.className !== 'add-content' && this.showAddRequestTip) {
                 this.showAddRequestTip = false;
+			}
+			let personCardDom = document.getElementById("personal-card");
+			if (isString && e.target.className.search('avatar') == -1 && personCardDom && !personCardDom.contains(event.target) && this.showPersonalCard) {
+                this.showPersonalCard = false;
             }
 		});
 	}

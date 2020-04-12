@@ -1,9 +1,16 @@
 <template>
-    <div class="personal-card scale-fade">
+    <div class="personal-card" id="personal-card">
         <div class="profile_mini">
             <div class="profile_mini_hd">
                 <div class="avatar">
-                    <img class="img" :src="personImg" alt="">
+                    <el-tooltip class="item" effect="dark" content="点击更换头像" placement="top">
+                        <div>
+                            <a href="javascript:void(0)" id="add" @click="openfile">
+                                <img class="img" :src="user.img" alt="点击更换头像">
+                            </a>
+                            <input type="file" accept="image/*" style="display:none" ref="changeAvatar" @change="changeAvatar"/>
+                        </div>
+                    </el-tooltip>
                 </div>
             </div>
             <div class="profile_mini_bd">
@@ -11,13 +18,17 @@
                     <a class="opt">
                        <i class="web_wechat_tab_launch-chat"></i>
                     </a>
-                    <h4 class="nickname">{{displayName}}</h4>
-                    <i  class="web_wechat_men" v-show="false"></i>
+                    <el-tooltip class="item" effect="dark" content="点击修改昵称，最长6个字符" placement="top-start">
+                        <div class="nickname_item">
+                            <p class="nickname" contenteditable="true" @keydown.enter="modifyNickName" @blur="modifyNickNameBlur">{{displayName}}</p>
+                            <i  class="web_wechat_men" v-show="false"></i>
+                        </div>
+                    </el-tooltip>
                 </div>
                 <div class="meta_area">
-                       <div class="meta_item">
+                    <div class="meta_item">
                         <label class="label" for="">备注：</label>
-                        <p class="value " contenteditable="">{{extra}}</p>
+                        <p class="value" contenteditable="true" @keydown.enter="modifyExtra">{{extra}}</p>
                     </div>
                     <div class="meta_item">
                         <label class="label">手机号：</label>
@@ -31,34 +42,122 @@
 
 <script>
 import Logger from '../../websocket/utils/logger';
+import MyInfoType from '../../websocket/message/myInfoType'
+import MessageContentMediaType from '../../websocket/message/messageContentMediaType';
+import LocalStore from '../../websocket/store/localstore';
+import * as qiniu from 'qiniu-js'
+import { mapGetters, mapState } from 'vuex'
 export default {
     name: 'persionCard',
     props: ['userId'],
     data() {
         return {
-            extra: '',
-            address: ''
+            extra: '备注无',
+            address: '',
         }
     },
+    methods: {
+       modifyNickName(e){
+           if(e.keyCode ==13){
+              this.modifyNickNameBlur(e);
+              e.preventDefault();
+           }
+       },
+       modifyNickNameBlur(e){
+             Logger.log("modify displayName "+e.target.innerText);
+              var inputName = e.target.innerText;
+              this.displayName = inputName;
+              if(inputName.length < 7){
+                 this.$store.dispatch("modifyMyInfo",{
+                     type: MyInfoType.Modify_DisplayName,
+                     value: inputName
+                 });
+              }
+       },
+       modifyExtra(e){
+           if(e.keyCode ==13){
+              e.preventDefault();
+           }
+       },
+       openfile(){
+           this.$refs.changeAvatar.click();
+       },
+       changeAvatar(e){
+           var _this = this;
+           var store = this.$store;
+           store.dispatch('getUploadToken', MessageContentMediaType.Image);
+           console.log("changeAvatar "+e.target.value);
+           var file = e.target.files[0];
+           var key = MessageContentMediaType.Image +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
+           setTimeout(()=> {
+                var token = LocalStore.getImageUploadToken();
+                console.log("upload avatar key "+key+" token "+token);
+                if(token){
+                    var observable = qiniu.upload(file, key, token, null, null);
+                    var observer = {
+                            next(res){
+                                console.log('uploading '+res.total.percent);
+                            },
+                            error(err){
+                                console.log("upload error "+err.code +" message "+err.message);
+                            }, 
+                            complete(res){
+                                console.log("upload complete "+res);
+                                var localPath = e.target.value;
+                                var remotePath = "http://image.comsince.cn/"+key;
+                                _this.$store.state.user.img = remotePath;
+                                store.dispatch("modifyMyInfo",{
+                                    type: MyInfoType.Modify_Portrait,
+                                    value: remotePath
+                                });
+                            }
+                        }
+                    observable.subscribe(observer);
+                }
+                
+           },200);
+           this.$refs.changeAvatar.value = null;
+       }
+    },
     computed: {
-        personImg() {
-            var userInfo = this.$store.state.userInfos.get(this.userId);
-            var portrait = '';
-            if(userInfo){
-                portrait = userInfo.portrait;
-            } 
-            if(portrait === ''){
-               portrait = 'static/images/vue.jpg';
+        ...mapState([   
+            'user',
+        ]),
+        personImg: {
+            get() {
+                var userInfo = this.$store.state.userInfos.get(this.userId);
+                var portrait = '';
+                if(userInfo){
+                    portrait = userInfo.portrait;
+                } 
+                if(portrait === ''){
+                    portrait = 'static/images/vue.jpg';
+                }
+                return portrait;
+            },
+            set(value) {
+                var userInfo = this.$store.state.userInfos.get(this.userId);
+                if(userInfo){
+                    userInfo.portrait = value;
+                }
             }
-            return portrait;
+
         },
-        displayName(){
-           var userInfo = this.$store.state.userInfos.get(this.userId);
-           var displayName = '';
-           if(userInfo){
-               displayName = userInfo.displayName == '' ? userInfo.mobile : userInfo.displayName;
+        displayName: {
+           get() {
+                var userInfo = this.$store.state.userInfos.get(this.userId);
+                var displayName = '';
+                if(userInfo){
+                    displayName = userInfo.displayName == '' ? userInfo.mobile : userInfo.displayName;
+                } 
+                return displayName;
+           },
+           set(value) {
+                var userInfo = this.$store.state.userInfos.get(this.userId);
+                if(userInfo){
+                    userInfo.displayName = value;
+                }
            } 
-           return displayName;
         },
         mobile() {
             var userInfo = this.$store.state.userInfos.get(this.userId);
@@ -77,7 +176,7 @@ export default {
 .personal-card {
 	position: absolute;
 	background: #fff;
-	width: 220px;
+	width: 250px;
 	top: 20px;
 	left: 60px;
 	z-index: 20;
@@ -85,23 +184,22 @@ export default {
 	border-radius: 4px
 }
 
-
-.scale-fade {
-    transition: all 0 cubic-bezier(.25,.46,.45,.94);
-    transition-timing-function: cubic-bezier(.25,.46,.45,.94);
-}
-
 .profile_mini_hd .avatar .img {
-    width: 220px;
+    width: 250px;
     height: 220px;
     display: block;
     border-top-left-radius:4px;
     border-top-right-radius:4px;
+    cursor: pointer;
 }
 
 .profile_mini_bd {
     padding: 20px;
     min-height: 74px;
+}
+
+.profile_mini_bd .nickname_item {
+    overflow: hidden;
 }
 
 .profile_mini_bd .nickname_area {
@@ -127,15 +225,14 @@ export default {
 .profile_mini_bd .nickname {
     font-weight: 400;
     font-size: 18px;
-    display: inline-block;
     vertical-align: middle;
-    max-width: 110px;
-    width: auto;
+    width: 115px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     word-wrap: normal;
     line-height: 1.6;
+    margin-left: 5px;
 }
 
 .web_wechat_men {
@@ -154,6 +251,7 @@ export default {
 
 .profile_mini_bd .meta_area {
     line-height: 1.6;
+    margin-left: 5px;
 }
 
 .profile_mini_bd .meta_item {

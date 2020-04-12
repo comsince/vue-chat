@@ -166,7 +166,7 @@ export default {
            store.dispatch('getUploadToken', MessageContentMediaType.Image);
            console.log("sendpic "+e.target.value);
            var file = e.target.files[0];
-           var key = MessageContentMediaType.Image +"-"+localStorage.getItem('vue-user-id')+"-"+new Date().getTime()+"-"+file.name;
+           var key = MessageContentMediaType.Image +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
            setTimeout(()=> {
                 var token = LocalStore.getImageUploadToken();
                 console.log("upload file key "+key+" token "+token);

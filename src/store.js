@@ -535,6 +535,9 @@ const mutations = {
        if(value){
            state.friendIds = value;
        }
+    },
+    modifyMyInfo(state,value){
+        state.vueSocket.modifyMyInfo(value);
     }
 
 }
@@ -633,6 +636,7 @@ const actions = {
     updateFriendRequest: ({ commit }, value) => commit('updateFriendRequest', value),
     handleFriendRequest: ({ commit }, value) => commit('handleFriendRequest', value),
     updateFriendIds: ({ commit }, value) => commit('updateFriendIds', value),
+    modifyMyInfo: ({ commit }, value) => commit('modifyMyInfo', value),
 }
 const store = new Vuex.Store({
   state,

@@ -26,6 +26,7 @@ export const FAR =  "FAR";
 export const FRN = "FRN";
 export const FHR = "FHR";
 export const FN = "FN";
+export const MMI = "MMI";
 
 export const LOGIN_API = "http://"+WS_IP+":8081/login";
 

@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -17,6 +17,7 @@ import NotifyFriendRequestHandler from './handler/notifyFriendRequestHandler';
 import FriendRequestHandler from './handler/friendRequestHandler';
 import HandleFriendRequestHandler from './handler/handleFriendRequestHandler';
 import NotifyFriendHandler from './handler/notifyFriendHandler';
+import ModifyInfoHandler from './handler/modifyMyInfoHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -114,6 +115,7 @@ export default class VueWebSocket {
         this.handlerList.push(new FriendRequestHandler(this));
         this.handlerList.push(new HandleFriendRequestHandler(this));
         this.handlerList.push(new NotifyFriendHandler(this));
+        this.handlerList.push(new ModifyInfoHandler(this));
     }
 
     processMessage(data){
@@ -199,6 +201,17 @@ export default class VueWebSocket {
      */
     getUserInfos(userIds){
         this.sendPublishMessage(UPUI,userIds);
+    }
+
+    /**
+     * 
+     * @param {用户信息} info: {
+     * type:  0
+     * value: 
+     * }
+     */
+    modifyMyInfo(info){
+        this.sendPublishMessage(MMI,info);
     }
 
     /**
