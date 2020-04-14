@@ -12,14 +12,17 @@
       <label style="margin-top: 50px">手机号码：</label>
       <input v-model="mobile" type="tel" pattern="^\d{11}$" title="请输入账号">
       <label>验证码：</label>
-      <input v-model="code" type="num" title="请输入密码" @keydown.enter="loginEnter">
+      <div class="pass-form">
+        <input class="pass-input" v-model="code" type="num" title="请输入密码" @keydown.enter="loginEnter">
+        <el-button class="send-verify-code" type="primary" :disabled="sendVerifyBtnDisabled" @click="sendVerifyCode">{{sendVerifyBtnText}}</el-button>
+      </div>
       <input class="bt" @click="login" type="submit" value="登录">
     </div>
   </div>
 </template>
 
 <script>
-import { LOGIN_API, KEY_VUE_DEVICE_ID, KEY_VUE_USER_ID, KEY_VUE_TOKEN } from '../../constant'
+import { LOGIN_API, KEY_VUE_DEVICE_ID, KEY_VUE_USER_ID, KEY_VUE_TOKEN, SNED_VERIFY_CODE_API } from '../../constant'
 import { mapGetters } from 'vuex'
 import UUID from 'uuid-js'
 import axios from 'axios'
@@ -29,8 +32,16 @@ export default {
     return {
       mobile: '',
       code: '',
-      loginAPI: LOGIN_API // 通过用户ID登录接口
+      countDownTimer: null,
+      sendVerifyBtnText: '发送验证码',
+      sendVerifyBtnDisabled: false,
+      loginAPI: LOGIN_API, // 通过用户ID登录接口
     }
+  },
+  destroyed() {
+      if(this.countDownTimer){
+          clearInterval(this.countDownTimer);
+      }
   },
   methods: {
     login () {
@@ -45,7 +56,7 @@ export default {
         if(!(/^1[3|4|5|7|8]\d{9}$/.test(this.mobile))){
            this.$message.error('请输入正确的手机号');
            return; 
-        } 
+        }
         axios({
             method: 'post',
             url: LOGIN_API,
@@ -80,8 +91,45 @@ export default {
         if(e.keyCode === 13 && this.mobile != '' && this.code != ''){
             this.login();
         }
+    },
+    sendVerifyCode(){
+        if(!(/^1[3|4|5|7|8]\d{9}$/.test(this.mobile))){
+           this.$message.error('请输入正确的手机号');
+           return; 
+        }
+        axios({
+          method: 'post',
+          url: SNED_VERIFY_CODE_API,
+          data: JSON.stringify({
+            mobile: this.mobile
+          }),
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8'
+          }
+        }).then(response => {
+          console.log('send code '+response.data.code+" message "+response.data.message)
+          if(response.data.code == 0){
+            var _this = this;
+            this.sendVerifyBtnDisabled = true; 
+            var countDown = 60;
+            this.countDownTimer = setInterval(() => {
+              _this.sendVerifyBtnText = --countDown +"S";
+              // console.log("countdown "+countDown);
+              if(countDown == 0){
+                 clearInterval(_this.countDownTimer);
+                 _this.sendVerifyBtnDisabled = false;
+                 _this.sendVerifyBtnText = "发送验证码";
+              }
+            }, (1000));
+          } else {
+            this.$message.error(response.data.message);
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+        
     }
-  }
+  },
 }
 </script>
 
@@ -171,5 +219,21 @@ export default {
   }
   .login_panel .bt:hover {
     background-color: #2f86f6;
+  }
+
+  .pass-form {
+    /* position: relative; */
+  }
+  .pass-form .pass-input {
+    display: block;
+    float: left;
+    margin-right: 5px;
+    width: 162px;
+  }
+  .pass-form .send-verify-code {
+    display: block;
+    float: left;
+    width: 103px;
+    height: 42px;
   }
 </style>
