@@ -53,7 +53,7 @@ export default {
            localStorage.setItem(KEY_VUE_DEVICE_ID,vueDeviceId);
         }
         console.log('vue deviceId '+vueDeviceId);
-        if(!(/^1[3|4|5|7|8]\d{9}$/.test(this.mobile))){
+        if(!(/^1[3|4|5|7|8|9]\d{9}$/.test(this.mobile))){
            this.$message.error('请输入正确的手机号');
            return; 
         }
@@ -93,7 +93,7 @@ export default {
         }
     },
     sendVerifyCode(){
-        if(!(/^1[3|4|5|7|8]\d{9}$/.test(this.mobile))){
+        if(!(/^1[3|4|5|7|8|9]\d{9}$/.test(this.mobile))){
            this.$message.error('请输入正确的手机号');
            return; 
         }
