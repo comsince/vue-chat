@@ -18,7 +18,7 @@
                     <a class="opt">
                        <i class="web_wechat_tab_launch-chat"></i>
                     </a>
-                    <el-tooltip class="item" effect="dark" content="点击修改昵称，最长6个字符" placement="top-start">
+                    <el-tooltip class="item" effect="dark" content="点击修改昵称，最长10个字符" placement="top-start">
                         <div class="nickname_item">
                             <p class="nickname" contenteditable="true" @keydown.enter="modifyNickName" @blur="modifyNickNameBlur">{{displayName}}</p>
                             <i  class="web_wechat_men" v-show="false"></i>
@@ -67,7 +67,7 @@ export default {
              Logger.log("modify displayName "+e.target.innerText);
               var inputName = e.target.innerText;
               this.displayName = inputName;
-              if(inputName.length < 7){
+              if(inputName.length < 10){
                  this.$store.dispatch("modifyMyInfo",{
                      type: MyInfoType.Modify_DisplayName,
                      value: inputName

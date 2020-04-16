@@ -129,7 +129,8 @@ const state = {
     //是否限制音视频对话框
     showChatBox: false,
     showAudioBox: false,
-    showSearchFriendDialog: false
+    showSearchFriendDialog: false,
+    showCreateGroupDialog: false,
 }
 
 const mutations = {
@@ -558,6 +559,21 @@ const getters = {
     searchedFriendlist (state) {
        let friends = state.friendlist.filter(friends => friends.remark.includes(state.searchText));
        return friends
+    },
+    onlyFriendlist(){
+        let friends = state.friendlist.slice(1,state.friendlist.length);
+        var listunCheckedFriends = [];
+        for(var friend of friends){
+           listunCheckedFriends.push({
+               id: friend.id,
+               wxid: friend.wxid,
+               remark: friend.remark,
+               img: friend.img,
+               initial: friend.initial,
+               checked: false
+           });
+        }
+        return listunCheckedFriends;
     },
     // 通过当前选择是哪个对话匹配相应的对话
     selectedChat (state) {

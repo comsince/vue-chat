@@ -4,17 +4,22 @@
     <a @click="showSearchFriendDialog" class="iconsize wx-chat-icon"><i class="iconfont icon-jiahaoyou iconhover"></i> 添加好友 </a>
    </div> 
    <div>
-    <a class="iconsize wx-chat-icon"><i class="iconfont icon-pengyou iconhover"></i> 创建群聊 </a>
+    <a @click="showCreateGroupDialog" class="iconsize wx-chat-icon"><i class="iconfont icon-pengyou iconhover"></i> 创建群聊 </a>
    </div>
   </div>
 </template>
 
 <script>
+import Logger from '../../websocket/utils/logger';
 export default {
 	name: 'addtip',
 	methods: {
 		showSearchFriendDialog(){
             this.$store.state.showSearchFriendDialog = true;
+		},
+		showCreateGroupDialog(){
+			Logger.log("show create group dialog");
+			this.$store.state.showCreateGroupDialog = true;
 		}
 	},
 }

@@ -2,16 +2,19 @@
   <div class="layout-container" id="app-chat">
     <router-view></router-view>
     <searchfriend></searchfriend>
+    <creategroup></creategroup>
   </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
 import searchfriend from './page/friend/searchfriend'
+import creategroup from './page/group/creategroup'
 export default {
    name : 'AppChat',
    components: {
-     searchfriend
+     searchfriend,
+     creategroup,
    }
 }
 </script>
