@@ -194,7 +194,7 @@ const mutations = {
     selectFriend (state, value) {
        state.selectFriendId = value
        console.log("select friend id "+value);
-       if(value === 0){
+       if(value === 0 && state.friendRequests.length == 0){
           state.newFriendRequestCount = 0;
           state.vueSocket.getFriendRequest(LocalStore.getFriendRequestVersion());
        }
@@ -495,8 +495,10 @@ const mutations = {
         state.messages = [];
         state.friendlist = [];
         state.friendIds = [];
+        state.friendRequests = [];
         state.waitUserIds = [];
         state.userInfoList = [];
+        state.newFriendRequestCount = 0;
         LocalStore.clearLocalStore();
         ChatManager.removeOnReceiveMessageListener();
         //发送断开消息，清除session，防止同一个设备切换登录导致的验证失败

@@ -15,7 +15,7 @@
                 label="头像"
                 width="50">
                 <template slot-scope="scope">
-                    <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                    <el-avatar :src="friendPortrait(scope.row.from)"></el-avatar>
                 </template>
             </el-table-column>
             <el-table-column
@@ -24,7 +24,7 @@
                 width="280">
                 <template slot-scope="scope">
                     <div>
-                        <p>{{scope.row.from}}</p>
+                        <p>{{friendName(scope.row.from)}}</p>
                         <p>{{scope.row.reason}}</p>
                     </div>
                 </template>
@@ -83,7 +83,8 @@ export default {
         ]),
         ...mapState([
           'friendRequests',
-          'appHeight'
+          'appHeight',
+          'userInfoList'
         ]),
     },
     methods: {
@@ -105,6 +106,29 @@ export default {
                 targetUid: request.from,
                 status: 1
             })  
+        },
+        friendName(target){
+           var user = this.userInfoList.find(user => user.uid == target);
+           var displayName = target;
+           if(user){
+               displayName = user.displayName;
+               if(!displayName){
+                  displayName = user.mobile;
+               }
+           } 
+           return displayName;
+        },
+        friendPortrait(target){
+            var user = this.userInfoList.find(user => user.uid == target);
+            var portrait;
+            if(user){
+                portrait = user.portrait;
+            }
+            
+            if(!portrait){
+                portrait =  "static/images/vue.jpg";
+            }
+            return portrait;
         }
 		
     }
