@@ -119,7 +119,7 @@ const state = {
     deviceId: '',
     userId: '',
     token: '',
-    userInfos: new Map(),
+    userInfoList: [],
     notify:'',
     firstLogin: false,
     //修改全屏模式
@@ -131,6 +131,8 @@ const state = {
     showAudioBox: false,
     showSearchFriendDialog: false,
     showCreateGroupDialog: false,
+    //待请求用户id信息列表
+    waitUserIds: [],
 }
 
 const mutations = {
@@ -152,6 +154,10 @@ const mutations = {
             state.messages = messages;
         }
         state.selectTarget = LocalStore.getSelectTarget();
+        let userInfoList = LocalStore.getUserInfoList();
+        if(userInfoList){
+            state.userInfoList = userInfoList;
+        }
         state.notify = new Notify({
             effect: 'flash',
             interval: 500,
@@ -187,6 +193,7 @@ const mutations = {
     // 得知用户当前选择的是哪个好友。
     selectFriend (state, value) {
        state.selectFriendId = value
+       console.log("select friend id "+value);
        if(value === 0){
           state.newFriendRequestCount = 0;
           state.vueSocket.getFriendRequest(LocalStore.getFriendRequestVersion());
@@ -212,23 +219,20 @@ const mutations = {
             var currentUser = value[i];
             if(currentUser.wxid != state.userId){
                 var friendUid = state.friendIds.find(friendUid => friendUid === currentUser.wxid);
-                Logger.log("current user id "+friendUid+" state friend length "+state.friendlist.length);
                 if(friendUid){
                   var isExist = false;
-                  for(var j in state.friendlist){
-                      var friend = state.friendlist[j];
-                      if(friend.wxid === currentUser.wxid){
-                         isExist = true;
-                         state.friendlist.splice(j,1,currentUser);
-                         break;
-                      }
+                  for(var friend of state.friendlist){
+                    if(friend.wxid === currentUser.wxid){
+                        isExist = true;
+                        friend.nickname = currentUser.nickname;
+                        friend.img = currentUser.img;
+                    }
                   }
-                  Logger.log("uid "+friendUid +" isExist "+isExist);
                   if(!isExist){
                     state.friendlist.push(currentUser);
                   }
                 }
-            }    
+            }  
         }
         //更新会话信息
         for(var stateConversationInfo of state.conversations){
@@ -249,19 +253,27 @@ const mutations = {
     },
 
     updateUserInfos(state,userInfos){
-        let userInfoMap = state.userInfos;
-        if(!userInfoMap){
-            userInfoMap = new Map();
+        for(let currentUserInfo of userInfos){
+           if(currentUserInfo.uid === state.userId){
+               state.user.img = currentUserInfo.portrait;
+               state.user.name = currentUserInfo.displayName;
+           }
+           var isExist = false;
+           var deleteIndex = 0;
+           for(var index in state.userInfoList){
+               var userInfo = state.userInfoList[index];
+               if(userInfo.uid == currentUserInfo.uid){
+                   isExist = true;
+                   deleteIndex = index;
+                   break;
+               }
+           }
+           if(isExist){
+              state.userInfoList.splice(deleteIndex,1,currentUserInfo)
+           } else {
+              state.userInfoList.push(currentUserInfo);
+           }
         }
-        for(let userInfo of userInfos){
-            console.log("uid "+userInfo.uid+" portrait "+userInfo.portrait);
-           if(userInfo.uid === state.userId){
-               state.user.img = userInfo.portrait;
-               state.user.name = userInfo.displayName;
-           } 
-           userInfoMap.set(userInfo.uid,userInfo);
-        }
-        state.userInfos = userInfoMap;
     },
     // 发送信息
     sendMessage (state, sendMessage){
@@ -423,6 +435,13 @@ const mutations = {
     },
 
     addProtoMessage(state,protoMessage){
+        //更新用户信息
+       if(state.waitUserIds.indexOf(protoMessage.from) == -1){
+           console.log("waiting for get userId "+protoMessage.from);
+           state.waitUserIds.push(protoMessage.from);
+           state.vueSocket.getUserInfos([protoMessage.from]);
+       }
+
        var added = false;
        var isExistMessage = false;
        for(var stateChatMessage of state.messages){
@@ -476,6 +495,8 @@ const mutations = {
         state.messages = [];
         state.friendlist = [];
         state.friendIds = [];
+        state.waitUserIds = [];
+        state.userInfoList = [];
         LocalStore.clearLocalStore();
         ChatManager.removeOnReceiveMessageListener();
         //发送断开消息，清除session，防止同一个设备切换登录导致的验证失败
@@ -539,6 +560,9 @@ const mutations = {
     },
     modifyMyInfo(state,value){
         state.vueSocket.modifyMyInfo(value);
+    },
+    getUserInfos(state,value){
+        state.vueSocket.getUserInfos(value);
     }
 
 }
@@ -600,9 +624,6 @@ const getters = {
         }
         return chatMessage.protoMessages;
     },
-    userInfos(){
-        return state.userInfos;
-    },
     unreadTotalCount(state){
         var total = 0;
         if(state.conversations){
@@ -653,6 +674,7 @@ const actions = {
     handleFriendRequest: ({ commit }, value) => commit('handleFriendRequest', value),
     updateFriendIds: ({ commit }, value) => commit('updateFriendIds', value),
     modifyMyInfo: ({ commit }, value) => commit('modifyMyInfo', value),
+    getUserInfos: ({ commit }, value) => commit('getUserInfos', value),
 }
 const store = new Vuex.Store({
   state,
@@ -680,6 +702,17 @@ store.watch(
         deep : true
     }
 )
+
+store.watch(
+    state => state.userInfoList,
+    value => {
+        LocalStore.saveUserInfoList(value);
+    },
+    {
+        deep : true
+    }
+)
+
 
 store.watch(
     state => state.selectTarget,

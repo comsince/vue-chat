@@ -122,10 +122,11 @@ export default {
     computed: {
         ...mapState([   
             'user',
+            'userInfoList'
         ]),
         personImg: {
             get() {
-                var userInfo = this.$store.state.userInfos.get(this.userId);
+                var userInfo = this.userInfoList.find(user => user.uid == this.userId);
                 var portrait = '';
                 if(userInfo){
                     portrait = userInfo.portrait;
@@ -136,7 +137,7 @@ export default {
                 return portrait;
             },
             set(value) {
-                var userInfo = this.$store.state.userInfos.get(this.userId);
+                var userInfo = this.userInfoList.find(user => user.uid == this.userId);
                 if(userInfo){
                     userInfo.portrait = value;
                 }
@@ -145,7 +146,7 @@ export default {
         },
         displayName: {
            get() {
-                var userInfo = this.$store.state.userInfos.get(this.userId);
+                var userInfo = this.userInfoList.find(user => user.uid == this.userId);
                 var displayName = '';
                 if(userInfo){
                     displayName = userInfo.displayName == '' ? userInfo.mobile : userInfo.displayName;
@@ -153,14 +154,14 @@ export default {
                 return displayName;
            },
            set(value) {
-                var userInfo = this.$store.state.userInfos.get(this.userId);
+                var userInfo = this.userInfoList.find(user => user.uid == this.userId);
                 if(userInfo){
                     userInfo.displayName = value;
                 }
            } 
         },
         mobile() {
-            var userInfo = this.$store.state.userInfos.get(this.userId);
+            var userInfo = this.userInfoList.find(user => user.uid == this.userId);
             if(userInfo){
                  return userInfo.mobile;
             }else {

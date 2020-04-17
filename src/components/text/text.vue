@@ -152,12 +152,12 @@ export default {
             'selectId',
             'emojis',
             'showChatBox',
-            'showAudioBox'
+            'showAudioBox',
+            'userInfoList'
         ]),
         ...mapGetters([
             'selectedChat',
             'isSingleConversation',
-            'userInfos',
         ])
     },
     methods: {
@@ -270,13 +270,15 @@ export default {
             this.callDisplayName = this.getDisplayName(target);
         },
         getUserPortrait(target){
-            if(this.userInfos){
-                return this.userInfos.get(target).portrait;
+            var userInfo = this.userInfoList.find(userInfo => userInfo.uid == target);
+            if(userInfo){
+                return userInfo.portrait;
             }
             return null;
         },
         getDisplayName(target){
-            return this.userInfos.get(target).displayName;
+            var userInfo = this.userInfoList.find(userInfo => userInfo.uid == target);
+            return userInfo.displayName;
         },
         hangUp(){
             this.voipClient.cancelCall();

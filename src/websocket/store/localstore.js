@@ -47,6 +47,15 @@ export default class LocalStore {
         return JSON.parse(value);
     }
 
+    static saveUserInfoList(value){
+        localStorage.setItem("user_infos_list",JSON.stringify(value));
+    }
+
+    static getUserInfoList(){
+        let value = localStorage.getItem("user_infos_list");
+        return JSON.parse(value);
+    }
+
     /**
      * 记录消息发送条数主要时为了
      */

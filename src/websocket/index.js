@@ -22,6 +22,7 @@ import ModifyInfoHandler from './handler/modifyMyInfoHandler';
 export default class VueWebSocket {
     handlerList = [];
     userDisconnect = false;
+    isconnected = false;
 
     constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType,vuexStore){
         this.ws_protocol = ws_protocol;
@@ -42,6 +43,7 @@ export default class VueWebSocket {
         var websocketObj = this;
         this.ws.onopen = function (event) {
             console.log("ws open");
+            websocketObj.isconnected = true;
             websocketObj.lastInteractionTime(new Date().getTime());
             websocketObj.pingIntervalId = setInterval(() => {
                  websocketObj.ping();
@@ -56,6 +58,7 @@ export default class VueWebSocket {
             websocketObj.lastInteractionTime(new Date().getTime());
         }
         this.ws.onclose = function(event) {
+            websocketObj.isconnected = false;
             console.log("ws onclose");
             websocketObj.ws.close();
             clearInterval(websocketObj.pingIntervalId);
@@ -90,7 +93,12 @@ export default class VueWebSocket {
 
     send(data){
         console.log("send message "+data);
-        this.ws.send(data);
+        if(this.isconnected){
+            this.ws.send(data);
+        } else {
+            console.log("curent websocket is close");
+        }
+        
     }
 
     /**

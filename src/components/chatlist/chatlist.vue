@@ -36,7 +36,8 @@ export default {
             'selectId',
             'selectTarget',
             'searchText',
-            'appHeight'
+            'appHeight',
+            'userInfoList'
         ]),
         ...mapGetters([
             'searchedConversationList'
@@ -58,9 +59,8 @@ export default {
                 var isCurrentUser = protoConversationInfo.lastMessage.from === LocalStore.getUserId();
                 if(protoConversationInfo.conversationType == ConversationType.Group && !isCurrentUser){
                     var from = protoConversationInfo.lastMessage.from;
-                    console.log("conversation group from "+from);
-                    var displayUserInfo = this.$store.state.userInfos.get(from);
-                    var displayName = ''
+                    var displayUserInfo = this.userInfoList.find(userInfo => userInfo.uid == from);
+                    var displayName = from;
                     if(displayUserInfo){
                         displayName = displayUserInfo.displayName;
                         if(!displayName){

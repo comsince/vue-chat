@@ -12,37 +12,40 @@
                     <div v-if="item.content.type === 110" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div>
                     <div v-if="item.content.type === 90" class="time"><span>{{item.content.content}}</span></div>
 		    		<div v-if="!isNotification(item.content.type)" class="main" :class="{ self: item.direction == 0 ? true : false }">
-                        <img class="avatar" width="36" height="36" :src="item.direction == 0 ? 
-                        user.img: (userInfos.get(item.from) != null ? userInfos.get(item.from).portrait : 'static/images/vue.jpg')"
+                        <img class="avatar" width="36" height="36" :src="avatarSrc(item)"
                         onerror="this.src='static/images/vue.jpg'"/>
                         <div class="content">
-                            <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
-                            <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>    
-                            <div v-if="item.content.type === 2">
-                                [语音消息]
-                            </div>
-                            <div v-if="item.content.type === 3" v-viewer>
-                                <img :src="item.content.remoteMediaUrl" class="receive-image">
-                            </div>
-                            <div v-if="item.content.type === 4">
-                                [位置消息]
-                            </div>
-                            <div v-if="item.content.type === 5">
-                                [文件消息]
-                            </div>
-                            <div v-if="item.content.type === 6" >
-                                <Xgplayer :config="videoConfig(item.content.remoteMediaUrl,index === selectedChat.protoMessages.length - 1)" @player="Player = $event"/>
-                            </div>
-                            <div v-if="item.content.type === 7">
-                                [表情消息]
-                            </div>
-                            <div v-if="item.content.type === 8">
-                                [图片表情]
-                            </div>
-                            <div v-if="item.content.type === 400">
-                                [网络电话]
+                            <div class="display-name" v-if="!isSingleConversation && item.direction != 0">{{showUserName(item.from)}}</div>
+                            <div class="content-message">
+                                <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
+                                <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>    
+                                <div v-if="item.content.type === 2">
+                                    [语音消息]
+                                </div>
+                                <div v-if="item.content.type === 3" v-viewer>
+                                    <img :src="item.content.remoteMediaUrl" class="receive-image">
+                                </div>
+                                <div v-if="item.content.type === 4">
+                                    [位置消息]
+                                </div>
+                                <div v-if="item.content.type === 5">
+                                    [文件消息]
+                                </div>
+                                <div v-if="item.content.type === 6" >
+                                    <Xgplayer :config="videoConfig(item.content.remoteMediaUrl,index === selectedChat.protoMessages.length - 1)" @player="Player = $event"/>
+                                </div>
+                                <div v-if="item.content.type === 7">
+                                    [表情消息]
+                                </div>
+                                <div v-if="item.content.type === 8">
+                                    [图片表情]
+                                </div>
+                                <div v-if="item.content.type === 400">
+                                    [网络电话]
+                                </div>
                             </div>
                         </div>
+                        
                     </div>
 		    	</li>
 		    </ul>
@@ -74,12 +77,13 @@ export default {
         ...mapGetters([
             'selectedChat',
             'messages',
-            'userInfos'
+            'isSingleConversation'
         ]),
         ...mapState([
             'user',
             'emojis',
-            'appHeight'
+            'appHeight',
+            'userInfoList'
         ]),
     },
     mounted() {
@@ -94,6 +98,30 @@ export default {
         }
     },
     methods: {
+        avatarSrc(item){
+            var avarimgUrl = 'static/images/vue.jpg';
+            if(item.direction == 0){
+                avarimgUrl = this.user.img;
+            } else {
+                var user = this.userInfoList.find(user => user.uid == item.from);
+                if(user){
+                   avarimgUrl = user.portrait;
+                }
+            }
+            return avarimgUrl;
+        },
+        showUserName(from){
+            var displayName = from;
+            var user = this.userInfoList.find(user => user.uid == from);
+            if(user){
+                 if(user.displayName){
+                     displayName = user.displayName;
+                 } else {
+                     displayName = user.mobile;
+                 }
+            }
+            return displayName;
+        },
         //  在发送信息之后，将输入的内容中属于表情的部分替换成emoji图片标签
         //  再经过v-html 渲染成真正的图片
         replaceFace (con) {
@@ -238,39 +266,48 @@ export default {
                 float: left
                 margin-left: 15px
                 border-radius: 3px
-            .content
-                display: inline-block
-                margin-left: 10px
-                position: relative
-                padding: 6px 10px
-                max-width: 65%
-                min-height: 36px
-                line-height: 24px
-                box-sizing: border-box
-                font-size: 14px
-                text-align: left
-                word-break: break-all
-                background-color: #fafafa
-                border-radius: 4px
-                .text
-                  white-space: pre-wrap;
-                &:before
-                    content: " "
-                    position: absolute
-                    top: 12px
-                    right: 100%
-                    border: 6px solid transparent
-                    border-right-color: #fafafa
+            .content 
+                display:inline-block
+                width: 65%   
+                .display-name
+                    margin-left: 10px
+                    margin-bottom: 5px
+                    font-size: 8px
+                    color: #999
+                .content-message
+                    display: inline-block
+                    margin-left: 10px
+                    position: relative
+                    padding: 6px 10px
+                    max-width: 100%
+                    min-height: 36px
+                    line-height: 24px
+                    box-sizing: border-box
+                    font-size: 14px
+                    text-align: left
+                    word-break: break-all
+                    background-color: #fafafa
+                    border-radius: 4px
+                    .text
+                        white-space: pre-wrap;
+                    &:before
+                        content: " "
+                        position: absolute
+                        top: 12px
+                        right: 100%
+                        border: 6px solid transparent
+                        border-right-color: #fafafa
         .self
             text-align: right
             .avatar
                 float: right
                 margin:0 15px
-            .content 
-                background-color: #b2e281
-                &:before 
-                    right: -12px
-                    vertical-align: middle
-                    border-right-color: transparent
-                    border-left-color: #b2e281
+            .content    
+                .content-message 
+                    background-color: #b2e281
+                    &:before 
+                        right: -12px
+                        vertical-align: middle
+                        border-right-color: transparent
+                        border-left-color: #b2e281
 </style>
