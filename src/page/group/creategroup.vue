@@ -16,11 +16,11 @@
                         <ul>
                             <li v-bind:key = index v-for="(item, index) in onlyFriendlist" class="frienditem"  :class="{ noborder: !item.initial}">
                                 <div class="list_title" v-if="item.initial">{{item.initial}}</div>
-                                <div class="friend-info" >
+                                <div class="friend-info" :class="{ active: item.id === selectFriendId }" @click.stop="selectFriend(item.id)">
                                     <img class="avatar" :src="item.img" onerror="this.src='static/images/vue.jpg'">
                                     <div class="remark">{{item.remark}}</div>
                                     <div class="friend-check">
-                                        <el-checkbox :true-label="item.id+':1'" :false-label="item.id+':0'"  @change="friendChangeChange" v-model="item.checked"></el-checkbox>
+                                        <el-checkbox :true-label="item.id+':1'" :false-label="item.id+':0'" @change="friendChangeChange"  @click.stop.native="" v-model="item.checked"></el-checkbox>
                                     </div>
                                 </div>
                                 
@@ -69,7 +69,8 @@ export default {
            friendInput: '',
            selectedFriends: [],
            checkFriendTips: '未选择联系人',
-           confirmEnable: true
+           confirmEnable: true,
+           selectFriendId: 0
        }
     },
     computed: {
@@ -96,15 +97,31 @@ export default {
                 var friendIdAndChecked = event.split(":");
                 Logger.log("select friendid "+friendIdAndChecked[0]+" checked "+friendIdAndChecked[1]);
                 var friend = this.onlyFriendlist.find(friend => friend.id == friendIdAndChecked[0]);
+                Logger.log("friend change "+friend.checked);
                 if(friendIdAndChecked[1] == 1){
                     if(friend){
-                        this.selectedFriends.push(friend);
+                        this.selectFriendId = friend.id;
+                        var existFriend = this.selectedFriends.find(friend => friend.id == this.selectFriendId);
+                        if(!existFriend){
+                            this.selectedFriends.push(friend);
+                        }
                     }
                 } else if(friendIdAndChecked[1] == 0){
                     if(friend){
                         this.removeCheckedFriend(friend.id);
                     }
                 }    
+           }
+       },
+       selectFriend(friendId){
+           this.selectFriendId = friendId;
+           var friend = this.onlyFriendlist.find(friend => friend.id == friendId);
+           Logger.log("selectFriend friendId "+friendId+" checked "+friend.checked);
+           friend.checked = !friend.checked;
+           if(!friend.checked){
+               this.removeCheckedFriend(friend.id);
+           } else {
+               this.selectedFriends.push(friend);
            }
        },
        cancel(){ 
@@ -132,6 +149,9 @@ export default {
             if(index != -1){
                 this.selectedFriends.splice(index,1);
             }
+            if(id == this.selectFriendId){
+               this.selectFriendId = 0;
+            }
        },
        exit(){
            this.$store.state.showCreateGroupDialog = false;
@@ -143,6 +163,9 @@ export default {
    },
    watch: {
        selectedFriends() {
+           if(this.selectedFriends.length == 0){
+              this.selectFriendId = 0;
+           }
            if(this.selectedFriends.length > 1){
               this.confirmEnable = false;
            } else {
