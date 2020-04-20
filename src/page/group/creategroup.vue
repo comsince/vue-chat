@@ -14,7 +14,7 @@
                     </div>
                     <div class="friendlist" :style="{height: (appHeight-170) + 'px'}">
                         <ul>
-                            <li v-bind:key = index v-for="(item, index) in onlyFriendlist" class="frienditem"  :class="{ noborder: !item.initial}">
+                            <li v-bind:key = index v-for="(item, index) in waitCheckedFriendList" class="frienditem"  :class="{ noborder: !item.initial}">
                                 <div class="list_title" v-if="item.initial">{{item.initial}}</div>
                                 <div class="friend-info" :class="{ active: item.id === selectFriendId }" @click.stop="selectFriend(item.id)">
                                     <img class="avatar" :src="item.img" onerror="this.src='static/images/vue.jpg'">
@@ -78,7 +78,7 @@ export default {
             'appHeight',
         ]),
         ...mapGetters([
-            'onlyFriendlist',
+            'searchedFriendlist'
         ]),
         showCreateGroupDialog : {
             get () {
@@ -88,6 +88,22 @@ export default {
             set(val) {
                 this.$store.state.showCreateGroupDialog = val;
             }
+        },
+        waitCheckedFriendList(){
+            let friends = this.searchedFriendlist.slice(1,this.searchedFriendlist.length);
+            var listunCheckedFriends = [];
+            for(var friend of friends){
+                // console.log("friend only initial "+friend.initial);
+                listunCheckedFriends.push({
+                    id: friend.id,
+                    wxid: friend.wxid,
+                    remark: friend.remark,
+                    img: friend.img,
+                    initial: friend.initial,
+                    checked: false
+                });
+            }
+            return listunCheckedFriends;
         }
    },
    methods:{
@@ -96,7 +112,7 @@ export default {
            if(event && event != ""){
                 var friendIdAndChecked = event.split(":");
                 Logger.log("select friendid "+friendIdAndChecked[0]+" checked "+friendIdAndChecked[1]);
-                var friend = this.onlyFriendlist.find(friend => friend.id == friendIdAndChecked[0]);
+                var friend = this.waitCheckedFriendList.find(friend => friend.id == friendIdAndChecked[0]);
                 Logger.log("friend change "+friend.checked);
                 if(friendIdAndChecked[1] == 1){
                     if(friend){
@@ -115,7 +131,7 @@ export default {
        },
        selectFriend(friendId){
            this.selectFriendId = friendId;
-           var friend = this.onlyFriendlist.find(friend => friend.id == friendId);
+           var friend = this.waitCheckedFriendList.find(friend => friend.id == friendId);
            Logger.log("selectFriend friendId "+friendId+" checked "+friend.checked);
            friend.checked = !friend.checked;
            if(!friend.checked){
@@ -134,7 +150,7 @@ export default {
             this.exit();
        },
        delfriend(id){
-          var friend = this.onlyFriendlist.find(friend => friend.id == id);
+          var friend = this.waitCheckedFriendList.find(friend => friend.id == id);
           friend.checked = false;
           this.removeCheckedFriend(id);
        },
@@ -156,7 +172,7 @@ export default {
        exit(){
            this.$store.state.showCreateGroupDialog = false;
            this.selectedFriends = [];
-           for(var friend of this.onlyFriendlist){
+           for(var friend of this.waitCheckedFriendList){
                 friend.checked = false;
            }           
        }

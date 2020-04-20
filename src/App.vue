@@ -23,6 +23,8 @@ export default {
 .layout-container {
     width: 100%;
     height: 100%;
+    min-width: 920px;
+    min-height: 550px;
     box-sizing: border-box;
     display: flex;
     align-items: center;

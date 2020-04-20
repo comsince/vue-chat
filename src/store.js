@@ -582,14 +582,59 @@ const getters = {
        return stateConversation.conversationInfo.conversationType === ConversationType.Single; 
     },
     // 筛选出含有搜索值的好友列表
-    searchedFriendlist (state) {
-       let friends = state.friendlist.filter(friends => friends.remark.includes(state.searchText));
-       return friends
+    searchedFriendlist () {
+       //需要根据用户昵称拼音首字母进行分类
+       var friendMap = new Map();
+       var noInitFriendList = [];
+       var allFriendList = [];
+       for(var friendOrigin of state.friendlist){
+           var friend = {
+                id: friendOrigin.id,
+                wxid: friendOrigin.wxid, //微信号
+                initial: friendOrigin.initial, //姓名首字母
+                img: friendOrigin.img, //头像
+                signature: friendOrigin.signature, //个性签名
+                nickname: friendOrigin.nickname,  //昵称
+                sex: friendOrigin.sex,   //性别 1为男，0为女
+                remark: friendOrigin.remark,  //备注
+                area: friendOrigin.area,  //地区
+           };
+           if(friend.id == 0){
+                continue;
+           }
+           if(friend.initial){
+                var initalFriendList = friendMap.get(friend.initial);
+                if(initalFriendList){
+                   friend.initial = "";
+                   initalFriendList.push(friend);
+                } else {
+                    initalFriendList = [];
+                    initalFriendList.push(friend);
+                    friendMap.set(friend.initial,initalFriendList);
+                }
+           } else {
+             noInitFriendList.push(friend);
+           }
+       }
+       allFriendList.push(state.friendlist[0]);
+       if(noInitFriendList.length > 0){
+           for(var friend of noInitFriendList){
+              allFriendList.push(friend);
+           }
+       }
+       for(var [key,friendList] of friendMap){
+           for(var friend of friendList){
+             allFriendList.push(friend);
+           }
+       }
+       let friends = allFriendList.filter(friend => friend.remark.includes(state.searchText));
+       return friends;
     },
     onlyFriendlist(){
         let friends = state.friendlist.slice(1,state.friendlist.length);
         var listunCheckedFriends = [];
         for(var friend of friends){
+            console.log("friend only initial "+friend.initial);
            listunCheckedFriends.push({
                id: friend.id,
                wxid: friend.wxid,
