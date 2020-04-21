@@ -4,9 +4,9 @@
 		<header class="header">
 			<div class="friendname">{{selectedChat.name}}</div>
             <div class="friend-group-info">
-                <i title="用户信息" class="icon iconfont icon-pengyou1" v-if="isSingleConversation" @click="showGroupFriendInfo =!showGroupFriendInfo"></i>
-                <i title="群组信息" class="icon iconfont icon-pengyou" v-if="!isSingleConversation" @click="showGroupFriendInfo =!showGroupFriendInfo"></i>
-                <groupInfo v-if="showGroupFriendInfo"></groupInfo>
+                <i title="用户信息" class="icon iconfont icon-pengyou1" v-if="isSingleConversation" ></i>
+                <i title="群组信息" class="icon iconfont icon-pengyou" v-if="!isSingleConversation" @click="showGroupInfo"></i>
+                <groupInfo v-if="showGroupFriendInfo" v-bind:groupId="selectedChat.target"></groupInfo>
             </div>
 		</header>
 		<div class="message-wrapper" ref="list" @scroll="scrollEvent" @click="messageBoxClick" :style="{height: (appHeight * 0.75-60) + 'px'}">
@@ -91,7 +91,7 @@ export default {
             'user',
             'emojis',
             'appHeight',
-            'userInfoList'
+            'userInfoList',
         ]),
     },
     mounted() {
@@ -106,6 +106,10 @@ export default {
         }
     },
     methods: {
+        showGroupInfo(){
+            this.showGroupFriendInfo =!this.showGroupFriendInfo;
+            this.$store.dispatch("getGroupInfo",this.selectedChat.target);
+        },
         avatarSrc(item){
             var avarimgUrl = 'static/images/vue.jpg';
             if(item.direction == 0){

@@ -4,7 +4,7 @@
             <div class="group-info-title">
                 <div class="group-name-info">
                     <div class="group-name-title">群名</div>
-                    <div class="group-name">群名称</div>
+                    <p class="group-name">{{groupName()}}</p>
                 </div>
                 <div class="group-board-info">
                     <div class="group-board-title">群公告</div>
@@ -34,6 +34,7 @@
 import { mapState, mapActions ,mapGetters } from 'vuex'
 export default {
     name: 'groupInfoMenu',
+    props: ['groupId'],
     data(){
         return {
             friendInfoList: [{
@@ -73,9 +74,20 @@ export default {
     computed: {
         ...mapState([
             'appHeight',
+            'groupInfoList',
         ]),
         ...mapGetters([
         ]),
+    },
+    methods: {
+        groupName(){
+            var groupName = "";
+            var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.groupId);
+            if(groupInfo){
+               groupName = groupInfo.name;
+            }
+            return groupName;
+        }
     }
 }
 </script>
@@ -111,7 +123,11 @@ export default {
                     color: #888
                 .group-name
                     font-size: 14px 
-                    line-height: 1.6   
+                    line-height: 1.6
+                    width: 200px  
+                    overflow: hidden
+                    white-space: nowrap
+                    text-overflow: ellipsis  
             .group-board-info
                 width: 100%
                 height: 50%

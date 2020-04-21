@@ -120,6 +120,7 @@ const state = {
     userId: '',
     token: '',
     userInfoList: [],
+    groupInfoList: [],
     notify:'',
     firstLogin: false,
     //修改全屏模式
@@ -275,6 +276,33 @@ const mutations = {
            }
         }
     },
+
+    updateGroupInfos(state,groupInfos){
+        for(let currentGroupInfo of groupInfos){
+           var isExist = false;
+           var deleteIndex = 0;
+           for(var index in state.groupInfoList){
+               var groupInfo = state.groupInfoList[index];
+               if(groupInfo.target == currentGroupInfo.target){
+                    isExist = true;
+                    deleteIndex = index;
+                    break;
+               }
+           }
+           if(isExist){
+              state.groupInfoList.splice(deleteIndex,1,currentGroupInfo);
+           } else {
+               state.groupInfoList.push(currentGroupInfo);
+           }
+        }
+        console.log("group size "+state.groupInfoList.length);
+        this.commit("updateConversationIntro",groupInfos);
+    },
+
+    getGroupInfo(state,target){
+        state.vueSocket.getGroupInfo(target,false);
+    },
+
     // 发送信息
     sendMessage (state, sendMessage){
         var message = Message.toMessage(state,sendMessage);
@@ -722,6 +750,8 @@ const actions = {
     updateFriendIds: ({ commit }, value) => commit('updateFriendIds', value),
     modifyMyInfo: ({ commit }, value) => commit('modifyMyInfo', value),
     getUserInfos: ({ commit }, value) => commit('getUserInfos', value),
+    updateGroupInfos: ({ commit }, value) => commit('updateGroupInfos', value),
+    getGroupInfo: ({ commit }, value) => commit('getGroupInfo', value),
 }
 const store = new Vuex.Store({
   state,
