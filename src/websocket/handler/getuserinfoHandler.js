@@ -19,8 +19,15 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
                    style: py.STYLE_FIRST_LETTER
                });
                var initial = pinyinInitial[0][0];
+               
                if(initial.length > 1){
-                 initial = "#";
+                   var initial = initial.substr(0,1);
+                   var reg= /^[A-Za-z]/;
+                   if(reg.test(initial)){
+                     initial = initial.toUpperCase();
+                   } else {
+                    initial = "#";
+                   }
                } else {
                  initial = initial.toUpperCase();
                }
