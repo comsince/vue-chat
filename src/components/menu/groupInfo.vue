@@ -1,5 +1,5 @@
 <template>
-    <div class="group-content" :style="{height: (appHeight-61) + 'px'}">
+    <div id="group-info-id" class="group-content" :style="{height: (appHeight-61) + 'px'}">
         <div class="flex-layout">
             <div class="group-info-title">
                 <div class="group-name-info">

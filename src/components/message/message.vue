@@ -5,7 +5,7 @@
 			<div class="friendname">{{selectedChat.name}}</div>
             <div class="friend-group-info">
                 <i title="用户信息" class="icon iconfont icon-pengyou1" v-if="isSingleConversation" ></i>
-                <i title="群组信息" class="icon iconfont icon-pengyou" v-if="!isSingleConversation" @click="showGroupInfo"></i>
+                <i title="群组信息" class="icon iconfont icon-pengyou show-group-info" v-if="!isSingleConversation" @click="showGroupInfo"></i>
                 <groupInfo v-if="showGroupFriendInfo" v-bind:groupId="selectedChat.target"></groupInfo>
             </div>
 		</header>
@@ -96,7 +96,15 @@ export default {
     },
     mounted() {
          //  在页面加载时让信息滚动到最下面
-        setTimeout(() => this.$refs.list.scrollTop = this.$refs.list.scrollHeight, 0)
+        setTimeout(() => this.$refs.list.scrollTop = this.$refs.list.scrollHeight, 0);
+        document.addEventListener("click", e => {
+            var isString = typeof(e.target.className) == 'string'
+            let groupInfoDom = document.getElementById("group-info-id");
+            //注意点击显示按钮事件的处理，防止状态发生反转
+			if (isString && e.target.className.search('show-group-info') == -1 && groupInfoDom && !groupInfoDom.contains(event.target) && this.showGroupFriendInfo) {
+                this.showGroupFriendInfo = false;
+            }
+        });
         
     },
     watch: {
@@ -108,7 +116,9 @@ export default {
     methods: {
         showGroupInfo(){
             this.showGroupFriendInfo =!this.showGroupFriendInfo;
-            this.$store.dispatch("getGroupInfo",this.selectedChat.target);
+            if(this.showGroupFriendInfo){
+                this.$store.dispatch("getGroupInfo",this.selectedChat.target);
+            }
         },
         avatarSrc(item){
             var avarimgUrl = 'static/images/vue.jpg';
