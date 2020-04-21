@@ -11,7 +11,7 @@
                     <div class="group-board-content">暂无公告</div>
                 </div>
             </div>
-            <div class="friend-info-list" :style="{height: (appHeight-200) + 'px'}">
+            <div class="friend-info-list" :style="{height: (appHeight-221) + 'px'}">
                 <ul>
                     <li v-bind:key = index v-for="(item, index) in friendInfoList" class="frienditem">
                         <div class="friend-info">
@@ -85,19 +85,20 @@ export default {
     position: absolute
     background: #fff
     height: 200px
-    width: 150px
+    width: 220px
     top: 61px
     right: 0px
     z-index: 20
-    box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2)
+    border-left: 1px solid #e7e7e7 
     .flex-layout
         width: 100%
         height: 100%
         display: flex
         flex-flow: row wrap
         .group-info-title
+            margin-left: 10px
             width: 100%
-            height: 20%
+            height: 120px
             padding 10px 5px 10px 5px
             border-bottom: 1px solid #e7e7e7 
             .group-name-info
@@ -105,18 +106,25 @@ export default {
                 height: 50%
                 margin-bottom: 5px
                 .group-name-title
-                    font-size: 14px
+                    font-size: 13px
                     line-height: 1.6
-                    color: #888;
+                    color: #888
+                .group-name
+                    font-size: 14px 
+                    line-height: 1.6   
             .group-board-info
                 width: 100%
                 height: 50%
                 .group-board-title 
-                    font-size: 14px
+                    font-size: 13px
                     line-height: 1.6
                     color: #888
+                .group-board-content 
+                    font-size: 14px
+                    line-height: 1.6   
         .friend-info-list
             width: 100%
+            margin-left: 10px
             overflow-y: auto
             .frienditem
                 padding: 5px 0px 5px 0px
