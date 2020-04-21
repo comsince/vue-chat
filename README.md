@@ -54,7 +54,6 @@
 ![image](./attachment/vue-chat-rtc-video.png)
 
 ### V1.0.3
-* [待解决]同一浏览器只允许登录一个账户
 * 增加好友搜索，好友添加功能，形成功能闭环
 
 ### V1.0.4
@@ -69,6 +68,7 @@ npm install
 
 # serve with hot reload at localhost:8080
 npm run dev
+# 运行请先检查如下配置：TCP服务配置，HTTPS配置，是否支持WSS,是否支持HTTPS，HTTP监听端口8081,HTTPS监听端口8443
 
 # build for production with minification
 npm run build

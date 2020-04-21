@@ -3,6 +3,11 @@
 	<div class="message">
 		<header class="header">
 			<div class="friendname">{{selectedChat.name}}</div>
+            <div class="friend-group-info">
+                <i title="用户信息" class="icon iconfont icon-pengyou1" v-if="isSingleConversation" @click="showGroupFriendInfo =!showGroupFriendInfo"></i>
+                <i title="群组信息" class="icon iconfont icon-pengyou" v-if="!isSingleConversation" @click="showGroupFriendInfo =!showGroupFriendInfo"></i>
+                <groupInfo v-if="showGroupFriendInfo"></groupInfo>
+            </div>
 		</header>
 		<div class="message-wrapper" ref="list" @scroll="scrollEvent" @click="messageBoxClick" :style="{height: (appHeight * 0.75-60) + 'px'}">
 		    <ul v-if="selectedChat">
@@ -62,14 +67,17 @@ import Viewer from 'v-viewer'
 import Vue from 'vue'
 Vue.use(Viewer)
 import CryptoJS from 'crypto-js'
+import groupInfo from '../menu/groupInfo'
 export default {
     components:{
-        Xgplayer
+        Xgplayer,
+        groupInfo
     },
 
     data(){
         return {
-            Player: null
+            Player: null,
+            showGroupFriendInfo: false
         }
     },
     
@@ -193,8 +201,7 @@ export default {
 
         isNotification(type){
             return type >= 80 && type <= 117 
-        }
- 
+        },
     },
     filters: {
             // 将日期过滤为 hour:minutes
@@ -229,16 +236,28 @@ export default {
       border-radius: 3px
       
    .message
+      position: relative
       width: 100%
       height: 75%
       .header
         height: 14%
         max-height: 60px
         min-height: 60px 
-        padding: 28px 0 0 30px
+        padding: 0px 0 0 30px
         box-sizing: border-box
+        display:flex
         .friendname
+            display: flex
+            align-items: center
             font-size: 18px
+        .friend-group-info
+            padding: 0px 20px 0px 0px
+            display: flex
+            align-items: center
+            margin-left : auto
+            .icon
+                font-size: 24px
+                cursor: pointer 
       .message-wrapper
         height: 86%
         padding: 10px 15px
