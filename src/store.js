@@ -121,6 +121,7 @@ const state = {
     token: '',
     userInfoList: [],
     groupInfoList: [],
+    tempGroupMembers: [],
     notify:'',
     firstLogin: false,
     //修改全屏模式
@@ -301,6 +302,14 @@ const mutations = {
 
     getGroupInfo(state,target){
         state.vueSocket.getGroupInfo(target,false);
+    },
+
+    getGroupMember(state,groupId){
+        state.vueSocket.getGroupMember(groupId,true);
+    },
+
+    updateTempGroupMember(state,groupMembers){
+        state.tempGroupMembers = groupMembers;
     },
 
     // 发送信息
@@ -644,7 +653,9 @@ const getters = {
              noInitFriendList.push(friend);
            }
        }
-       allFriendList.push(state.friendlist[0]);
+       if(state.friendlist.length > 0){
+         allFriendList.push(state.friendlist[0]);
+       }
        if(noInitFriendList.length > 0){
            for(var friend of noInitFriendList){
               allFriendList.push(friend);
@@ -752,6 +763,8 @@ const actions = {
     getUserInfos: ({ commit }, value) => commit('getUserInfos', value),
     updateGroupInfos: ({ commit }, value) => commit('updateGroupInfos', value),
     getGroupInfo: ({ commit }, value) => commit('getGroupInfo', value),
+    getGroupMember: ({ commit }, value) => commit('getGroupMember', value),
+    updateTempGroupMember: ({ commit }, value) => commit('updateTempGroupMember', value),
 }
 const store = new Vuex.Store({
   state,

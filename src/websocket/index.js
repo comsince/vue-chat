@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -18,6 +18,7 @@ import FriendRequestHandler from './handler/friendRequestHandler';
 import HandleFriendRequestHandler from './handler/handleFriendRequestHandler';
 import NotifyFriendHandler from './handler/notifyFriendHandler';
 import ModifyInfoHandler from './handler/modifyMyInfoHandler';
+import GetGroupMemberHandler from './handler/getGroupMemberHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -124,6 +125,7 @@ export default class VueWebSocket {
         this.handlerList.push(new HandleFriendRequestHandler(this));
         this.handlerList.push(new NotifyFriendHandler(this));
         this.handlerList.push(new ModifyInfoHandler(this));
+        this.handlerList.push(new GetGroupMemberHandler(this));
     }
 
     processMessage(data){
@@ -231,6 +233,13 @@ export default class VueWebSocket {
         var groupIds = [];
         groupIds.push(groupId);
         this.sendPublishMessage(GPGI,groupIds);
+    }
+
+    getGroupMember(groupId,refresh){
+       this.sendPublishMessage(GPGM,{
+           groupId: groupId,
+           version: 0
+       })
     }
 
     pullMessage(messageId,type = 0,pullType = 0,sendMessageCount = 0){

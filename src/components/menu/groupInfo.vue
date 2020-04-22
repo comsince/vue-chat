@@ -13,7 +13,7 @@
             </div>
             <div class="friend-info-list" :style="{height: (appHeight-221) + 'px'}">
                 <ul>
-                    <li v-bind:key = index v-for="(item, index) in friendInfoList" class="frienditem">
+                    <li v-bind:key = index v-for="(item, index) in memberList" class="frienditem">
                         <div class="friend-info">
                             <img class="avatar" :src="item.avatarUrl" onerror="this.src='static/images/vue.jpg'">
                             <p class="nickName">{{item.displayName}}</p>
@@ -34,50 +34,44 @@
 import { mapState, mapActions ,mapGetters } from 'vuex'
 export default {
     name: 'groupInfoMenu',
-    props: ['groupId'],
-    data(){
-        return {
-            friendInfoList: [{
-                displayName: "测试长名称来阿斯顿",
-                avatarUrl: "http://image.comsince.cn/1-xIxQxQEE-1586853153457-xixi.jpg"
-            },
-            {
-                displayName: "测试",
-                avatarUrl: "http://image.comsince.cn/1-xIxQxQEE-1586853153457-xixi.jpg"
-            },{
-                displayName: "测试官方即时支持",
-                avatarUrl: "http://image.comsince.cn/1-8Y8E8Ett-1586856301263-0902399d1a8450f8bf1475c1771cb62.png"
-            },{
-                displayName: "测试和那地方阿斯顿发射的发射的",
-                avatarUrl: "http://image.comsince.cn/1-qJqkqkBB-1586859367172-152c33b18a346dbc7f4b9d95511e1c47.jpg"
-            },{
-                displayName: "测试",
-                avatarUrl: "http://image.comsince.cn/1-U6UwUw44-1586917334427-verificationCode.png"
-            },{
-                displayName: "测试",
-                avatarUrl: "http://image.comsince.cn/1-U6UwUw44-1586917334427-verificationCode.png"
-            },{
-                displayName: "测试",
-                avatarUrl: "http://image.comsince.cn/1-WUWPWPJJ-1587088366830-101.jpg"
-            },{
-                displayName: "测试",
-                avatarUrl: "http://image.comsince.cn/1-U6UwUw44-1586917334427-verificationCode.png"
-            },{
-                displayName: "测试",
-                avatarUrl: "http://image.comsince.cn/1-STTnSntt-1587103966305-cat.jpeg"
-            },{
-                displayName: "测试",
-                avatarUrl: "http://image.comsince.cn/1-LOM7L7LL-1587120333078-微信图片_20200326145119.jpg"
-            }]
+    props: ['groupId'], 
+    mounted() {
+        if(this.memberList.length == 0){
+           this.$store.dispatch('getGroupMember',this.groupId);
         }
-    }, 
+    },
+    destroyed() {
+       this.$store.dispatch('updateTempGroupMember',[]);
+    },
     computed: {
         ...mapState([
             'appHeight',
             'groupInfoList',
+            'tempGroupMembers',
+            'userInfoList'
         ]),
         ...mapGetters([
         ]),
+        memberList(){
+            var groupMembers = [];
+            var noFriendMemberIds = [];
+            for(var groupMember of this.tempGroupMembers){
+               var userInfo = this.userInfoList.find( user => groupMember.memberId == user.uid);
+               if(userInfo){
+                   groupMember.displayName = userInfo.displayName != ''? userInfo.displayName : userInfo.mobile;
+                   groupMember.avatarUrl = userInfo.portrait != '' ? userInfo.portrait : 'static/images/vue.jpg';
+               } else {
+                   noFriendMemberIds.push(groupMember.memberId);
+                   groupMember.displayName = groupMember.memberId;
+                   groupMember.avatarUrl = 'static/images/vue.jpg';
+               }
+               groupMembers.push(groupMember);
+            }
+            if(noFriendMemberIds.length > 0){
+                this.$store.dispatch('getUserInfos',noFriendMemberIds);
+            }
+            return groupMembers;
+        }
     },
     methods: {
         groupName(){
@@ -88,7 +82,7 @@ export default {
             }
             return groupName;
         }
-    }
+    },
 }
 </script>
 

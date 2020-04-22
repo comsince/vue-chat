@@ -16,6 +16,7 @@ export const FRP = 'FRP';
 export const FP = 'FP';
 export const UPUI = 'UPUI';
 export const GPGI = 'GPGI';
+export const GPGM = 'GPGM';
 export const MP = 'MP';
 export const MS = "MS";
 export const MN = "MN";

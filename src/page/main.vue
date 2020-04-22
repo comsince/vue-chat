@@ -28,9 +28,7 @@ export default {
    },
    mounted (){
       window.onresize = () => {
-        console.log('windown onresize');
         var appHeight = this.$refs.appRef.offsetHeight;
-        console.log('resize app height '+appHeight);
         this.$store.state.appHeight = appHeight;
       }
       //初始化时获取appHeight
