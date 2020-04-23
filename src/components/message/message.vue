@@ -13,8 +13,9 @@
 		    <ul v-if="selectedChat">
 		    	<li v-bind:key = index v-for="(item, index) in selectedChat.protoMessages" class="message-item">
 		    		<div v-if="isShowTime(index,selectedChat.protoMessages)" class="time"><span>{{item.timestamp | getTimeStringAutoShort2}}</span></div>
-                    <div v-if="item.content.type === 104" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div>
-                    <div v-if="item.content.type === 110" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div>
+                    <!-- <div v-if="item.content.type === 104" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div>
+                    <div v-if="item.content.type === 110" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div> -->
+                    <div v-if="isGroupNotification(item)" class="time"><span>{{groupNotification(item)}}</span></div>
                     <div v-if="item.content.type === 90" class="time"><span>{{item.content.content}}</span></div>
 		    		<div v-if="!isNotification(item.content.type)" class="main" :class="{ self: item.direction == 0 ? true : false }">
                         <img class="avatar" width="36" height="36" :src="avatarSrc(item)"
@@ -68,6 +69,9 @@ import Vue from 'vue'
 Vue.use(Viewer)
 import CryptoJS from 'crypto-js'
 import groupInfo from '../menu/groupInfo'
+import MessageConfig from '../../websocket/message/messageConfig';
+import NotificationMessageContent from '../../websocket/message/notification/notificationMessageContent';
+import GroupNotificationContent from '../../websocket/message/notification/groupNotification';
 export default {
     components:{
         Xgplayer,
@@ -211,6 +215,35 @@ export default {
                     break;    
             }
             return notificationContent;
+        },
+
+        isGroupNotification(protoMessage){
+           var contentClass = MessageConfig.getMessageContentClazz(protoMessage.content.type);
+           var content = new contentClass();
+           return content instanceof GroupNotificationContent;
+        },
+
+        groupNotification(protoMessage){
+            var displayContent;
+            var messageContent = MessageConfig.convert2MessageContent(protoMessage.from,protoMessage.content);
+            if(!messageContent.fromSelf){
+                displayContent = this.getDisplayName(protoMessage.from)+":"+messageContent.formatNotification();
+            } else {
+                displayContent = messageContent.formatNotification();
+            }
+            return displayContent;
+        },
+
+        getDisplayName(from){
+            var displayUserInfo = this.userInfoList.find(userInfo => userInfo.uid == from);
+            var displayName = from;
+            if(displayUserInfo){
+                displayName = displayUserInfo.displayName;
+                if(!displayName){
+                    displayName = displayUserInfo.mobile;
+                }
+            }
+            return displayName;
         },
 
         isNotification(type){

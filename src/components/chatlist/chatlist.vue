@@ -30,6 +30,8 @@ import { mapState, mapActions ,mapGetters } from 'vuex'
 import ConversationType from '../../websocket/model/conversationType';
 import LocalStore from '../../websocket/store/localstore';
 import TimeUtils from '../../websocket/utils/timeUtils';
+import MessageConfig from '../../websocket/message/messageConfig';
+import NotificationMessageContent from '../../websocket/message/notification/notificationMessageContent';
 export default {
     computed: {
    	    ...mapState([
@@ -52,25 +54,47 @@ export default {
             var protoConversationInfo = item.conversationInfo;
             var displayContent;
             if(protoConversationInfo.lastMessage){
-                displayContent = protoConversationInfo.lastMessage.content.searchableContent;
-                if(protoConversationInfo.lastMessage.content.type === 400){
-                    displayContent = '[网络电话]';
-                }
-                var isCurrentUser = protoConversationInfo.lastMessage.from === LocalStore.getUserId();
-                if(protoConversationInfo.conversationType == ConversationType.Group && !isCurrentUser){
-                    var from = protoConversationInfo.lastMessage.from;
-                    var displayUserInfo = this.userInfoList.find(userInfo => userInfo.uid == from);
-                    var displayName = from;
-                    if(displayUserInfo){
-                        displayName = displayUserInfo.displayName;
-                        if(!displayName){
-                            displayName = displayUserInfo.mobile;
-                        }
+                var messageContent = MessageConfig.convert2MessageContent(protoConversationInfo.lastMessage.from,protoConversationInfo.lastMessage.content);
+                if(messageContent && messageContent instanceof NotificationMessageContent){
+                    if(!messageContent.fromSelf){
+                        displayContent = this.getDisplayName(protoConversationInfo.lastMessage.from)+":"+messageContent.formatNotification();
+                    } else {
+                        displayContent = messageContent.formatNotification();
                     }
-                    displayContent = displayName +":"+protoConversationInfo.lastMessage.content.searchableContent;
+                    console.log("notification message "+displayContent);
+                } else {
+                    displayContent = protoConversationInfo.lastMessage.content.searchableContent;
+                    if(protoConversationInfo.lastMessage.content.type === 400){
+                        displayContent = '[网络电话]';
+                    }
+                    var isCurrentUser = protoConversationInfo.lastMessage.from === LocalStore.getUserId();
+                    if(protoConversationInfo.conversationType == ConversationType.Group && !isCurrentUser){
+                        var from = protoConversationInfo.lastMessage.from;
+                        var displayUserInfo = this.userInfoList.find(userInfo => userInfo.uid == from);
+                        var displayName = from;
+                        if(displayUserInfo){
+                            displayName = displayUserInfo.displayName;
+                            if(!displayName){
+                                displayName = displayUserInfo.mobile;
+                            }
+                        }
+                        displayContent = displayName +":"+protoConversationInfo.lastMessage.content.searchableContent;
+                    }
                 }
+                
             }
            return displayContent;
+        },
+        getDisplayName(from){
+            var displayUserInfo = this.userInfoList.find(userInfo => userInfo.uid == from);
+            var displayName = from;
+            if(displayUserInfo){
+                displayName = displayUserInfo.displayName;
+                if(!displayName){
+                    displayName = displayUserInfo.mobile;
+                }
+            }
+            return displayName;
         }	
     },
     filters: {

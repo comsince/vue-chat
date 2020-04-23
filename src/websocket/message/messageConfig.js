@@ -10,6 +10,10 @@ import CallSignalMessageContent from '../../webrtc/message/callSignalMessageCont
 import ImageMessageContent from './imageMessageContent'
 import CallByeMessageContent from '../../webrtc/message/callByeMessageContent'
 import CallModifyMessageContent from '../../webrtc/message/callModifyMessageContent'
+import CreateGroupNotification from './notification/createGroupNotification'
+import ChangeGroupNameNotification from './notification/changeGroupNameNotification'
+import NotificationMessageContent from './notification/notificationMessageContent'
+import LocalStore from '../store/localstore'
 export default class MessageConfig{
     static getMessageContentClazz(type) {
         for (const content of MessageConfig.MessageContents) {
@@ -23,6 +27,24 @@ export default class MessageConfig{
         }
         console.log(`message type ${type} is unknown`);
         return UnknownMessageContent;
+    }
+
+    static convert2MessageContent(from,protoMessageContent){
+        var messageContent = null;
+        var contentClazz =  this.getMessageContentClazz(protoMessageContent.type);
+        if(contentClazz != UnsupportMessageContent){
+           let content = new contentClazz();
+           try {
+               content.decode(protoMessageContent);
+               if (content instanceof NotificationMessageContent) {
+                    content.fromSelf = from === LocalStore.getUserId();
+               }
+               messageContent = content;
+           }catch(error){
+               console.log("decode message content error "+protoMessageContent);
+           }
+        } 
+        return messageContent;
     }
 
 
@@ -118,6 +140,7 @@ export default class MessageConfig{
             name: 'changeGroupNameNotification',
             flag: PersistFlag.Persist,
             type: MessageContentType.ChangeGroupName_Notification,
+            contentClazz: ChangeGroupNameNotification
         },
         {
             name: 'changeGroupPortraitNotification',
@@ -128,6 +151,7 @@ export default class MessageConfig{
             name: 'createGroupNotification',
             flag: PersistFlag.Persist,
             type: MessageContentType.CreateGroup_Notification,
+            contentClazz: CreateGroupNotification
         },
         {
             name: 'dismissGroupNotification',

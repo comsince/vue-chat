@@ -454,7 +454,7 @@ const mutations = {
      */
     updateConversationIntro(state,groupInfos){
         for(var groupInfo of groupInfos){
-           var stateConverstaionInfo = state.conversations.find(stateConverstaionInfo => stateConverstaionInfo.name === groupInfo.target);
+           var stateConverstaionInfo = state.conversations.find(stateConverstaionInfo => stateConverstaionInfo.conversationInfo.target === groupInfo.target);
            if(stateConverstaionInfo){
             console.log("update conversation name "+stateConverstaionInfo.name);
                stateConverstaionInfo.name = groupInfo.name;
