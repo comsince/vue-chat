@@ -18,6 +18,7 @@ import MessageConfig from './websocket/message/messageConfig';
 import ChatManager from './websocket/chatManager';
 import ProtoMessageContent from './websocket/message/protomessageContent';
 import Logger from './websocket/utils/logger';
+import WebSocketCli from './websocket/websocketcli'
 
 Vue.use(Vuex)
 
@@ -142,9 +143,13 @@ const mutations = {
     initData (state) {
         state.userId = localStorage.getItem('vue-user-id');
         state.token = localStorage.getItem('vue-token');
-        const vueSocket = new VueWebSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE,store);
-        vueSocket.connect(true);
-        state.vueSocket = vueSocket;
+        console.log("store construct websocket");
+        //WebSocketCli.vuexStore = store;
+        // const vueSocket = new VueWebSocket(WS_PROTOCOL,WS_IP,WS_PORT, HEART_BEAT_INTERVAL, RECONNECT_INTERVAL,BINTRAY_TYPE);
+        // vueSocket.vuexStore = store;
+        // vueSocket.connect(true);
+        // state.vueSocket = vueSocket;
+        state.vueSocket = VueWebSocket;
         //voip client
         state.voipClient = new VoipClient(store);
         let conversations = LocalStore.getConversations();

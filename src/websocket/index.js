@@ -19,23 +19,50 @@ import HandleFriendRequestHandler from './handler/handleFriendRequestHandler';
 import NotifyFriendHandler from './handler/notifyFriendHandler';
 import ModifyInfoHandler from './handler/modifyMyInfoHandler';
 import GetGroupMemberHandler from './handler/getGroupMemberHandler';
+import PromiseResolve from './future/promiseResolve';
+import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from '../constant/index'
+import vuexStore from '../store'
 
-export default class VueWebSocket {
+export class VueWebSocket {
     handlerList = [];
     userDisconnect = false;
     isconnected = false;
+    resolvePromiseMap = new Map();
+    
+    // constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType,vuexStore){
+    //     this.ws_protocol = ws_protocol;
+    //     this.ip= ip;
+    //     this.port = port;
+    //     this.heartbeatTimeout = heartbeatTimeout;
+    //     this.reconnectInterval = reconnectInterval;
+    //     this.binaryType = binaryType;
+    //     this.url = ws_protocol + '://' + ip + ':'+ port;
+    //     this.vuexStore = vuexStore;
+    //     this.initHandlerList();
+    // }
 
-    constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType,vuexStore){
-        this.ws_protocol = ws_protocol;
-        this.ip= ip;
-        this.port = port;
-        this.heartbeatTimeout = heartbeatTimeout;
-        this.reconnectInterval = reconnectInterval;
-        this.binaryType = binaryType;
-        this.url = ws_protocol + '://' + ip + ':'+ port;
-        this.vuexStore = vuexStore;
+    constructor(){
+        this.ws_protocol = WS_PROTOCOL;
+        this.ip= WS_IP;
+        this.port = WS_PORT;
+        this.heartbeatTimeout = HEART_BEAT_INTERVAL;
+        this.reconnectInterval = RECONNECT_INTERVAL;
+        this.binaryType = BINTRAY_TYPE;
+        this.url = WS_PROTOCOL + '://' + WS_IP + ':'+ WS_PORT;
         this.initHandlerList();
+        this.connect(true);
     }
+
+    // constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType){
+    //     this.ws_protocol = ws_protocol;
+    //     this.ip= ip;
+    //     this.port = port;
+    //     this.heartbeatTimeout = heartbeatTimeout;
+    //     this.reconnectInterval = reconnectInterval;
+    //     this.binaryType = binaryType;
+    //     this.url = ws_protocol + '://' + ip + ':'+ port;
+    //     this.initHandlerList();
+    // }
 
     connect(isReconncect){
         this.ws = new WebSocket(this.url);
@@ -106,7 +133,7 @@ export default class VueWebSocket {
      * 分发vuex action
      */
     sendAction(type,data){
-        this.vuexStore.dispatch(type,data);
+        vuexStore.dispatch(type,data);
     }
 
     initHandlerList(){
@@ -213,6 +240,10 @@ export default class VueWebSocket {
         this.sendPublishMessage(UPUI,userIds);
     }
 
+    async getUserInfo(userId){
+        return await this.sendPublishMessage(UPUI,[userId]);
+    }
+
     /**
      * 
      * @param {用户信息} info: {
@@ -268,10 +299,29 @@ export default class VueWebSocket {
         websocketprotomessage.setSignal(PUBLISH);
         websocketprotomessage.setSubSignal(subsignal);
         websocketprotomessage.setContent(content);
+        var messageId = LocalStore.getMessageId();
+        if(messageId > 65535){
+            messageId = 0;
+        }
+        websocketprotomessage.setMessageId(++messageId);
+        LocalStore.saveMessageId(messageId);
         this.send(websocketprotomessage.toJson());
+        
+        var vueWebSocket = this;
+        var pubAckPromise = new Promise((resolve) => {
+             var timeoutId = setTimeout(() => {
+                  resolve('');
+             },500);
+             var resolvePromise = new PromiseResolve(resolve,timeoutId);
+             vueWebSocket.resolvePromiseMap.set(messageId,resolvePromise);
+        });
+        return pubAckPromise;
     }
 
     sendMessage(protoMessage){
        this.sendPublishMessage(MS,protoMessage);
     }
 }
+
+const self = new VueWebSocket();
+export default self;

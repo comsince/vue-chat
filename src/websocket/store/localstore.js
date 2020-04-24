@@ -101,6 +101,18 @@ export default class LocalStore {
         return localStorage.getItem("friend_request_version");
     }
 
+    static saveMessageId(messageId){
+       localStorage.setItem("message_id",messageId);
+    }
+
+    static getMessageId(){
+        var messageId = localStorage.getItem("message_id");
+        if(!messageId){
+            messageId = 0;
+        }
+        return messageId;
+    }
+
     static clearLocalStore(){
         localStorage.setItem("coversations","");
         localStorage.setItem("last_message_seq","");
@@ -109,5 +121,6 @@ export default class LocalStore {
         localStorage.setItem("select_target","");
         localStorage.setItem("friend_request_version",0);
         localStorage.setItem(KEY_VUE_USER_ID,'');
+        localStorage.setItem("message_id",0);
     }
 }
