@@ -226,12 +226,7 @@ export default {
         groupNotification(protoMessage){
             var displayContent;
             var messageContent = MessageConfig.convert2MessageContent(protoMessage.from,protoMessage.content);
-            if(!messageContent.fromSelf){
-                displayContent = this.getDisplayName(protoMessage.from)+":"+messageContent.formatNotification();
-            } else {
-                displayContent = messageContent.formatNotification();
-            }
-            return displayContent;
+            return messageContent.formatNotification();
         },
 
         getDisplayName(from){

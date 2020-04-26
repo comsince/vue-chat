@@ -56,12 +56,7 @@ export default {
             if(protoConversationInfo.lastMessage){
                 var messageContent = MessageConfig.convert2MessageContent(protoConversationInfo.lastMessage.from,protoConversationInfo.lastMessage.content);
                 if(messageContent && messageContent instanceof NotificationMessageContent){
-                    if(!messageContent.fromSelf){
-                        displayContent = this.getDisplayName(protoConversationInfo.lastMessage.from)+":"+messageContent.formatNotification();
-                    } else {
-                        displayContent = messageContent.formatNotification();
-                    }
-                    console.log("notification message "+displayContent);
+                    displayContent = messageContent.formatNotification();
                 } else {
                     displayContent = protoConversationInfo.lastMessage.content.searchableContent;
                     if(protoConversationInfo.lastMessage.content.type === 400){

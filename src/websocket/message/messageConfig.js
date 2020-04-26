@@ -13,6 +13,7 @@ import CallModifyMessageContent from '../../webrtc/message/callModifyMessageCont
 import CreateGroupNotification from './notification/createGroupNotification'
 import ChangeGroupNameNotification from './notification/changeGroupNameNotification'
 import NotificationMessageContent from './notification/notificationMessageContent'
+import AddGroupMemberNotification from './notification/addGroupMemberNotification'
 import LocalStore from '../store/localstore'
 export default class MessageConfig{
     static getMessageContentClazz(type) {
@@ -135,6 +136,7 @@ export default class MessageConfig{
             name: 'addGroupMemberNotification',
             flag: PersistFlag.Persist,
             type: MessageContentType.AddGroupMember_Notification,
+            contentClazz: AddGroupMemberNotification
         },
         {
             name: 'changeGroupNameNotification',

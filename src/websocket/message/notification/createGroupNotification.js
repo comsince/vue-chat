@@ -2,6 +2,7 @@ import MessageContentType from '../messageContentType';
 
 import GroupNotificationContent from './groupNotification';
 import StringUtils from '../../utils/StringUtil'
+import webSocketCli from '../../websocketcli'
 
 export default class CreateGroupNotification extends GroupNotificationContent {
     creator = '';
@@ -17,7 +18,7 @@ export default class CreateGroupNotification extends GroupNotificationContent {
         if (this.fromSelf) {
             return '您创建了群组 ' + this.groupName;
         } else {
-            return  '创建了群组 ' + this.groupName;
+            return  webSocketCli.getDisplayName(this.creator)+' 创建了群组 ' + this.groupName;
         }
     }
 
