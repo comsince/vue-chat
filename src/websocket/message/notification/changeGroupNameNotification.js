@@ -2,7 +2,6 @@ import MessageContentType from "../messageContentType";
 
 import GroupNotificationContent from "./groupNotification";
 import StringUtils from '../../utils/StringUtil'
-import webSocketCli from '../../websocketcli'
 
 export default class ChangeGroupNameNotification extends GroupNotificationContent {
     operator = '';
@@ -15,8 +14,6 @@ export default class ChangeGroupNameNotification extends GroupNotificationConten
     }
 
     formatNotification() {
-        // var userName = webSocketCli.getDisplayName(this.operator);
-        // console.log("change group name operetor userName "+userName);
         if (this.fromSelf) {
             return '您修改群名称为：' + this.name;
         } else {

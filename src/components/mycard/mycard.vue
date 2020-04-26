@@ -2,7 +2,7 @@
 <template>
 	<div class="mycard" ref="mycardRef">
 	    <header>
-	    	<img :src="user.img" class="avatar" @click="showPersonalCard = !showPersonalCard" @dblclick="changeFullScreenMode">
+	    	<img :src="user.img" class="avatar" @click="showPersonCard" @dblclick="changeFullScreenMode">
 			<personcard v-if="showPersonalCard" v-bind:userId="userId"></personcard>
 	    </header>
 	    <div class="navbar" @click="clearSearch">
@@ -34,6 +34,9 @@
 import { mapState, mapGetters } from 'vuex'
 import addtip from '../../components/menu/addtip'
 import personcard from '../../components/menu/personalCard'
+import webSocketCli from '../../websocket/websocketcli'
+import Logger from '../../websocket/utils/logger'
+
 export default {
 	components: {
 		addtip,
@@ -56,6 +59,9 @@ export default {
 	   ])
     },
     methods: {
+		showPersonCard(){
+			this.showPersonalCard = !this.showPersonalCard
+		},
     	clearSearch() {
     		this.$store.dispatch('search', '')
 		},

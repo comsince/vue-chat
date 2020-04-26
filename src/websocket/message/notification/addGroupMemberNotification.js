@@ -2,6 +2,7 @@ import MessageContentType from '../messageContentType';
 
 import GroupNotificationContent from './groupNotification';
 import StringUtils from '../../utils/StringUtil'
+import webSocketCli from '../../websocketcli'
 
 export default class AddGroupMemberNotification extends GroupNotificationContent {
     invitor = '';
@@ -19,19 +20,19 @@ export default class AddGroupMemberNotification extends GroupNotificationContent
           if (this.fromSelf) {
               return '您加入了群组';
           } else {
-              return wfc.getGroupMemberDisplayName(this.groupId, this.invitor) + ' 加入了群组';
+              return webSocketCli.getDisplayName(this.invitor) + ' 加入了群组';
           }
         }
 
         if (this.fromSelf) {
             notifyStr = '您邀请:';
         } else {
-            notifyStr = wfc.getGroupMemberDisplayName(this.groupId, this.invitor) + '邀请:';
+            notifyStr = webSocketCli.getDisplayName(this.invitor) + '邀请:';
         }
 
         let membersStr = '';
         this.invitees.forEach(m => {
-            membersStr += ' ' + wfc.getUserDisplayName(m);
+            membersStr += ' ' + webSocketCli.getDisplayName(m);
         });
 
         return notifyStr + membersStr + '加入了群组';

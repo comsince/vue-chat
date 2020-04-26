@@ -22,8 +22,9 @@ import GetGroupMemberHandler from './handler/getGroupMemberHandler';
 import PromiseResolve from './future/promiseResolve';
 import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from '../constant/index'
 import vuexStore from '../store'
+import Logger from './utils/logger';
 
-export class VueWebSocket {
+export default class VueWebSocket {
     handlerList = [];
     userDisconnect = false;
     isconnected = false;
@@ -241,7 +242,8 @@ export class VueWebSocket {
     }
 
     async getUserInfo(userId){
-        return await this.sendPublishMessage(UPUI,[userId]);
+        var promise = await this.sendPublishMessage(UPUI,[userId]);
+        return promise
     }
 
     /**
@@ -322,6 +324,3 @@ export class VueWebSocket {
        this.sendPublishMessage(MS,protoMessage);
     }
 }
-
-const self = new VueWebSocket();
-export default self;

@@ -10,7 +10,7 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
     }
 
     processMessage(proto){
-       if(proto.content != null){
+       if(proto.content != null && proto.content != ''){
            var userInfoList = JSON.parse(proto.content);
            var stateFriendList = [];
            var userInfos = [];
@@ -49,7 +49,9 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
                console.log("messageId "+proto.messageId);
               var promiseReslove = this.vueWebsocket.resolvePromiseMap.get(proto.messageId);
               clearTimeout(promiseReslove.timeoutId);
-              promiseReslove.resolve(userInfos[0]);
+              var displayName = userInfoList[0].displayName === '' ? userInfoList[0].mobile : userInfoList[0].displayName;
+              promiseReslove.resolve(displayName);
+              this.vueWebsocket.resolvePromiseMap.delete(proto.messageId);
            }
            console.log("state user size "+stateFriendList.length);
            this.vueWebsocket.sendAction("updateUserInfos",userInfos);
