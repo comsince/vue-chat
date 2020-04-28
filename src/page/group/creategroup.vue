@@ -48,7 +48,10 @@
                     <div class="check-operate">
                         <div class="check-btns">
                             <el-button class="cancel-btn" size="medium" type="info" plain round @click="cancel">取 消</el-button>
-                            <el-button class="confirm-btn"  size="medium" type="success" plain round @click="confirm" :disabled="confirmEnable">确 定</el-button>
+                            <el-button class="confirm-btn"  size="medium" type="success" plain round 
+                                @click="confirm" 
+                                :disabled="confirmEnable" 
+                                v-loading.fullscreen.lock="fullscreenLoading">确 定</el-button>
                         </div>
                         
                     </div>
@@ -62,6 +65,8 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import Logger from '../../websocket/utils/logger'
+import webSocketClient  from '../../websocket/websocketcli'
+import LocalStore from '../../websocket/store/localstore'
 export default {
     name: 'creategroup',
     data() {
@@ -70,12 +75,14 @@ export default {
            selectedFriends: [],
            checkFriendTips: '未选择联系人',
            confirmEnable: true,
-           selectFriendId: 0
+           selectFriendId: 0,
+           fullscreenLoading: false
        }
     },
     computed: {
         ...mapState([
             'appHeight',
+            'user'
         ]),
         ...mapGetters([
             'searchedFriendlist'
@@ -144,7 +151,32 @@ export default {
             this.exit();
        },
        confirm(){
-            this.exit();
+           if(this.selectedFriends.length > 0){
+                this.fullscreenLoading = true;
+                var groupName = this.user.name;
+                var memberIds = [];
+                for(var index in this.selectedFriends){
+                    if (index < 2){
+                        groupName += "、"+this.selectedFriends[index].remark;
+                    }
+                    memberIds.push(this.selectedFriends[index].wxid);
+                }
+                //将自己加入到群组中
+                memberIds.push(LocalStore.getUserId());
+                webSocketClient.createGroup(groupName,memberIds).then(data => {
+                    Logger.log("create group result "+data);
+                    if(data != ''){
+                       var result = JSON.parse(data);
+                       if(result.code == 200){
+                          this.fullscreenLoading = false;
+                          this.exit();
+                       }
+                    } else {
+                        this.fullscreenLoading = false;
+                    }
+                });
+           }
+           
        },
        handleClose(){
             this.exit();

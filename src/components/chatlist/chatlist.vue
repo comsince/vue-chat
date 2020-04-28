@@ -1,7 +1,7 @@
 <!-- 聊天列表 -->
 <template>
   <div class="conversationlist" :style="{height: (appHeight-60) + 'px'}">
-    <ul>
+    <ul v-loading="isEmptyConversation" style="min-height: 60px">
         <li v-bind:key = index v-for="(item,index) in searchedConversationList" class="sessionlist" :class="{ active: item.conversationInfo.target === selectTarget }" @click="selectConversation(item.conversationInfo.target)">
             <div class="list-left">
             	<img class="avatar"  width="42" height="42" alt="static/images/vue.jpg" :src="item.img" onerror="this.src='static/images/vue.jpg'">
@@ -32,7 +32,13 @@ import LocalStore from '../../websocket/store/localstore';
 import TimeUtils from '../../websocket/utils/timeUtils';
 import MessageConfig from '../../websocket/message/messageConfig';
 import NotificationMessageContent from '../../websocket/message/notification/notificationMessageContent';
+import Logger from '../../websocket/utils/logger';
 export default {
+    data(){
+        return {
+            loading: true
+        }
+    },
     computed: {
    	    ...mapState([
             'selectId',
@@ -43,7 +49,10 @@ export default {
         ]),
         ...mapGetters([
             'searchedConversationList'
-        ])
+        ]),
+        isEmptyConversation(){
+            return this.searchedConversationList.length == 0;
+        }
     },
     methods: {
     	...mapActions([

@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -23,6 +23,11 @@ import PromiseResolve from './future/promiseResolve';
 import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from '../constant/index'
 import vuexStore from '../store'
 import Logger from './utils/logger';
+import GroupInfo from './model/groupInfo';
+import GroupType from './model/groupType';
+import GroupMember from './model/groupMember';
+import GroupMemberType from './model/groupMemberType';
+import CreateGroupHandler from './handler/createGroupHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -154,6 +159,7 @@ export default class VueWebSocket {
         this.handlerList.push(new NotifyFriendHandler(this));
         this.handlerList.push(new ModifyInfoHandler(this));
         this.handlerList.push(new GetGroupMemberHandler(this));
+        this.handlerList.push(new CreateGroupHandler(this));
     }
 
     processMessage(data){
@@ -275,6 +281,23 @@ export default class VueWebSocket {
        })
     }
 
+    async createGroup(groupName,memberIds){
+        var groupInfo = new GroupInfo();
+        groupInfo.name = groupName;
+        groupInfo.type = GroupType.Normal;
+        var groupMembers = [];
+        for(var memberId of memberIds){
+            var groupMember = new GroupMember();
+            groupMember.memberId = memberId;
+            groupMember.type = memberId == LocalStore.getUserId() ? GroupMemberType.Owner : GroupMemberType.Normal;
+            groupMembers.push(groupMember);
+        }
+        return await this.sendPublishMessage(GC,{
+            groupInfo: groupInfo,
+            groupMembers: groupMembers
+        });
+    }
+
     pullMessage(messageId,type = 0,pullType = 0,sendMessageCount = 0){
         this.sendPublishMessage(MP,{
             messageId: messageId,
@@ -313,7 +336,7 @@ export default class VueWebSocket {
         var pubAckPromise = new Promise((resolve) => {
              var timeoutId = setTimeout(() => {
                   resolve('');
-             },500);
+             },5000);
              var resolvePromise = new PromiseResolve(resolve,timeoutId);
              vueWebSocket.resolvePromiseMap.set(messageId,resolvePromise);
         });

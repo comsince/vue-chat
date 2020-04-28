@@ -21,6 +21,11 @@ export class WebSocketClient {
     }
 
 
+    createGroup(groupName,memberIds){
+       return vuexStore.state.vueSocket.createGroup(groupName,memberIds);
+    }
+
+
 }
 
 const self = new WebSocketClient();

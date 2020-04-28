@@ -20,12 +20,13 @@
 ![image](./attachment/vue-chat-video.png)
 
 # 项目演示
-* [项目演示地址](http://www.comsince.cn/chat/index.html)
+* [项目公测地址](https://chat.comsince.cn)
 * 请选择其中任何一个帐号密码进行登录即可
 ```properties
 帐号：13800000000, 13800000001, 13800000002
 密码：556677
 ```
+* 暂时停止手机验证码注册登录，后续开通QQ群里面通知
 
 ## 版本规划
 ### V1.0.0
@@ -39,7 +40,7 @@
 ### V1.0.1
 * 增加全屏幕模式支持，点击用户头像即可切换
 
-![image](./attachment/wechat-full-screen-mode.png)
+![image](https://user-gold-cdn.xitu.io/2020/4/13/171719952947e62a?w=1518&h=655&f=png&s=170160)
 
 ### V1.0.2
 * 计划增加音视频聊天功能
@@ -47,11 +48,11 @@
 
 > 语音通话
 
-![image](./attachment/vue-chat-rtc-audio.png)
+![image](http://image.comsince.cn/vue-chat-audio.png)
 
 > 视频通话
 
-![image](./attachment/vue-chat-rtc-video.png)
+![image](http://image.comsince.cn/vue-chat-video.png)
 
 ### V1.0.3
 * 增加好友搜索，好友添加功能，形成功能闭环
