@@ -48,18 +48,20 @@
 
 > 语音通话
 
-![image](http://image.comsince.cn/vue-chat-audio.png)
+![image](https://user-gold-cdn.xitu.io/2020/3/20/170f70e65d19d2ac?w=2880&h=1800&f=png&s=1120425)
 
 > 视频通话
 
-![image](http://image.comsince.cn/vue-chat-video.png)
+![image](https://user-gold-cdn.xitu.io/2020/3/20/170f70e73e8ad91e?w=2880&h=1800&f=png&s=1323835)
 
 ### V1.0.3
 * 增加好友搜索，好友添加功能，形成功能闭环
 
 ### V1.0.4
-* 增加创建群组功能
 * 群组用户列表功能
+
+### V1.0.5-beta
+* 增加创建群组功能
 
 ## Build Setup
 
