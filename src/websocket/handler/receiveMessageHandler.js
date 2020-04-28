@@ -20,6 +20,11 @@ export default class ReceiveMessageHandler extends AbstractMessageHandler {
         LocalStore.resetSendMessageCount();
         var content = JSON.parse(proto.content);
         console.log("current "+content.current+" head "+content.head+" messageCount "+content.messageCount);
+        if(content.messageCount == 0){
+          this.vueWebsocket.sendAction('changeEmptyMessageState',true);
+        } else {
+          this.vueWebsocket.sendAction('changeEmptyMessageState',false);
+        }
         for(var protoMessage of content.messageResponseList){
           var protoMessage = ProtoMessage.toProtoMessage(protoMessage);
           if(MessageConfig.isDisplayableMessage(protoMessage)){

@@ -23,6 +23,8 @@ export default class ConnectAckHandler extends AbstractMessageHandler{
         } else {
             this.vueWebsocket.sendAction('changetFirstLogin',false);
         }
+        //好友请求信息
+        this.vueWebsocket.getFriendRequest(LocalStore.getFriendRequestVersion());
         //初始拉取消息列表
         this.vueWebsocket.pullMessage(lastMessageSeq,0,0,LocalStore.getSendMessageCount());
         LocalStore.setLastMessageSeq(connectAcceptedMessage.messageHead);

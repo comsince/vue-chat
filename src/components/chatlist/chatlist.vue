@@ -45,13 +45,14 @@ export default {
             'selectTarget',
             'searchText',
             'appHeight',
-            'userInfoList'
+            'userInfoList',
+            'emptyMessage'
         ]),
         ...mapGetters([
             'searchedConversationList'
         ]),
         isEmptyConversation(){
-            return this.searchedConversationList.length == 0;
+            return this.searchedConversationList.length == 0 && !this.emptyMessage;
         }
     },
     methods: {

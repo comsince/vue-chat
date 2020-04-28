@@ -124,6 +124,7 @@ const state = {
     tempGroupMembers: [],
     notify:'',
     firstLogin: false,
+    emptyMessage: false,
     //修改全屏模式
     changeFullScreenMode: false,
     appHeight: 638,
@@ -195,9 +196,12 @@ const mutations = {
     selectFriend (state, value) {
        state.selectFriendId = value
        console.log("select friend id "+value);
-       if(value === 0 && state.friendRequests.length == 0){
-          state.newFriendRequestCount = 0;
-          state.vueSocket.getFriendRequest(LocalStore.getFriendRequestVersion());
+       if(value === 0){
+           if(state.friendRequests.length == 0){
+             state.vueSocket.getFriendRequest(LocalStore.getFriendRequestVersion());
+           } else {
+             state.newFriendRequestCount = 0;
+           }
        }
     },
 
@@ -535,6 +539,7 @@ const mutations = {
         state.waitUserIds = [];
         state.userInfoList = [];
         state.newFriendRequestCount = 0;
+        state.emptyMessage = false;
         LocalStore.clearLocalStore();
         ChatManager.removeOnReceiveMessageListener();
         //发送断开消息，清除session，防止同一个设备切换登录导致的验证失败
@@ -601,6 +606,9 @@ const mutations = {
     },
     getUserInfos(state,value){
         state.vueSocket.getUserInfos(value);
+    },
+    changeEmptyMessageState(state,value){
+        state.emptyMessage = value;
     }
 
 }
@@ -764,6 +772,7 @@ const actions = {
     getGroupInfo: ({ commit }, value) => commit('getGroupInfo', value),
     getGroupMember: ({ commit }, value) => commit('getGroupMember', value),
     updateTempGroupMember: ({ commit }, value) => commit('updateTempGroupMember', value),
+    changeEmptyMessageState: ({ commit }, value) => commit('changeEmptyMessageState', value),
 }
 const store = new Vuex.Store({
   state,

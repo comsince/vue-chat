@@ -336,7 +336,7 @@ export default class VueWebSocket {
         var pubAckPromise = new Promise((resolve) => {
              var timeoutId = setTimeout(() => {
                   resolve('');
-             },5000);
+             },10000);
              var resolvePromise = new PromiseResolve(resolve,timeoutId);
              vueWebSocket.resolvePromiseMap.set(messageId,resolvePromise);
         });
