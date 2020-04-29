@@ -14,7 +14,7 @@ export class WebSocketProtoMessage {
     subSignal;
 
     constructor(){
-        console.log('constuctor');
+        console.log('constuctor WebSocketProtoMessage');
     }
 
     setMessageId(messageId){
@@ -26,7 +26,7 @@ export class WebSocketProtoMessage {
     }
 
     setSubSignal(subSignal){
-        this.subsignal = subSignal;
+        this.subSignal = subSignal;
     }
 
     setContent(content){
@@ -36,8 +36,8 @@ export class WebSocketProtoMessage {
     toJson(){
         let message = {
             signal : this.signal,
-            subsignal : this.subsignal == null ? 'NONE' : this.subsignal,
-            message_id : this.messageId == null ? 0 : this.messageId,
+            subSignal : this.subSignal == null ? 'NONE' : this.subSignal,
+            messageId : this.messageId == null ? 0 : this.messageId,
             content : this.content
         }
 

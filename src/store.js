@@ -311,6 +311,10 @@ const mutations = {
         state.vueSocket.getGroupMember(groupId,true);
     },
 
+    quitGroup(state,groupId){
+        state.vueSocket.quitGroup(groupId);
+    },
+
     updateTempGroupMember(state,groupMembers){
         state.tempGroupMembers = groupMembers;
     },
@@ -520,6 +524,32 @@ const mutations = {
            this.commit('updateConversationInfo',protoConversationInfo);
        }
        
+    },
+
+
+    updateProtoMessageUid(state,updateMessage){
+        var stateChatMessage = state.messages.find(stateChatMessage => stateChatMessage.target === state.selectTarget);
+        if(stateChatMessage){
+            var protoMessage = stateChatMessage.protoMessages.find(message => message.messageId == updateMessage.messageId);
+            if(protoMessage){
+                protoMessage.messageUid = updateMessage.messageUid;
+            }
+        } else {
+            //如果切换聊天，需要全局遍历，暂定
+        }
+    },
+
+
+    updateMessageStatus(state,updateMessageStatus){
+        var stateChatMessage = state.messages.find(stateChatMessage => stateChatMessage.target === state.selectTarget);
+        if(stateChatMessage){
+            var protoMessage = stateChatMessage.protoMessages.find(message => message.messageId == updateMessageStatus.messageId);
+            if(protoMessage){
+                protoMessage.status = updateMessageStatus.status;
+            }
+        } else {
+            //如果切换聊天，需要全局遍历，暂定
+        }
     },
 
     loginOut(state,message){
@@ -771,8 +801,11 @@ const actions = {
     updateGroupInfos: ({ commit }, value) => commit('updateGroupInfos', value),
     getGroupInfo: ({ commit }, value) => commit('getGroupInfo', value),
     getGroupMember: ({ commit }, value) => commit('getGroupMember', value),
+    quitGroup: ({ commit }, value) => commit('quitGroup', value),
     updateTempGroupMember: ({ commit }, value) => commit('updateTempGroupMember', value),
     changeEmptyMessageState: ({ commit }, value) => commit('changeEmptyMessageState', value),
+    updateProtoMessageUid: ({ commit }, value) => commit('updateProtoMessageUid', value),
+    updateMessageStatus: ({ commit }, value) => commit('updateMessageStatus', value),
 }
 const store = new Vuex.Store({
   state,

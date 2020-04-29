@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "4581221",
+      "name": "发送中",
+      "font_class": "loading-solid",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "3398713",
+      "name": "发送失败",
+      "font_class": "fasongshibai",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
       "icon_id": "6659620",
       "name": "朋友",
       "font_class": "pengyou1",

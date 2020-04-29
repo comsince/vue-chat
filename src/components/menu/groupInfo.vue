@@ -22,7 +22,8 @@
                 </ul>
             </div>
             <div class="flex-bottom">
-                <p class="quit-group">退出群聊</p>
+                <p class="quit-group" v-if="!isGroupOwner" @click="quitGroup">退出群聊</p>
+                <p class="dismiss-group" v-if="isGroupOwner">解散群聊</p>
             </div>
         </div>
         
@@ -32,9 +33,15 @@
 
 <script>
 import { mapState, mapActions ,mapGetters } from 'vuex'
+import LocalStore from '../../websocket/store/localstore';
 export default {
     name: 'groupInfoMenu',
     props: ['groupId'], 
+    data(){
+        return {
+            isGroupOwner: false
+        }
+    },
     mounted() {
         if(this.memberList.length == 0){
            this.$store.dispatch('getGroupMember',this.groupId);
@@ -56,6 +63,9 @@ export default {
             var groupMembers = [];
             var noFriendMemberIds = [];
             for(var groupMember of this.tempGroupMembers){
+               if(groupMember.memberId == LocalStore.getUserId()){
+                   this.isGroupOwner = groupMember.type == 2 ? true : false;
+               } 
                var userInfo = this.userInfoList.find( user => groupMember.memberId == user.uid);
                if(userInfo){
                    groupMember.displayName = userInfo.displayName != ''? userInfo.displayName : userInfo.mobile;
@@ -81,6 +91,9 @@ export default {
                groupName = groupInfo.name;
             }
             return groupName;
+        },
+        quitGroup(){
+            this.$store.dispatch('quitGroup',this.groupId);
         }
     },
 }
@@ -169,5 +182,11 @@ export default {
                 color: rgb(0,220,65);
                 font-size: 16px
                 cursor: pointer
-                text-align: center           
+                text-align: center
+            .dismiss-group
+                width: 100%
+                color: red
+                font-size: 16px
+                cursor: pointer
+                text-align: center          
 </style>

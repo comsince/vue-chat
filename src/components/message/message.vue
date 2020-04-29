@@ -22,6 +22,10 @@
                         onerror="this.src='static/images/vue.jpg'"/>
                         <div class="content">
                             <div class="display-name" v-if="!isSingleConversation && item.direction != 0">{{showUserName(item.from)}}</div>
+                            <div class="send-status" v-if="item.direction == 0">
+                                <i title = "发送中" class="icon iconfont icon-loading-solid" v-if="isSending(item)"></i>
+                                <i title = "发送失败" class="icon iconfont icon-fasongshibai" v-if="isSendFail(item)"></i>
+                            </div>
                             <div class="content-message">
                                 <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
                                 <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>    
@@ -72,6 +76,7 @@ import groupInfo from '../menu/groupInfo'
 import MessageConfig from '../../websocket/message/messageConfig';
 import NotificationMessageContent from '../../websocket/message/notification/notificationMessageContent';
 import GroupNotificationContent from '../../websocket/message/notification/groupNotification';
+import MessageStatus from '../../websocket/message/messageStatus';
 export default {
     components:{
         Xgplayer,
@@ -244,6 +249,16 @@ export default {
         isNotification(type){
             return type >= 80 && type <= 117 
         },
+
+        isSending(protoMessage){
+            //兼容以前没有更新messageUid的发送消息
+            return protoMessage.status == MessageStatus.Sending
+            // && protoMessage.messageUid != 0;
+        },
+
+        isSendFail(protoMessage){
+            return protoMessage.status == MessageStatus.SendFailure
+        }
     },
     filters: {
             // 将日期过滤为 hour:minutes
@@ -340,7 +355,7 @@ export default {
                     margin-left: 10px
                     position: relative
                     padding: 6px 10px
-                    max-width: 100%
+                    max-width: 90%
                     min-height: 36px
                     line-height: 24px
                     box-sizing: border-box
@@ -363,7 +378,17 @@ export default {
             .avatar
                 float: right
                 margin:0 15px
-            .content    
+            .content
+                .send-status
+                    height: 100%
+                    display: inline-block
+                    .icon
+                        display: block
+                        font-size: 16px 
+                    .icon-fasongshibai
+                        color: red
+                    .icon-loading-solid
+                        animation: changeright 1s linear infinite    
                 .content-message 
                     background-color: #b2e281
                     &:before 
@@ -371,4 +396,12 @@ export default {
                         vertical-align: middle
                         border-right-color: transparent
                         border-left-color: #b2e281
+    @keyframes changeright     
+    0% 
+        -webkit-transform:rotate(0deg)
+    50%
+        -webkit-transform:rotate(180deg)
+    100%
+        -webkit-transform:rotate(360deg)                      
+                    
 </style>

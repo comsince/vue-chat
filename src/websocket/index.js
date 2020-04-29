@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC, GQ, PUB_ACK} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -28,6 +28,8 @@ import GroupType from './model/groupType';
 import GroupMember from './model/groupMember';
 import GroupMemberType from './model/groupMemberType';
 import CreateGroupHandler from './handler/createGroupHandler';
+import QuitGroupHandler from './handler/quitGroupHandler';
+import { fail } from 'assert';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -160,6 +162,7 @@ export default class VueWebSocket {
         this.handlerList.push(new ModifyInfoHandler(this));
         this.handlerList.push(new GetGroupMemberHandler(this));
         this.handlerList.push(new CreateGroupHandler(this));
+        this.handlerList.push(new QuitGroupHandler(this));
     }
 
     processMessage(data){
@@ -298,6 +301,12 @@ export default class VueWebSocket {
         });
     }
 
+    quitGroup(groupId){
+       this.sendPublishMessage(GQ,{
+           groupId: groupId
+       });
+    }
+
     pullMessage(messageId,type = 0,pullType = 0,sendMessageCount = 0){
         this.sendPublishMessage(MP,{
             messageId: messageId,
@@ -319,7 +328,7 @@ export default class VueWebSocket {
      * @param {子信令} subsignal 
      * @param {消息体内容} content 
      */
-    sendPublishMessage(subsignal,content){
+    sendPublishMessage(subsignal,content,protoMessageId = 0){
         var websocketprotomessage = new WebSocketProtoMessage();
         websocketprotomessage.setSignal(PUBLISH);
         websocketprotomessage.setSubSignal(subsignal);
@@ -335,15 +344,26 @@ export default class VueWebSocket {
         var vueWebSocket = this;
         var pubAckPromise = new Promise((resolve) => {
              var timeoutId = setTimeout(() => {
-                  resolve('');
+                 if(subsignal == MS){
+                    var failProtoMessage = new WebSocketProtoMessage();
+                    failProtoMessage.setSignal(PUB_ACK);
+                    failProtoMessage.setSubSignal(subsignal)
+                    failProtoMessage.setMessageId(messageId);
+                    failProtoMessage.setContent('')
+                    vueWebSocket.processMessage(failProtoMessage.toJson())
+                 } else {
+                    resolve("");
+                 }
+                 
              },10000);
              var resolvePromise = new PromiseResolve(resolve,timeoutId);
+             resolvePromise.protoMessageId = protoMessageId;
              vueWebSocket.resolvePromiseMap.set(messageId,resolvePromise);
         });
         return pubAckPromise;
     }
 
     sendMessage(protoMessage){
-       this.sendPublishMessage(MS,protoMessage);
+       this.sendPublishMessage(MS,protoMessage,protoMessage.messageId);
     }
 }

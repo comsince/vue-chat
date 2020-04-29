@@ -14,6 +14,7 @@ import CreateGroupNotification from './notification/createGroupNotification'
 import ChangeGroupNameNotification from './notification/changeGroupNameNotification'
 import NotificationMessageContent from './notification/notificationMessageContent'
 import AddGroupMemberNotification from './notification/addGroupMemberNotification'
+import QuitGroupNotification from './notification/quitGroupNotification'
 import LocalStore from '../store/localstore'
 export default class MessageConfig{
     static getMessageContentClazz(type) {
@@ -174,6 +175,7 @@ export default class MessageConfig{
             name: 'quitGroupNotification',
             flag: PersistFlag.Persist,
             type: MessageContentType.QuitGroup_Notification,
+            contentClazz: QuitGroupNotification,
         },
         {
             name: 'transferGroupOwnerNotification',
