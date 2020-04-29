@@ -53,7 +53,7 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
               promiseReslove.resolve(displayName);
               this.vueWebsocket.resolvePromiseMap.delete(proto.messageId);
            }
-           console.log("state user size "+stateFriendList.length);
+        
            this.vueWebsocket.sendAction("updateUserInfos",userInfos);
            this.vueWebsocket.sendAction("updateFriendList",stateFriendList);
        }

@@ -234,6 +234,7 @@ const mutations = {
                     }
                   }
                   if(!isExist){
+                    currentUser.id = state.friendlist.length
                     state.friendlist.push(currentUser);
                   }
                 }
@@ -431,6 +432,7 @@ const mutations = {
         // 消息是否属于当前会话
         var isCurrentConversationMessage = (state.selectTarget === protoConversationInfo.target);
         var visibilityStateVisible = (state.visibilityState === 'visible');
+        console.log("current message "+isCurrentConversationMessage +" visible "+visibilityStateVisible+" first login "+state.firstLogin);
         //只显示接收消息，同一用户不同session，不再通知
         var isShowSendingMessage = protoConversationInfo.lastMessage.direction === 1;
         //更新会话消息未读数
@@ -565,6 +567,7 @@ const mutations = {
         state.messages = [];
         state.friendlist = [];
         state.friendIds = [];
+        state.selectFriendId = 0;
         state.friendRequests = [];
         state.waitUserIds = [];
         state.userInfoList = [];
