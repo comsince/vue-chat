@@ -314,6 +314,19 @@ const mutations = {
 
     quitGroup(state,groupId){
         state.vueSocket.quitGroup(groupId);
+
+        //为防止再次收到消息，退出群组的发起人不应该在接收任何退出群组消息，防止再次产生会话
+        var index = -1
+        for(var i = 0; i<state.conversations.length; i++){
+            if(state.conversations[i].conversationInfo.target == groupId){
+                index = i;
+                break;
+            }
+        }
+        console.log("quit group index "+index)
+        if(index != -1){
+            state.conversations.splice(index,1);
+        }
     },
 
     updateTempGroupMember(state,groupMembers){
