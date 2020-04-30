@@ -1,8 +1,9 @@
 import AbstractMessageHandler from "./abstractmessagehandler";
-import { PUB_ACK, UPUI } from "../../constant";
+import { PUB_ACK, UPUI, ERROR_CODE, SUCCESS_CODE } from "../../constant";
 import UserInfo from "../model/userInfo";
 import py from "pinyin"
 import { isBuffer } from "util";
+import FutureResult from "../future/futureResult";
 
 export default class GetUserInfoHandler extends AbstractMessageHandler{
     match(proto){
@@ -50,7 +51,7 @@ export default class GetUserInfoHandler extends AbstractMessageHandler{
               var promiseReslove = this.vueWebsocket.resolvePromiseMap.get(proto.messageId);
               clearTimeout(promiseReslove.timeoutId);
               var displayName = userInfoList[0].displayName === '' ? userInfoList[0].mobile : userInfoList[0].displayName;
-              promiseReslove.resolve(displayName);
+              promiseReslove.resolve(new FutureResult(SUCCESS_CODE,displayName));
               this.vueWebsocket.resolvePromiseMap.delete(proto.messageId);
            }
         

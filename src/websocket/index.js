@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC, GQ, PUB_ACK} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC, GQ, PUB_ACK, ERROR_CODE, MR} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -30,6 +30,9 @@ import GroupMemberType from './model/groupMemberType';
 import CreateGroupHandler from './handler/createGroupHandler';
 import QuitGroupHandler from './handler/quitGroupHandler';
 import { fail } from 'assert';
+import FutureResult from './future/futureResult';
+import RecallMessageHandler from './handler/recallMessageHandler';
+import NotifyRecallMessageHandler from './handler/notifyRecallMessageHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -163,6 +166,8 @@ export default class VueWebSocket {
         this.handlerList.push(new GetGroupMemberHandler(this));
         this.handlerList.push(new CreateGroupHandler(this));
         this.handlerList.push(new QuitGroupHandler(this));
+        this.handlerList.push(new RecallMessageHandler(this));
+        this.handlerList.push(new NotifyRecallMessageHandler(this));
     }
 
     processMessage(data){
@@ -277,8 +282,8 @@ export default class VueWebSocket {
         this.sendPublishMessage(GPGI,groupIds);
     }
 
-    getGroupMember(groupId,refresh){
-       this.sendPublishMessage(GPGM,{
+    async getGroupMember(groupId,refresh){
+       return await this.sendPublishMessage(GPGM,{
            groupId: groupId,
            version: 0
        })
@@ -301,10 +306,16 @@ export default class VueWebSocket {
         });
     }
 
-    quitGroup(groupId){
-       this.sendPublishMessage(GQ,{
+    async quitGroup(groupId){
+       return await this.sendPublishMessage(GQ,{
            groupId: groupId
        });
+    }
+
+    async recallMessage(messageUid){
+       return await this.sendPublishMessage(MR,{
+            messageUid: messageUid
+       })
     }
 
     pullMessage(messageId,type = 0,pullType = 0,sendMessageCount = 0){
@@ -352,7 +363,7 @@ export default class VueWebSocket {
                     failProtoMessage.setContent('')
                     vueWebSocket.processMessage(failProtoMessage.toJson())
                  } else {
-                    resolve("");
+                    resolve(new FutureResult(ERROR_CODE,""));
                  }
                  
              },10000);

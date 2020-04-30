@@ -20,9 +20,31 @@ export class WebSocketClient {
        return displayName;
     }
 
+    getPortrait(userId){
+      var userInfolist = vuexStore.state.userInfoList;
+      var userInfo = userInfolist.find(user => user.uid == userId);
+      var portrait = 'static/images/vue.jpg'
+      if(userInfo){
+          portrait = userInfo.portrait;
+      }
+      return portrait;
+    }
+
 
     createGroup(groupName,memberIds){
        return vuexStore.state.vueSocket.createGroup(groupName,memberIds);
+    }
+
+    quitGroup(groupId){
+       return vuexStore.state.vueSocket.quitGroup(groupId);
+    }
+
+    getGroupMember(groupId){
+       return vuexStore.state.vueSocket.getGroupMember(groupId);
+    }
+
+    recallMessage(messageUid){
+       return vuexStore.state.vueSocket.recallMessage(messageUid);
     }
 
 

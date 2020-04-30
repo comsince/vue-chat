@@ -15,6 +15,7 @@ import ChangeGroupNameNotification from './notification/changeGroupNameNotificat
 import NotificationMessageContent from './notification/notificationMessageContent'
 import AddGroupMemberNotification from './notification/addGroupMemberNotification'
 import QuitGroupNotification from './notification/quitGroupNotification'
+import RecallMessageNotification from './notification/recallMessageNotification'
 import LocalStore from '../store/localstore'
 export default class MessageConfig{
     static getMessageContentClazz(type) {
@@ -186,6 +187,7 @@ export default class MessageConfig{
             name: 'recall',
             flag: PersistFlag.Persist,
             type: MessageContentType.RecallMessage_Notification,
+            contentClazz: RecallMessageNotification
         },
         {
             name: 'callStartMessageContent',

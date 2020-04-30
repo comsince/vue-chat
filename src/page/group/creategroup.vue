@@ -67,6 +67,7 @@ import { mapGetters, mapState } from 'vuex'
 import Logger from '../../websocket/utils/logger'
 import webSocketClient  from '../../websocket/websocketcli'
 import LocalStore from '../../websocket/store/localstore'
+import { SUCCESS_CODE } from '../../constant'
 export default {
     name: 'creategroup',
     data() {
@@ -89,7 +90,7 @@ export default {
         ]),
         showCreateGroupDialog : {
             get () {
-                Logger.log("showCreateGroupDialog"+this.$store.state.showCreateGroupDialog);
+                Logger.log("showCreateGroupDialog "+this.$store.state.showCreateGroupDialog);
                 return this.$store.state.showCreateGroupDialog;
             },
             set(val) {
@@ -165,12 +166,10 @@ export default {
                 memberIds.push(LocalStore.getUserId());
                 webSocketClient.createGroup(groupName,memberIds).then(data => {
                     Logger.log("create group result "+data);
-                    if(data != ''){
-                       var result = JSON.parse(data);
-                       if(result.code == 200){
-                          this.fullscreenLoading = false;
-                          this.exit();
-                       }
+                    if(data.code == SUCCESS_CODE){
+                       var result = JSON.parse(data.result);
+                       this.fullscreenLoading = false;
+                       this.exit();
                     } else {
                         this.fullscreenLoading = false;
                     }

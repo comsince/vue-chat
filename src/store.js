@@ -18,6 +18,7 @@ import MessageConfig from './websocket/message/messageConfig';
 import ChatManager from './websocket/chatManager';
 import ProtoMessageContent from './websocket/message/protomessageContent';
 import Logger from './websocket/utils/logger';
+import RecallMessageNotification from './websocket/message/notification/recallMessageNotification';
 
 Vue.use(Vuex)
 
@@ -134,6 +135,8 @@ const state = {
     showAudioBox: false,
     showSearchFriendDialog: false,
     showCreateGroupDialog: false,
+    showGroupInfo: false,
+    showMessageRightMenu: [],
     //待请求用户id信息列表
     waitUserIds: [],
 }
@@ -314,7 +317,9 @@ const mutations = {
 
     quitGroup(state,groupId){
         state.vueSocket.quitGroup(groupId);
+    },
 
+    deleteConversation(state,groupId){
         //为防止再次收到消息，退出群组的发起人不应该在接收任何退出群组消息，防止再次产生会话
         var index = -1
         for(var i = 0; i<state.conversations.length; i++){
@@ -326,6 +331,10 @@ const mutations = {
         console.log("quit group index "+index)
         if(index != -1){
             state.conversations.splice(index,1);
+        }
+        //重新选择新的会话
+        if(state.conversations.length > 0){
+            state.selectTarget = state.conversations[0].conversationInfo.target
         }
     },
 
@@ -567,6 +576,23 @@ const mutations = {
         }
     },
 
+    updateMessageContent(state,notifyMessage){
+        var found = false;
+        for(var stateMessages of state.messages){
+             for(var protoMessage of stateMessages.protoMessages){
+                 if(protoMessage.messageUid == notifyMessage.messageUid){
+                    var recallMessageContent = new RecallMessageNotification(notifyMessage.fromUser,notifyMessage.messageUid);
+                    protoMessage.content = recallMessageContent.encode();
+                    found = true
+                    break;
+                 }
+             }
+             if(found){
+                break;
+             }
+        }
+    },
+
     loginOut(state,message){
         state.userId = '';
         state.token = '';
@@ -585,6 +611,7 @@ const mutations = {
         state.waitUserIds = [];
         state.userInfoList = [];
         state.newFriendRequestCount = 0;
+        state.showMessageRightMenu = [];
         state.emptyMessage = false;
         LocalStore.clearLocalStore();
         ChatManager.removeOnReceiveMessageListener();
@@ -822,6 +849,8 @@ const actions = {
     changeEmptyMessageState: ({ commit }, value) => commit('changeEmptyMessageState', value),
     updateProtoMessageUid: ({ commit }, value) => commit('updateProtoMessageUid', value),
     updateMessageStatus: ({ commit }, value) => commit('updateMessageStatus', value),
+    updateMessageContent: ({ commit }, value) => commit('updateMessageContent', value),
+    deleteConversation: ({ commit }, value) => commit('deleteConversation', value),
 }
 const store = new Vuex.Store({
   state,

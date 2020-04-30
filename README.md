@@ -1,4 +1,3 @@
-# vue-chat
 
 基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯，支持文本，图片类型发送，支持实时音视频，支持音视频与[android-chat](https://github.com/comsince/android-chat)客户端互通
 
@@ -61,9 +60,11 @@
 * 群组用户列表功能
 
 ### V1.0.5-beta
+* 增加websocket异步回调接口
 * 增加创建群组功能
 * 退出群聊
-* 解散群聊
+* 撤回消息
+* 修改群名称
 
 ## Build Setup
 

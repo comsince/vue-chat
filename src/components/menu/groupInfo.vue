@@ -13,7 +13,7 @@
             </div>
             <div class="friend-info-list" :style="{height: (appHeight-221) + 'px'}">
                 <ul>
-                    <li v-bind:key = index v-for="(item, index) in memberList" class="frienditem">
+                    <li v-bind:key = index v-for="(item, index) in groupMembers" class="frienditem">
                         <div class="friend-info">
                             <img class="avatar" :src="item.avatarUrl" onerror="this.src='static/images/vue.jpg'">
                             <p class="nickName">{{item.displayName}}</p>
@@ -34,54 +34,80 @@
 <script>
 import { mapState, mapActions ,mapGetters } from 'vuex'
 import LocalStore from '../../websocket/store/localstore';
+//注意websocketClient 不是常量引入
+import webSocketClient from '../../websocket/websocketcli';
+import { SUCCESS_CODE } from '../../constant';
 export default {
     name: 'groupInfoMenu',
     props: ['groupId'], 
     data(){
         return {
-            isGroupOwner: false
+            isGroupOwner: false,
+            groupMembers: []
         }
     },
     mounted() {
-        if(this.memberList.length == 0){
-           this.$store.dispatch('getGroupMember',this.groupId);
-        }
+        console.log("showGroupInfo mounted")
+        document.addEventListener("click", e => {
+            var isString = typeof(e.target.className) == 'string'
+            let groupInfoDom = document.getElementById("group-info-id");
+            //注意点击显示按钮事件的处理，防止状态发生反转
+			if (isString && e.target.className.search('show-group-info') == -1 && groupInfoDom && !groupInfoDom.contains(event.target) && this.$store.state.showGroupInfo) {
+                this.$store.state.showGroupInfo = false;
+            }
+        });
+
+        webSocketClient.getGroupMember(this.groupId).then(data => {
+            if(data.code == SUCCESS_CODE){
+                var groupMembers = [];
+                for(var groupMember of data.result){
+                    if(groupMember.memberId == LocalStore.getUserId()){
+                        this.isGroupOwner = groupMember.type == 2 ? true : false;
+                    }
+                    groupMember.displayName = webSocketClient.getDisplayName(groupMember.memberId);
+                    groupMember.avatarUrl = webSocketClient.getPortrait(groupMember.memberId);
+                    groupMembers.push(groupMember);
+                }
+                this.groupMembers = groupMembers;
+            }
+        })
     },
+
     destroyed() {
-       this.$store.dispatch('updateTempGroupMember',[]);
+       this.groupMembers = []
     },
     computed: {
         ...mapState([
             'appHeight',
             'groupInfoList',
             'tempGroupMembers',
-            'userInfoList'
+            'userInfoList',
         ]),
         ...mapGetters([
         ]),
-        memberList(){
-            var groupMembers = [];
-            var noFriendMemberIds = [];
-            for(var groupMember of this.tempGroupMembers){
-               if(groupMember.memberId == LocalStore.getUserId()){
-                   this.isGroupOwner = groupMember.type == 2 ? true : false;
-               } 
-               var userInfo = this.userInfoList.find( user => groupMember.memberId == user.uid);
-               if(userInfo){
-                   groupMember.displayName = userInfo.displayName != ''? userInfo.displayName : userInfo.mobile;
-                   groupMember.avatarUrl = userInfo.portrait != '' ? userInfo.portrait : 'static/images/vue.jpg';
-               } else {
-                   noFriendMemberIds.push(groupMember.memberId);
-                   groupMember.displayName = groupMember.memberId;
-                   groupMember.avatarUrl = 'static/images/vue.jpg';
-               }
-               groupMembers.push(groupMember);
-            }
-            if(noFriendMemberIds.length > 0){
-                this.$store.dispatch('getUserInfos',noFriendMemberIds);
-            }
-            return groupMembers;
-        }
+        // memberList(){
+        //     var groupMembers = [];
+        //     var noFriendMemberIds = [];
+        //     for(var groupMember of this.tempGroupMembers){
+        //        if(groupMember.memberId == LocalStore.getUserId()){
+        //            this.isGroupOwner = groupMember.type == 2 ? true : false;
+        //        } 
+        //        var userInfo = this.userInfoList.find( user => groupMember.memberId == user.uid);
+        //        if(userInfo){
+        //            groupMember.displayName = userInfo.displayName != ''? userInfo.displayName : userInfo.mobile;
+        //            groupMember.avatarUrl = userInfo.portrait != '' ? userInfo.portrait : 'static/images/vue.jpg';
+        //        } else {
+        //            noFriendMemberIds.push(groupMember.memberId);
+        //            groupMember.displayName = groupMember.memberId;
+        //            groupMember.avatarUrl = 'static/images/vue.jpg';
+        //        }
+        //        groupMembers.push(groupMember);
+        //     }
+        //     if(noFriendMemberIds.length > 0){
+        //         this.$store.dispatch('getUserInfos',noFriendMemberIds);
+        //     }
+        //     return groupMembers;
+        // }
     },
     methods: {
         groupName(){
@@ -93,7 +119,12 @@ export default {
             return groupName;
         },
         quitGroup(){
-            this.$store.dispatch('quitGroup',this.groupId);
+            webSocketClient.quitGroup(this.groupId).then(data => {
+                if(data.code == SUCCESS_CODE){
+                    this.$store.dispatch('deleteConversation',this.groupId)
+                }
+                this.$store.state.showGroupInfo = false;
+            })
         }
     },
 }

@@ -5,55 +5,59 @@
 			<div class="friendname">{{selectedChat.name}}</div>
             <div class="friend-group-info">
                 <i title="用户信息" class="icon iconfont icon-pengyou1" v-if="isSingleConversation" ></i>
-                <i title="群组信息" class="icon iconfont icon-pengyou show-group-info" v-if="!isSingleConversation" @click="showGroupInfo"></i>
-                <groupInfo v-if="showGroupFriendInfo" v-bind:groupId="selectedChat.target"></groupInfo>
+                <i title="群组信息" class="icon iconfont icon-pengyou show-group-info" v-if="!isSingleConversation" @click="changeShowGroupInfo"></i>
+                <groupInfo v-bind:groupId="selectedChat.target" v-if="showGroupInfo"></groupInfo>
             </div>
 		</header>
 		<div class="message-wrapper" ref="list" @scroll="scrollEvent" @click="messageBoxClick" :style="{height: (appHeight * 0.75-60) + 'px'}">
 		    <ul v-if="selectedChat">
 		    	<li v-bind:key = index v-for="(item, index) in selectedChat.protoMessages" class="message-item">
 		    		<div v-if="isShowTime(index,selectedChat.protoMessages)" class="time"><span>{{item.timestamp | getTimeStringAutoShort2}}</span></div>
-                    <!-- <div v-if="item.content.type === 104" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div>
-                    <div v-if="item.content.type === 110" class="time"><span>{{notification(item.content.binaryContent,item.content.type)}}</span></div> -->
                     <div v-if="isGroupNotification(item)" class="time"><span>{{groupNotification(item)}}</span></div>
+                    <div v-if="isRecallNotification(item)" class="time"><span>{{groupNotification(item)}}</span></div>
                     <div v-if="item.content.type === 90" class="time"><span>{{item.content.content}}</span></div>
 		    		<div v-if="!isNotification(item.content.type)" class="main" :class="{ self: item.direction == 0 ? true : false }">
                         <img class="avatar" width="36" height="36" :src="avatarSrc(item)"
                         onerror="this.src='static/images/vue.jpg'"/>
                         <div class="content">
                             <div class="display-name" v-if="!isSingleConversation && item.direction != 0">{{showUserName(item.from)}}</div>
-                            <div class="send-status" v-if="item.direction == 0">
-                                <i title = "发送中" class="icon iconfont icon-loading-solid" v-if="isSending(item)"></i>
-                                <i title = "发送失败" class="icon iconfont icon-fasongshibai" v-if="isSendFail(item)"></i>
+
+                            <div class="content-message-right-menu">
+                                <div class="send-status" v-if="item.direction == 0">
+                                    <i title = "发送中" class="icon iconfont icon-loading-solid" v-if="isSending(item)"></i>
+                                    <i title = "发送失败" class="icon iconfont icon-fasongshibai" v-if="isSendFail(item)"></i>
+                                </div>
+                                <div class="content-message" @contextmenu.prevent="messageRigthClick(item.messageId)">
+                                    <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
+                                    <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>    
+                                    <div v-if="item.content.type === 2">
+                                        [语音消息]
+                                    </div>
+                                    <div v-if="item.content.type === 3" v-viewer>
+                                        <img :src="item.content.remoteMediaUrl" class="receive-image">
+                                    </div>
+                                    <div v-if="item.content.type === 4">
+                                        [位置消息]
+                                    </div>
+                                    <div v-if="item.content.type === 5">
+                                        [文件消息]
+                                    </div>
+                                    <div v-if="item.content.type === 6" >
+                                        <Xgplayer :config="videoConfig(item.content.remoteMediaUrl,index === selectedChat.protoMessages.length - 1)" @player="Player = $event"/>
+                                    </div>
+                                    <div v-if="item.content.type === 7">
+                                        [表情消息]
+                                    </div>
+                                    <div v-if="item.content.type === 8">
+                                        [图片表情]
+                                    </div>
+                                    <div v-if="item.content.type === 400">
+                                        [网络电话]
+                                    </div>
+                                </div>
+                                <rightMenu v-if="isShowMessageMenu(item)" v-bind:message="item"></rightMenu>
                             </div>
-                            <div class="content-message">
-                                <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
-                                <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>    
-                                <div v-if="item.content.type === 2">
-                                    [语音消息]
-                                </div>
-                                <div v-if="item.content.type === 3" v-viewer>
-                                    <img :src="item.content.remoteMediaUrl" class="receive-image">
-                                </div>
-                                <div v-if="item.content.type === 4">
-                                    [位置消息]
-                                </div>
-                                <div v-if="item.content.type === 5">
-                                    [文件消息]
-                                </div>
-                                <div v-if="item.content.type === 6" >
-                                    <Xgplayer :config="videoConfig(item.content.remoteMediaUrl,index === selectedChat.protoMessages.length - 1)" @player="Player = $event"/>
-                                </div>
-                                <div v-if="item.content.type === 7">
-                                    [表情消息]
-                                </div>
-                                <div v-if="item.content.type === 8">
-                                    [图片表情]
-                                </div>
-                                <div v-if="item.content.type === 400">
-                                    [网络电话]
-                                </div>
-                            </div>
+                            
                         </div>
                         
                     </div>
@@ -73,20 +77,22 @@ import Vue from 'vue'
 Vue.use(Viewer)
 import CryptoJS from 'crypto-js'
 import groupInfo from '../menu/groupInfo'
+import rightMenu from '../menu/rightMenu'
 import MessageConfig from '../../websocket/message/messageConfig';
 import NotificationMessageContent from '../../websocket/message/notification/notificationMessageContent';
 import GroupNotificationContent from '../../websocket/message/notification/groupNotification';
 import MessageStatus from '../../websocket/message/messageStatus';
+import RecallMessageNotification from '../../websocket/message/notification/recallMessageNotification';
 export default {
     components:{
         Xgplayer,
-        groupInfo
+        groupInfo,
+        rightMenu
     },
 
     data(){
         return {
             Player: null,
-            showGroupFriendInfo: false
         }
     },
     
@@ -101,19 +107,31 @@ export default {
             'emojis',
             'appHeight',
             'userInfoList',
+            'showGroupInfo',
+            'showMessageRightMenu'
         ]),
+        showGroupInfo: {
+           get() {
+               return this.$store.state.showGroupInfo;
+           },
+
+           set(value){
+                this.$store.state.showGroupInfo = value
+           }
+        },
+        
     },
     mounted() {
          //  在页面加载时让信息滚动到最下面
         setTimeout(() => this.$refs.list.scrollTop = this.$refs.list.scrollHeight, 0);
-        document.addEventListener("click", e => {
-            var isString = typeof(e.target.className) == 'string'
-            let groupInfoDom = document.getElementById("group-info-id");
-            //注意点击显示按钮事件的处理，防止状态发生反转
-			if (isString && e.target.className.search('show-group-info') == -1 && groupInfoDom && !groupInfoDom.contains(event.target) && this.showGroupFriendInfo) {
-                this.showGroupFriendInfo = false;
-            }
-        });
+        // document.addEventListener("click", e => {
+        //     var isString = typeof(e.target.className) == 'string'
+        //     let groupInfoDom = document.getElementById("group-info-id");
+        //     //注意点击显示按钮事件的处理，防止状态发生反转
+		// 	if (isString && e.target.className.search('show-group-info') == -1 && groupInfoDom && !groupInfoDom.contains(event.target) && this.showGroupFriendInfo) {
+        //         this.showGroupFriendInfo = false;
+        //     }
+        // });
         
     },
     watch: {
@@ -123,9 +141,9 @@ export default {
         }
     },
     methods: {
-        showGroupInfo(){
-            this.showGroupFriendInfo =!this.showGroupFriendInfo;
-            if(this.showGroupFriendInfo){
+        changeShowGroupInfo(){
+            this.showGroupInfo = !this.showGroupInfo ;
+            if(this.showGroupInfo){
                 this.$store.dispatch("getGroupInfo",this.selectedChat.target);
             }
         },
@@ -228,6 +246,12 @@ export default {
            return content instanceof GroupNotificationContent;
         },
 
+        isRecallNotification(protoMessage){
+           var contentClass = MessageConfig.getMessageContentClazz(protoMessage.content.type);
+           var content = new contentClass();
+           return content instanceof RecallMessageNotification;
+        },
+
         groupNotification(protoMessage){
             var displayContent;
             var messageContent = MessageConfig.convert2MessageContent(protoMessage.from,protoMessage.content);
@@ -258,6 +282,31 @@ export default {
 
         isSendFail(protoMessage){
             return protoMessage.status == MessageStatus.SendFailure
+        },
+
+        messageRigthClick(messageId){
+            var menuSetting = this.showMessageRightMenu.find(setting => setting.messageId == messageId)
+            if(menuSetting){
+               menuSetting.show = true
+            } else {
+                this.showMessageRightMenu.push({
+                    messageId: messageId,
+                    show: true
+                })
+            }
+        },
+        isShowMessageMenu(item){
+           if(item.direction == 0){
+                var menuSetting = this.showMessageRightMenu.find(setting => setting.messageId == item.messageId)
+                if(menuSetting){
+                    return menuSetting.show;
+                } else {
+                    return false;
+                }
+           } else {
+               return false;
+           }
+           
         }
     },
     filters: {
@@ -350,29 +399,31 @@ export default {
                     margin-bottom: 5px
                     font-size: 8px
                     color: #999
-                .content-message
-                    display: inline-block
-                    margin-left: 10px
-                    position: relative
-                    padding: 6px 10px
-                    max-width: 90%
-                    min-height: 36px
-                    line-height: 24px
-                    box-sizing: border-box
-                    font-size: 14px
-                    text-align: left
-                    word-break: break-all
-                    background-color: #fafafa
-                    border-radius: 4px
-                    .text
-                        white-space: pre-wrap;
-                    &:before
-                        content: " "
-                        position: absolute
-                        top: 12px
-                        right: 100%
-                        border: 6px solid transparent
-                        border-right-color: #fafafa
+                .content-message-right-menu
+                    position: relative    
+                    .content-message
+                        display: inline-block
+                        margin-left: 10px
+                        position: relative
+                        padding: 6px 10px
+                        max-width: 90%
+                        min-height: 36px
+                        line-height: 24px
+                        box-sizing: border-box
+                        font-size: 14px
+                        text-align: left
+                        word-break: break-all
+                        background-color: #fafafa
+                        border-radius: 4px
+                        .text
+                            white-space: pre-wrap;
+                        &:before
+                            content: " "
+                            position: absolute
+                            top: 12px
+                            right: 100%
+                            border: 6px solid transparent
+                            border-right-color: #fafafa
         .self
             text-align: right
             .avatar
@@ -388,14 +439,15 @@ export default {
                     .icon-fasongshibai
                         color: red
                     .icon-loading-solid
-                        animation: changeright 1s linear infinite    
-                .content-message 
-                    background-color: #b2e281
-                    &:before 
-                        right: -12px
-                        vertical-align: middle
-                        border-right-color: transparent
-                        border-left-color: #b2e281
+                        animation: changeright 1s linear infinite
+                .content-message-right-menu            
+                    .content-message 
+                        background-color: #b2e281
+                        &:before 
+                            right: -12px
+                            vertical-align: middle
+                            border-right-color: transparent
+                            border-left-color: #b2e281
     @keyframes changeright     
     0% 
         -webkit-transform:rotate(0deg)
