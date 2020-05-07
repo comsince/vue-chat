@@ -35,6 +35,10 @@ export class WebSocketClient {
        return vuexStore.state.vueSocket.createGroup(groupName,memberIds);
     }
 
+    modifyGroupInfo(info){
+       return vuexStore.state.vueSocket.modifyGroupInfo(info);
+    }
+
     quitGroup(groupId){
        return vuexStore.state.vueSocket.quitGroup(groupId);
     }

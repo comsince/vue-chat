@@ -4,7 +4,7 @@
             <div class="group-info-title">
                 <div class="group-name-info">
                     <div class="group-name-title">群名</div>
-                    <p class="group-name">{{groupName()}}</p>
+                    <p class="group-name" contenteditable="true" @blur="modifyGroupNameBlur" @keydown.enter="modifyGroupName">{{groupName}}</p>
                 </div>
                 <div class="group-board-info">
                     <div class="group-board-title">群公告</div>
@@ -40,6 +40,7 @@ import LocalStore from '../../websocket/store/localstore';
 import webSocketClient from '../../websocket/websocketcli';
 import { SUCCESS_CODE } from '../../constant';
 import GroupMember from '../../websocket/model/groupMember';
+import ModifyGroupInfoType from '../../websocket/message/modifyGroupInfoType'
 import Logger from '../../websocket/utils/logger';
 export default {
     name: 'groupInfoMenu',
@@ -62,37 +63,6 @@ export default {
                 this.$store.state.showGroupInfo = false;
             }
         });
-
-        // webSocketClient.getGroupMember(this.groupId).then(data => {
-        //     if(data.code == SUCCESS_CODE){
-        //         var groupMembers = [];
-        //         //add member item
-        //         var addGroupMember = new GroupMember()
-        //         addGroupMember.type = this.addGroupMemberType;
-        //         addGroupMember.displayName = '添加成员';
-        //         groupMembers.push(addGroupMember);
-                
-        //         //delete member
-        //         var deleteGroupMember = new GroupMember()
-        //         deleteGroupMember.type = this.deleteGroupMemberType;
-        //         deleteGroupMember.displayName = '移除成员';
-        //         groupMembers.push(deleteGroupMember);
-
-        //         for(var groupMember of data.result){
-        //             if(groupMember.memberId == LocalStore.getUserId()){
-        //                 this.isGroupOwner = groupMember.type == 2 ? true : false;
-        //             }
-        //             groupMember.displayName = webSocketClient.getDisplayName(groupMember.memberId);
-        //             groupMember.avatarUrl = webSocketClient.getPortrait(groupMember.memberId);
-        //             groupMembers.push(groupMember);
-        //         }
-        //         if(!this.isGroupOwner){
-        //            groupMembers.splice(1,1);
-        //         }
-        //         this.groupMembers = groupMembers;
-        //         Logger.log("group member count "+this.groupMembers.length);
-        //     }
-        // })
     },
 
     destroyed() {
@@ -108,30 +78,7 @@ export default {
         ]),
         ...mapGetters([
         ]),
-        // memberList(){
-        //     var groupMembers = [];
-        //     var noFriendMemberIds = [];
-        //     for(var groupMember of this.tempGroupMembers){
-        //        if(groupMember.memberId == LocalStore.getUserId()){
-        //            this.isGroupOwner = groupMember.type == 2 ? true : false;
-        //        } 
-        //        var userInfo = this.userInfoList.find( user => groupMember.memberId == user.uid);
-        //        if(userInfo){
-        //            groupMember.displayName = userInfo.displayName != ''? userInfo.displayName : userInfo.mobile;
-        //            groupMember.avatarUrl = userInfo.portrait != '' ? userInfo.portrait : 'static/images/vue.jpg';
-        //        } else {
-        //            noFriendMemberIds.push(groupMember.memberId);
-        //            groupMember.displayName = groupMember.memberId;
-        //            groupMember.avatarUrl = 'static/images/vue.jpg';
-        //        }
-        //        groupMembers.push(groupMember);
-        //     }
-        //     if(noFriendMemberIds.length > 0){
-        //         this.$store.dispatch('getUserInfos',noFriendMemberIds);
-        //     }
-        //     return groupMembers;
-        // }
-
+        
         memberList(){
             var groupMembers = [];
                 //add member item
@@ -158,17 +105,27 @@ export default {
                 groupMembers.splice(1,1);
             }
             return groupMembers;
+        },
+
+        groupName: {
+            get() {
+                var groupName = "";
+                var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.groupId);
+                if(groupInfo){
+                    groupName = groupInfo.name;
+                }
+                return groupName;
+            },
+            set(value){
+                var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.groupId);
+                if(groupInfo){
+                    groupInfo.name = value;
+                }
+            }
         }
+
     },
     methods: {
-        groupName(){
-            var groupName = "";
-            var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.groupId);
-            if(groupInfo){
-               groupName = groupInfo.name;
-            }
-            return groupName;
-        },
         quitGroup(){
             webSocketClient.quitGroup(this.groupId).then(data => {
                 if(data.code == SUCCESS_CODE){
@@ -182,6 +139,28 @@ export default {
             //触发groupMap以是vue相应变更
             this.$store.state.groupMemberTracker += 1;
             this.$store.state.showCreateGroupDialog = true;
+        },
+        modifyGroupNameBlur(e){
+            var inputName = e.target.innerText;
+            if(this.groupName === inputName){
+                 return
+            }
+            this.groupName = inputName;
+            if(this.groupName && this.groupName.length < 15){
+                webSocketClient.modifyGroupInfo({
+                    groupId: this.groupId,
+                    type: ModifyGroupInfoType.Modify_Group_Name,
+                    value: this.groupName
+                });
+            } else {
+                this.$message.error("群组名称过长最好不要超过15个字符");
+            }
+        },
+        modifyGroupName(e){
+           if(e.keyCode == 13){
+              this.modifyGroupNameBlur(e);
+              e.preventDefault();
+           }
         }
     },
 }
