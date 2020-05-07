@@ -13,9 +13,11 @@
             </div>
             <div class="friend-info-list" :style="{height: (appHeight-221) + 'px'}">
                 <ul>
-                    <li v-bind:key = index v-for="(item, index) in groupMembers" class="frienditem">
+                    <li v-bind:key = index v-for="(item, index) in memberList" class="frienditem">
                         <div class="friend-info">
-                            <img class="avatar" :src="item.avatarUrl" onerror="this.src='static/images/vue.jpg'">
+                            <i title="添加成员" class="icon iconfont icon-zengjia add" v-if="item.type == 1000" @click="addGroupMember"></i>
+                            <i title="移除成员" class="icon iconfont icon-shanchu-fangkuang add" v-if="item.type == 1001"></i>
+                            <img class="avatar" :src="item.avatarUrl" onerror="this.src='static/images/vue.jpg'" v-if="item.type == 0 || item.type ==2">
                             <p class="nickName">{{item.displayName}}</p>
                         </div>
                     </li>
@@ -37,13 +39,17 @@ import LocalStore from '../../websocket/store/localstore';
 //注意websocketClient 不是常量引入
 import webSocketClient from '../../websocket/websocketcli';
 import { SUCCESS_CODE } from '../../constant';
+import GroupMember from '../../websocket/model/groupMember';
+import Logger from '../../websocket/utils/logger';
 export default {
     name: 'groupInfoMenu',
     props: ['groupId'], 
     data(){
         return {
             isGroupOwner: false,
-            groupMembers: []
+            groupMembers: [],
+            addGroupMemberType: 1000,
+            deleteGroupMemberType: 1001
         }
     },
     mounted() {
@@ -57,20 +63,36 @@ export default {
             }
         });
 
-        webSocketClient.getGroupMember(this.groupId).then(data => {
-            if(data.code == SUCCESS_CODE){
-                var groupMembers = [];
-                for(var groupMember of data.result){
-                    if(groupMember.memberId == LocalStore.getUserId()){
-                        this.isGroupOwner = groupMember.type == 2 ? true : false;
-                    }
-                    groupMember.displayName = webSocketClient.getDisplayName(groupMember.memberId);
-                    groupMember.avatarUrl = webSocketClient.getPortrait(groupMember.memberId);
-                    groupMembers.push(groupMember);
-                }
-                this.groupMembers = groupMembers;
-            }
-        })
+        // webSocketClient.getGroupMember(this.groupId).then(data => {
+        //     if(data.code == SUCCESS_CODE){
+        //         var groupMembers = [];
+        //         //add member item
+        //         var addGroupMember = new GroupMember()
+        //         addGroupMember.type = this.addGroupMemberType;
+        //         addGroupMember.displayName = '添加成员';
+        //         groupMembers.push(addGroupMember);
+                
+        //         //delete member
+        //         var deleteGroupMember = new GroupMember()
+        //         deleteGroupMember.type = this.deleteGroupMemberType;
+        //         deleteGroupMember.displayName = '移除成员';
+        //         groupMembers.push(deleteGroupMember);
+
+        //         for(var groupMember of data.result){
+        //             if(groupMember.memberId == LocalStore.getUserId()){
+        //                 this.isGroupOwner = groupMember.type == 2 ? true : false;
+        //             }
+        //             groupMember.displayName = webSocketClient.getDisplayName(groupMember.memberId);
+        //             groupMember.avatarUrl = webSocketClient.getPortrait(groupMember.memberId);
+        //             groupMembers.push(groupMember);
+        //         }
+        //         if(!this.isGroupOwner){
+        //            groupMembers.splice(1,1);
+        //         }
+        //         this.groupMembers = groupMembers;
+        //         Logger.log("group member count "+this.groupMembers.length);
+        //     }
+        // })
     },
 
     destroyed() {
@@ -82,6 +104,7 @@ export default {
             'groupInfoList',
             'tempGroupMembers',
             'userInfoList',
+            'groupMemberMap'
         ]),
         ...mapGetters([
         ]),
@@ -108,6 +131,34 @@ export default {
         //     }
         //     return groupMembers;
         // }
+
+        memberList(){
+            var groupMembers = [];
+                //add member item
+            var addGroupMember = new GroupMember()
+            addGroupMember.type = this.addGroupMemberType;
+            addGroupMember.displayName = '添加成员';
+            groupMembers.push(addGroupMember);
+                
+                //delete member
+            var deleteGroupMember = new GroupMember()
+            deleteGroupMember.type = this.deleteGroupMemberType;
+            deleteGroupMember.displayName = '移除成员';
+            groupMembers.push(deleteGroupMember);
+
+            for(var groupMember of this.groupMemberMap.get(this.groupId)){
+                if(groupMember.memberId == LocalStore.getUserId()){
+                        this.isGroupOwner = groupMember.type == 2 ? true : false;
+                }
+                groupMember.displayName = webSocketClient.getDisplayName(groupMember.memberId);
+                groupMember.avatarUrl = webSocketClient.getPortrait(groupMember.memberId);
+                groupMembers.push(groupMember);
+            }
+            if(!this.isGroupOwner){
+                groupMembers.splice(1,1);
+            }
+            return groupMembers;
+        }
     },
     methods: {
         groupName(){
@@ -125,6 +176,12 @@ export default {
                 }
                 this.$store.state.showGroupInfo = false;
             })
+        },
+        addGroupMember(){
+            this.$store.state.groupOperateState = 1;
+            //触发groupMap以是vue相应变更
+            this.$store.state.groupMemberTracker += 1;
+            this.$store.state.showCreateGroupDialog = true;
         }
     },
 }
@@ -191,6 +248,10 @@ export default {
                     margin-right: 12px
                     width: 32px
                     height: 32px
+                .add
+                    margin-right: 12px
+                    font-size: 32px
+                    cursor: pointer
                 .nickName
                     flex: 1 1 auto
                     width: 106px

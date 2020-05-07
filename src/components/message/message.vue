@@ -83,6 +83,9 @@ import NotificationMessageContent from '../../websocket/message/notification/not
 import GroupNotificationContent from '../../websocket/message/notification/groupNotification';
 import MessageStatus from '../../websocket/message/messageStatus';
 import RecallMessageNotification from '../../websocket/message/notification/recallMessageNotification';
+import webSocketClient from '../../websocket/websocketcli';
+import { SUCCESS_CODE } from '../../constant';
+import LocalStore from '../../websocket/store/localstore';
 export default {
     components:{
         Xgplayer,
@@ -108,7 +111,8 @@ export default {
             'appHeight',
             'userInfoList',
             'showGroupInfo',
-            'showMessageRightMenu'
+            'showMessageRightMenu',
+            'groupMemberMap'
         ]),
         showGroupInfo: {
            get() {
@@ -142,10 +146,31 @@ export default {
     },
     methods: {
         changeShowGroupInfo(){
-            this.showGroupInfo = !this.showGroupInfo ;
-            if(this.showGroupInfo){
-                this.$store.dispatch("getGroupInfo",this.selectedChat.target);
-            }
+            webSocketClient.getGroupMember(this.selectedChat.target).then(data => {
+                var isGroupMember = false;
+
+                if(data.code == SUCCESS_CODE){
+
+                    this.groupMemberMap.set(this.selectedChat.target,data.result);
+
+                    for(var groupMember of data.result){
+                        if(groupMember.memberId == LocalStore.getUserId()){
+                            isGroupMember = true;
+                            break;
+                        }
+                        
+                    }
+
+                    if(!isGroupMember){
+                        this.$message.error("您不是群组成员，无法查看群组信息");
+                    } else {
+                        this.showGroupInfo = !this.showGroupInfo ;
+                        if(this.showGroupInfo){
+                            this.$store.dispatch("getGroupInfo",this.selectedChat.target);
+                        }
+                    }
+                }
+            })
         },
         avatarSrc(item){
             var avarimgUrl = 'static/images/vue.jpg';

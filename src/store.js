@@ -139,6 +139,10 @@ const state = {
     showMessageRightMenu: [],
     //待请求用户id信息列表
     waitUserIds: [],
+    //0创建群组，1,添加群组人员，2,移除群组人员
+    groupOperateState: 0,
+    groupMemberMap: new Map(),
+    groupMemberTracker: 0
 }
 
 const mutations = {
@@ -611,6 +615,7 @@ const mutations = {
         state.waitUserIds = [];
         state.userInfoList = [];
         state.newFriendRequestCount = 0;
+        state.groupMemberTracker = 0;
         state.showMessageRightMenu = [];
         state.emptyMessage = false;
         LocalStore.clearLocalStore();
@@ -686,6 +691,13 @@ const mutations = {
 
 }
 const getters = {
+    currentGroupMembers(){
+        if(state.groupMemberMap.has(state.selectTarget)){
+            return state.groupMemberMap.get(state.selectTarget);
+        } else {
+            return []
+        }
+    },
     //筛选会话列表
     searchedConversationList(){
        return state.conversations.filter(conversationInfo => conversationInfo.name ? conversationInfo.name.includes(state.searchText): false);

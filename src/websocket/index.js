@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC, GQ, PUB_ACK, ERROR_CODE, MR} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC, GQ, PUB_ACK, ERROR_CODE, MR, GAM} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -33,6 +33,7 @@ import { fail } from 'assert';
 import FutureResult from './future/futureResult';
 import RecallMessageHandler from './handler/recallMessageHandler';
 import NotifyRecallMessageHandler from './handler/notifyRecallMessageHandler';
+import AddGroupMemberHandler from './handler/addGroupMemberHandler';
 
 export default class VueWebSocket {
     handlerList = [];
@@ -168,6 +169,7 @@ export default class VueWebSocket {
         this.handlerList.push(new QuitGroupHandler(this));
         this.handlerList.push(new RecallMessageHandler(this));
         this.handlerList.push(new NotifyRecallMessageHandler(this));
+        this.handlerList.push(new AddGroupMemberHandler(this));
     }
 
     processMessage(data){
@@ -287,6 +289,20 @@ export default class VueWebSocket {
            groupId: groupId,
            version: 0
        })
+    }
+
+    async addMembers(groupId,memberIds){
+       var groupMembers = [];
+       for(var memberId of memberIds){
+            var groupMember = new GroupMember();
+            groupMember.memberId = memberId;
+            groupMember.type = GroupMemberType.Normal;
+            groupMembers.push(groupMember);
+       }
+       return await this.sendPublishMessage(GAM,{
+           groupId: groupId,
+           groupMembers: groupMembers
+       });
     }
 
     async createGroup(groupName,memberIds){

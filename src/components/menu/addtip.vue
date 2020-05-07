@@ -19,6 +19,7 @@ export default {
 		},
 		showCreateGroupDialog(){
 			Logger.log("show create group dialog");
+			this.$store.state.groupOperateState = 0;
 			this.$store.state.showCreateGroupDialog = true;
 		}
 	},

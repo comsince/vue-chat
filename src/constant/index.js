@@ -18,6 +18,7 @@ export const FP = 'FP';
 export const UPUI = 'UPUI';
 export const GPGI = 'GPGI';
 export const GPGM = 'GPGM';
+export const GAM = 'GAM';
 export const GC = 'GC';
 export const GQ = 'GQ';
 export const MP = 'MP';

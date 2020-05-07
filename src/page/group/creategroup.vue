@@ -1,5 +1,5 @@
 <template>
-   <div class="create-group">
+   <div class="create-group" v-if="showCreateGroupDialog">
        <el-dialog
         :visible.sync="showCreateGroupDialog"
         width="45%"
@@ -16,11 +16,11 @@
                         <ul>
                             <li v-bind:key = index v-for="(item, index) in waitCheckedFriendList" class="frienditem"  :class="{ noborder: !item.initial}">
                                 <div class="list_title" v-if="item.initial">{{item.initial}}</div>
-                                <div class="friend-info" :class="{ active: item.id === selectFriendId }" @click.stop="selectFriend(item.id)">
+                                <div class="friend-info" :class="{ active: item.id === selectFriendId && !item.disabled,disable: item.disabled }" @click.stop="selectFriend(item.id)">
                                     <img class="avatar" :src="item.img" onerror="this.src='static/images/vue.jpg'">
                                     <div class="remark">{{item.remark}}</div>
                                     <div class="friend-check">
-                                        <el-checkbox :true-label="item.id+':1'" :false-label="item.id+':0'" @change="friendChangeChange"  @click.stop.native="" v-model="item.checked"></el-checkbox>
+                                        <el-checkbox :true-label="item.id+':1'" :false-label="item.id+':0'" @change="friendChangeChange"  @click.stop.native="" v-model="item.checked" :disabled="item.disabled"></el-checkbox>
                                     </div>
                                 </div>
                                 
@@ -31,7 +31,7 @@
                 </div>
                 <div class="checkedlist">
                     <div class="checked-title">
-                        <div class="create-group-title">创建群聊</div>
+                        <div class="create-group-title">{{groupDialogTitle}}</div>
                         <div class="check-statu-title">{{checkFriendTips}}</div>
                     </div>
                     <div class="friendlist" :style="{height: (appHeight-200) + 'px'}">
@@ -77,20 +77,24 @@ export default {
            checkFriendTips: '未选择联系人',
            confirmEnable: true,
            selectFriendId: 0,
-           fullscreenLoading: false
+           fullscreenLoading: false,
        }
     },
     computed: {
         ...mapState([
             'appHeight',
-            'user'
+            'user',
+            'groupOperateState',
+            'groupMemberMap',
+            'selectTarget',
+            'groupMemberTracker'
         ]),
         ...mapGetters([
-            'searchedFriendlist'
+            'searchedFriendlist',
+            'currentGroupMembers'
         ]),
         showCreateGroupDialog : {
             get () {
-                Logger.log("showCreateGroupDialog "+this.$store.state.showCreateGroupDialog);
                 return this.$store.state.showCreateGroupDialog;
             },
             set(val) {
@@ -100,18 +104,39 @@ export default {
         waitCheckedFriendList(){
             let friends = this.searchedFriendlist.slice(1,this.searchedFriendlist.length);
             var listunCheckedFriends = [];
+            
             for(var friend of friends){
-                // console.log("friend only initial "+friend.initial);
+                var isChecked = false;
+                var isDisabled = false;
+                if(this.groupOperateState != 0){
+                    var trackTime = this.groupMemberTracker;
+                    var currentMember = this.groupMemberMap.get(this.selectTarget).find( member => member.memberId == friend.wxid)
+                    if(currentMember){
+                        isChecked = true;
+                        isDisabled = true;
+                    }
+                }
+                Logger.log("friend nickname "+friend.remark+" ischecked "+isChecked)
                 listunCheckedFriends.push({
                     id: friend.id,
                     wxid: friend.wxid,
                     remark: friend.remark,
                     img: friend.img,
                     initial: friend.initial,
-                    checked: false
+                    checked: isChecked,
+                    disabled: isDisabled
                 });
             }
             return listunCheckedFriends;
+        },
+        groupDialogTitle(){
+            if(this.groupOperateState == 0){
+                return '创建群聊'
+            } else if(this.groupOperateState == 1){
+                return '添加成员'
+            } else if(this.groupOperateState == 2){
+                return '移除成员'
+            }
         }
    },
    methods:{
@@ -140,7 +165,10 @@ export default {
        selectFriend(friendId){
            this.selectFriendId = friendId;
            var friend = this.waitCheckedFriendList.find(friend => friend.id == friendId);
-           Logger.log("selectFriend friendId "+friendId+" checked "+friend.checked);
+        //    Logger.log("selectFriend friendId "+friendId+" checked "+friend.checked+" disabled "+friend.disabled);
+           if(friend.disabled){
+                return
+           }
            friend.checked = !friend.checked;
            if(!friend.checked){
                this.removeCheckedFriend(friend.id);
@@ -162,18 +190,38 @@ export default {
                     }
                     memberIds.push(this.selectedFriends[index].wxid);
                 }
-                //将自己加入到群组中
-                memberIds.push(LocalStore.getUserId());
-                webSocketClient.createGroup(groupName,memberIds).then(data => {
-                    Logger.log("create group result "+data);
-                    if(data.code == SUCCESS_CODE){
-                       var result = JSON.parse(data.result);
-                       this.fullscreenLoading = false;
-                       this.exit();
-                    } else {
-                        this.fullscreenLoading = false;
-                    }
-                });
+            
+                switch (this.groupOperateState) {
+                    case 0:
+                        //将自己加入到群组中
+                        memberIds.push(LocalStore.getUserId());
+                        webSocketClient.createGroup(groupName,memberIds).then(data => {
+                            Logger.log("create group result "+data);
+                            if(data.code == SUCCESS_CODE){
+                                var result = JSON.parse(data.result);
+                                this.fullscreenLoading = false;
+                                this.exit();
+                            } else {
+                                this.fullscreenLoading = false;
+                            }
+                        });
+                        break
+                    case 1:
+                        webSocketClient.addMembers(this.selectTarget,memberIds).then(data => {
+                            Logger.log("add member result "+data)
+                            if(data.code == SUCCESS_CODE){
+                                this.fullscreenLoading = false;
+                                this.exit();
+                            } else {
+                                this.fullscreenLoading = false;
+                            }
+                        })
+                        break    
+                    default:
+                        break
+
+                }
+
            }
            
        },
@@ -204,17 +252,27 @@ export default {
            this.$store.state.showCreateGroupDialog = false;
            this.selectedFriends = [];
            for(var friend of this.waitCheckedFriendList){
-                friend.checked = false;
+                if(!friend.disabled){
+                    friend.checked = false;
+                }
            }           
-       }
+       },
    },
    watch: {
        selectedFriends() {
            if(this.selectedFriends.length == 0){
               this.selectFriendId = 0;
            }
-           if(this.selectedFriends.length > 1){
-              this.confirmEnable = false;
+           if(this.selectedFriends.length > 0){
+              if(this.groupOperateState == 0 ){
+                 if(this.selectedFriends.length > 1){
+                     this.confirmEnable = false;
+                 } else {
+                     this.confirmEnable = true;
+                 }
+              } else {
+                 this.confirmEnable = false;
+              }
            } else {
                this.confirmEnable = true;
            }
@@ -260,7 +318,9 @@ export default {
                 &:hover 
                     background-color: rgb(220,220,220)
                 &.active 
-                    background-color: #c4c4c4
+                    background-color: #c4c4c4 
+                .disable
+                    pointer-events: none;     
                 .avatar
                     border-radius: 2px
                     margin-right: 12px
@@ -329,7 +389,7 @@ export default {
                     line-height: 26px
                     color: black
                     display: flex
-                    align-items: center   
+                    align-items: center
 
 .el-dialog__wrapper {
     display: flex;

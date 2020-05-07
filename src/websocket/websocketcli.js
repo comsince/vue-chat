@@ -43,6 +43,10 @@ export class WebSocketClient {
        return vuexStore.state.vueSocket.getGroupMember(groupId);
     }
 
+    addMembers(groupId, memberIds){
+       return vuexStore.state.vueSocket.addMembers(groupId,memberIds);
+    }
+
     recallMessage(messageUid){
        return vuexStore.state.vueSocket.recallMessage(messageUid);
     }

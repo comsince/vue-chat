@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "4425816",
+      "name": "删除-方框",
+      "font_class": "shanchu-fangkuang",
+      "unicode": "e791",
+      "unicode_decimal": 59281
+    },
+    {
+      "icon_id": "4770755",
+      "name": "增加数字",
+      "font_class": "zengjiashuzi",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "6129045",
+      "name": "9减、删除-线性方框",
+      "font_class": "jianshanchu-xianxingfangkuang",
+      "unicode": "e75a",
+      "unicode_decimal": 59226
+    },
+    {
+      "icon_id": "8358855",
+      "name": "增加4",
+      "font_class": "zengjia2",
+      "unicode": "e689",
+      "unicode_decimal": 59017
+    },
+    {
+      "icon_id": "5253606",
+      "name": "移除",
+      "font_class": "yichu",
+      "unicode": "e656",
+      "unicode_decimal": 58966
+    },
+    {
+      "icon_id": "1301395",
+      "name": "增加",
+      "font_class": "zengjia",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "1272671",
+      "name": "移除",
+      "font_class": "delete-br",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    },
+    {
       "icon_id": "4581221",
       "name": "发送中",
       "font_class": "loading-solid",
