@@ -30,7 +30,7 @@ export default class ProtoMessageContent{
     }
 
     static typeToContent(messageContent){
-        var showText = "未知类型";
+        var showText = "您有新的消息";
         switch(messageContent.type){
             case MessageContentType.Image:
                 showText = "[图片]";

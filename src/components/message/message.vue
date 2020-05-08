@@ -13,8 +13,8 @@
 		    <ul v-if="selectedChat">
 		    	<li v-bind:key = index v-for="(item, index) in selectedChat.protoMessages" class="message-item">
 		    		<div v-if="isShowTime(index,selectedChat.protoMessages)" class="time"><span>{{item.timestamp | getTimeStringAutoShort2}}</span></div>
-                    <div v-if="isGroupNotification(item)" class="time"><span>{{groupNotification(item)}}</span></div>
-                    <div v-if="isRecallNotification(item)" class="time"><span>{{groupNotification(item)}}</span></div>
+                    <div v-if="isGroupNotification(item)" class="time"><span>{{notificationContent(item)}}</span></div>
+                    <div v-if="isRecallNotification(item)" class="time"><span>{{notificationContent(item)}}</span></div>
                     <div v-if="item.content.type === 90" class="time"><span>{{item.content.content}}</span></div>
 		    		<div v-if="!isNotification(item.content.type)" class="main" :class="{ self: item.direction == 0 ? true : false }">
                         <img class="avatar" width="36" height="36" :src="avatarSrc(item)"
@@ -249,22 +249,6 @@ export default {
             console.log('message box click');
         },
 
-        notification(encodeBaseStr,notifyType){
-            var notify = CryptoJS.enc.Base64.parse(encodeBaseStr).toString(CryptoJS.enc.Utf8);
-            var notifyJson = JSON.parse(notify);
-            console.log('notify '+notify);
-            var notificationContent;
-            switch (notifyType) {
-                case 104:
-                    notificationContent = '创建群组'+notifyJson.n;
-                    break;
-                case 110:
-                    notificationContent = '修改群名为'+notifyJson.n;
-                    break;    
-            }
-            return notificationContent;
-        },
-
         isGroupNotification(protoMessage){
            var contentClass = MessageConfig.getMessageContentClazz(protoMessage.content.type);
            var content = new contentClass();
@@ -277,22 +261,10 @@ export default {
            return content instanceof RecallMessageNotification;
         },
 
-        groupNotification(protoMessage){
+        notificationContent(protoMessage){
             var displayContent;
             var messageContent = MessageConfig.convert2MessageContent(protoMessage.from,protoMessage.content);
             return messageContent.formatNotification();
-        },
-
-        getDisplayName(from){
-            var displayUserInfo = this.userInfoList.find(userInfo => userInfo.uid == from);
-            var displayName = from;
-            if(displayUserInfo){
-                displayName = displayUserInfo.displayName;
-                if(!displayName){
-                    displayName = displayUserInfo.mobile;
-                }
-            }
-            return displayName;
         },
 
         isNotification(type){
