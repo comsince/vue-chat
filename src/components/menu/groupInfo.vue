@@ -15,6 +15,7 @@
                 <ul>
                     <li v-bind:key = index v-for="(item, index) in memberList" class="frienditem">
                         <div class="friend-info">
+                            <i title="个人用户添加成员" class="icon iconfont icon-zengjia add" v-if="item.type == 1002" @click="addGroupMemberFromSingle"></i>
                             <i title="添加成员" class="icon iconfont icon-zengjia add" v-if="item.type == 1000" @click="addGroupMember"></i>
                             <i title="移除成员" class="icon iconfont icon-shanchu-fangkuang add" v-if="item.type == 1001" @click="kickGroupMember"></i>
                             <img class="avatar" :src="item.avatarUrl" onerror="this.src='static/images/vue.jpg'" v-if="item.type == 0 || item.type ==2">
@@ -50,7 +51,8 @@ export default {
             isGroupOwner: false,
             groupMembers: [],
             addGroupMemberType: 1000,
-            deleteGroupMemberType: 1001
+            deleteGroupMemberType: 1001,
+            addGroupMemberSingleType: 1002,
         }
     },
     mounted() {
@@ -82,12 +84,13 @@ export default {
         
         memberList(){
             var groupMembers = [];
-                //add member item
-            var addGroupMember = new GroupMember()
-            addGroupMember.type = this.addGroupMemberType;
-            addGroupMember.displayName = '添加成员';
-            groupMembers.push(addGroupMember);
+            //add member item
+            
             if(!this.isSingleConversation){
+                var addGroupMember = new GroupMember()
+                addGroupMember.type = this.addGroupMemberType;
+                addGroupMember.displayName = '添加成员';
+                groupMembers.push(addGroupMember);
                 //delete member
                 var deleteGroupMember = new GroupMember()
                 deleteGroupMember.type = this.deleteGroupMemberType;
@@ -107,6 +110,11 @@ export default {
                     groupMembers.splice(1,1);
                 }
             } else {
+                var addGroupMember = new GroupMember()
+                addGroupMember.type = this.addGroupMemberSingleType;
+                addGroupMember.displayName = '添加成员';
+                groupMembers.push(addGroupMember);
+
                 var currentUser = new GroupMember();
                 currentUser.displayName = webSocketClient.getDisplayName(LocalStore.getUserId());
                 currentUser.avatarUrl = webSocketClient.getPortrait(LocalStore.getUserId());
@@ -149,6 +157,12 @@ export default {
                 }
                 this.$store.state.showGroupInfo = false;
             })
+        },
+        addGroupMemberFromSingle(){
+            this.$store.state.groupOperateState = 3;
+            //触发groupMap以是vue相应变更
+            this.$store.state.groupMemberTracker += 1;
+            this.$store.state.showCreateGroupDialog = true;
         },
         addGroupMember(){
             this.$store.state.groupOperateState = 1;

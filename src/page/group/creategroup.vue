@@ -91,7 +91,6 @@ export default {
         ]),
         ...mapGetters([
             'searchedFriendlist',
-            'currentGroupMembers'
         ]),
         showCreateGroupDialog : {
             get () {
@@ -104,7 +103,6 @@ export default {
         waitCheckedFriendList(){
             let friends = this.searchedFriendlist.slice(1,this.searchedFriendlist.length);
             var listunCheckedFriends = [];
-            
             for(var friend of friends){
                 var isChecked = false;
                 var isDisabled = false;
@@ -112,19 +110,27 @@ export default {
                 if(this.groupOperateState == 0){
                    isShow = true;
                 } else if(this.groupOperateState == 1){
-                    isShow = true;
+                    //only for update groupMember ,只能监听map类型，不能监听getter
                     var trackTime = this.groupMemberTracker;
-                    var currentMember = this.currentGroupMembers.find( member => member.memberId == friend.wxid)
+                    isShow = true;
+                    var currentMember = this.groupMemberMap.get(this.selectTarget).find( member => member.memberId == friend.wxid)
                     if(currentMember){
                         isChecked = true;
                         isDisabled = true;
                     }
                 } else if(this.groupOperateState == 2){
                     var trackTime = this.groupMemberTracker;
-                    var currentMember = this.currentGroupMembers.find( member => member.memberId == friend.wxid)
+                    var currentMember = this.groupMemberMap.get(this.selectTarget).find( member => member.memberId == friend.wxid)
                     if(currentMember){
                         isChecked = false;
                         isShow = true;
+                    }
+                } else if(this.groupOperateState == 3){
+                    var trackTime = this.groupMemberTracker;
+                    isShow = true;
+                    if(this.selectTarget == friend.wxid){
+                        isChecked = true;
+                        isDisabled = true;
                     }
                 }
                 Logger.log("friend nickname "+friend.remark+" ischecked "+isChecked)
@@ -240,7 +246,20 @@ export default {
                                 this.fullscreenLoading = false;
                             }
                         })
-                        break        
+                        break
+                    case 3:
+                       //增加当前用户，与现在聊天的用户
+                       memberIds.push(LocalStore.getUserId());
+                       memberIds.push(this.selectTarget);
+                       webSocketClient.createGroup(groupName,memberIds).then(data => {
+                           if(data.code == SUCCESS_CODE){
+                                var result = JSON.parse(data.result);
+                                this.fullscreenLoading = false;
+                                this.exit();
+                            } else {
+                                this.fullscreenLoading = false;
+                            }
+                       })             
                     default:
                         break
 
