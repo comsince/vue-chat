@@ -108,24 +108,38 @@ export default {
             for(var friend of friends){
                 var isChecked = false;
                 var isDisabled = false;
-                if(this.groupOperateState != 0){
+                var isShow = false
+                if(this.groupOperateState == 0){
+                   isShow = true;
+                } else if(this.groupOperateState == 1){
+                    isShow = true;
                     var trackTime = this.groupMemberTracker;
                     var currentMember = this.groupMemberMap.get(this.selectTarget).find( member => member.memberId == friend.wxid)
                     if(currentMember){
                         isChecked = true;
                         isDisabled = true;
                     }
+                } else if(this.groupOperateState == 2){
+                    var trackTime = this.groupMemberTracker;
+                    var currentMember = this.groupMemberMap.get(this.selectTarget).find( member => member.memberId == friend.wxid)
+                    if(currentMember){
+                        isChecked = false;
+                        isShow = true;
+                    }
                 }
                 Logger.log("friend nickname "+friend.remark+" ischecked "+isChecked)
-                listunCheckedFriends.push({
-                    id: friend.id,
-                    wxid: friend.wxid,
-                    remark: friend.remark,
-                    img: friend.img,
-                    initial: friend.initial,
-                    checked: isChecked,
-                    disabled: isDisabled
-                });
+                if(isShow){
+                    listunCheckedFriends.push({
+                        id: friend.id,
+                        wxid: friend.wxid,
+                        remark: friend.remark,
+                        img: friend.img,
+                        initial: friend.initial,
+                        checked: isChecked,
+                        disabled: isDisabled
+                    });
+                }
+                
             }
             return listunCheckedFriends;
         },
@@ -216,7 +230,17 @@ export default {
                                 this.fullscreenLoading = false;
                             }
                         })
-                        break    
+                        break
+                    case 2:
+                        webSocketClient.kickeMembers(this.selectTarget,memberIds).then(data => {
+                            if(data.code == SUCCESS_CODE){
+                                this.fullscreenLoading = false;
+                                this.exit();
+                            } else {
+                                this.fullscreenLoading = false;
+                            }
+                        })
+                        break        
                     default:
                         break
 

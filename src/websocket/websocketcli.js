@@ -51,6 +51,10 @@ export class WebSocketClient {
        return vuexStore.state.vueSocket.addMembers(groupId,memberIds);
     }
 
+    kickeMembers(groupId,memberIds){
+       return vuexStore.state.vueSocket.kickeMembers(groupId,memberIds);
+    }
+
     recallMessage(messageUid){
        return vuexStore.state.vueSocket.recallMessage(messageUid);
     }

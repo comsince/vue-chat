@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC, GQ, PUB_ACK, ERROR_CODE, MR, GAM, GMI} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC, GQ, PUB_ACK, ERROR_CODE, MR, GAM, GMI, GKM} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -34,7 +34,7 @@ import FutureResult from './future/futureResult';
 import RecallMessageHandler from './handler/recallMessageHandler';
 import NotifyRecallMessageHandler from './handler/notifyRecallMessageHandler';
 import AddGroupMemberHandler from './handler/addGroupMemberHandler';
-
+import KickGroupMemberHandler from './handler/kickGroupmemberHandler'
 export default class VueWebSocket {
     handlerList = [];
     userDisconnect = false;
@@ -170,6 +170,7 @@ export default class VueWebSocket {
         this.handlerList.push(new RecallMessageHandler(this));
         this.handlerList.push(new NotifyRecallMessageHandler(this));
         this.handlerList.push(new AddGroupMemberHandler(this));
+        this.handlerList.push(new KickGroupMemberHandler(this));
     }
 
     processMessage(data){
@@ -302,6 +303,13 @@ export default class VueWebSocket {
        return await this.sendPublishMessage(GAM,{
            groupId: groupId,
            groupMembers: groupMembers
+       });
+    }
+
+    async kickeMembers(groupId,memberIds){
+       return await this.sendPublishMessage(GKM,{
+           groupId: groupId,
+           memberIds: memberIds
        });
     }
 
