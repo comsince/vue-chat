@@ -114,14 +114,14 @@ export default {
                 } else if(this.groupOperateState == 1){
                     isShow = true;
                     var trackTime = this.groupMemberTracker;
-                    var currentMember = this.groupMemberMap.get(this.selectTarget).find( member => member.memberId == friend.wxid)
+                    var currentMember = this.currentGroupMembers.find( member => member.memberId == friend.wxid)
                     if(currentMember){
                         isChecked = true;
                         isDisabled = true;
                     }
                 } else if(this.groupOperateState == 2){
                     var trackTime = this.groupMemberTracker;
-                    var currentMember = this.groupMemberMap.get(this.selectTarget).find( member => member.memberId == friend.wxid)
+                    var currentMember = this.currentGroupMembers.find( member => member.memberId == friend.wxid)
                     if(currentMember){
                         isChecked = false;
                         isShow = true;

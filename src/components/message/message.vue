@@ -4,9 +4,9 @@
 		<header class="header">
 			<div class="friendname">{{selectedChat.name}}</div>
             <div class="friend-group-info">
-                <i title="用户信息" class="icon iconfont icon-pengyou1" v-if="isSingleConversation" ></i>
+                <i title="用户信息" class="icon iconfont icon-pengyou1 show-group-info" v-if="isSingleConversation" @click="changeShowCreateGroup"></i>
                 <i title="群组信息" class="icon iconfont icon-pengyou show-group-info" v-if="!isSingleConversation" @click="changeShowGroupInfo"></i>
-                <groupInfo v-bind:groupId="selectedChat.target" v-if="showGroupInfo"></groupInfo>
+                <groupInfo v-bind:targetId="selectedChat.target" v-if="showGroupInfo"></groupInfo>
             </div>
 		</header>
 		<div class="message-wrapper" ref="list" @scroll="scrollEvent" @click="messageBoxClick" :style="{height: (appHeight * 0.75-60) + 'px'}">
@@ -146,6 +146,10 @@ export default {
     },
     methods: {
         changeShowGroupInfo(){
+            if(this.showGroupInfo){
+                this.showGroupInfo = false
+                return
+            }
             webSocketClient.getGroupMember(this.selectedChat.target).then(data => {
                 var isGroupMember = false;
 
@@ -171,6 +175,9 @@ export default {
                     }
                 }
             })
+        },
+        changeShowCreateGroup(){
+            this.showGroupInfo = !this.showGroupInfo;
         },
         avatarSrc(item){
             var avarimgUrl = 'static/images/vue.jpg';

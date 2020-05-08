@@ -1,7 +1,7 @@
 <template>
     <div id="group-info-id" class="group-content" :style="{height: (appHeight-61) + 'px'}">
         <div class="flex-layout">
-            <div class="group-info-title">
+            <div class="group-info-title" v-if="!isSingleConversation">
                 <div class="group-name-info">
                     <div class="group-name-title">群名</div>
                     <p class="group-name" contenteditable="true" @blur="modifyGroupNameBlur" @keydown.enter="modifyGroupName">{{groupName}}</p>
@@ -23,7 +23,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="flex-bottom">
+            <div class="flex-bottom" v-if="!isSingleConversation">
                 <p class="quit-group" v-if="!isGroupOwner" @click="quitGroup">退出群聊</p>
                 <p class="dismiss-group" v-if="isGroupOwner">解散群聊</p>
             </div>
@@ -44,7 +44,7 @@ import ModifyGroupInfoType from '../../websocket/message/modifyGroupInfoType'
 import Logger from '../../websocket/utils/logger';
 export default {
     name: 'groupInfoMenu',
-    props: ['groupId'], 
+    props: ['targetId'], 
     data(){
         return {
             isGroupOwner: false,
@@ -54,12 +54,13 @@ export default {
         }
     },
     mounted() {
-        console.log("showGroupInfo mounted")
+        console.log("targetId "+this.targetId)
         document.addEventListener("click", e => {
             var isString = typeof(e.target.className) == 'string'
             let groupInfoDom = document.getElementById("group-info-id");
+            // console.log("isString "+isString +" show "+e.target.className.search('show-group-info'))
             //注意点击显示按钮事件的处理，防止状态发生反转
-			if (isString && e.target.className.search('show-group-info') == -1 && groupInfoDom && !groupInfoDom.contains(event.target) && this.$store.state.showGroupInfo) {
+			if (isString && e.target.className.search('show-group-info') == -1 && groupInfoDom && !groupInfoDom.contains(e.target) && this.$store.state.showGroupInfo) {
                 this.$store.state.showGroupInfo = false;
             }
         });
@@ -72,11 +73,11 @@ export default {
         ...mapState([
             'appHeight',
             'groupInfoList',
-            'tempGroupMembers',
             'userInfoList',
             'groupMemberMap'
         ]),
         ...mapGetters([
+            'isSingleConversation'
         ]),
         
         memberList(){
@@ -86,38 +87,53 @@ export default {
             addGroupMember.type = this.addGroupMemberType;
             addGroupMember.displayName = '添加成员';
             groupMembers.push(addGroupMember);
-                
+            if(!this.isSingleConversation){
                 //delete member
-            var deleteGroupMember = new GroupMember()
-            deleteGroupMember.type = this.deleteGroupMemberType;
-            deleteGroupMember.displayName = '移除成员';
-            groupMembers.push(deleteGroupMember);
-
-            for(var groupMember of this.groupMemberMap.get(this.groupId)){
-                if(groupMember.memberId == LocalStore.getUserId()){
-                        this.isGroupOwner = groupMember.type == 2 ? true : false;
+                var deleteGroupMember = new GroupMember()
+                deleteGroupMember.type = this.deleteGroupMemberType;
+                deleteGroupMember.displayName = '移除成员';
+                groupMembers.push(deleteGroupMember);
+                if(this.groupMemberMap.get(this.targetId)){
+                    for(var groupMember of this.groupMemberMap.get(this.targetId)){
+                        if(groupMember.memberId == LocalStore.getUserId()){
+                                this.isGroupOwner = groupMember.type == 2 ? true : false;
+                        }
+                        groupMember.displayName = webSocketClient.getDisplayName(groupMember.memberId);
+                        groupMember.avatarUrl = webSocketClient.getPortrait(groupMember.memberId);
+                        groupMembers.push(groupMember);
+                    }
                 }
-                groupMember.displayName = webSocketClient.getDisplayName(groupMember.memberId);
-                groupMember.avatarUrl = webSocketClient.getPortrait(groupMember.memberId);
-                groupMembers.push(groupMember);
+                if(!this.isGroupOwner){
+                    groupMembers.splice(1,1);
+                }
+            } else {
+                var currentUser = new GroupMember();
+                currentUser.displayName = webSocketClient.getDisplayName(LocalStore.getUserId());
+                currentUser.avatarUrl = webSocketClient.getPortrait(LocalStore.getUserId());
+                currentUser.memberId = LocalStore.getUserId();  
+                groupMembers.push(currentUser)
+
+                var targetUser = new GroupMember();
+                targetUser.displayName = webSocketClient.getDisplayName(this.targetId);
+                targetUser.avatarUrl = webSocketClient.getPortrait(this.targetId);
+                targetUser.memberId = this.targetId;
+                groupMembers.push(targetUser);
             }
-            if(!this.isGroupOwner){
-                groupMembers.splice(1,1);
-            }
+            
             return groupMembers;
         },
 
         groupName: {
             get() {
                 var groupName = "";
-                var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.groupId);
+                var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.targetId);
                 if(groupInfo){
                     groupName = groupInfo.name;
                 }
                 return groupName;
             },
             set(value){
-                var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.groupId);
+                var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.targetId);
                 if(groupInfo){
                     groupInfo.name = value;
                 }
@@ -127,9 +143,9 @@ export default {
     },
     methods: {
         quitGroup(){
-            webSocketClient.quitGroup(this.groupId).then(data => {
+            webSocketClient.quitGroup(this.targetId).then(data => {
                 if(data.code == SUCCESS_CODE){
-                    this.$store.dispatch('deleteConversation',this.groupId)
+                    this.$store.dispatch('deleteConversation',this.targetId)
                 }
                 this.$store.state.showGroupInfo = false;
             })
@@ -154,7 +170,7 @@ export default {
             this.groupName = inputName;
             if(this.groupName && this.groupName.length < 15){
                 webSocketClient.modifyGroupInfo({
-                    groupId: this.groupId,
+                    groupId: this.targetId,
                     type: ModifyGroupInfoType.Modify_Group_Name,
                     value: this.groupName
                 });
