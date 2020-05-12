@@ -1,4 +1,9 @@
 
+
+# 飞享
+
+该项目是`飞享`聊天系统客户端源码
+
 基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯，支持文本，图片类型发送，支持实时音视频，支持音视频与[android-chat](https://github.com/comsince/android-chat)客户端互通
 
 # 项目截图
