@@ -17,6 +17,7 @@ import AddGroupMemberNotification from './notification/addGroupMemberNotificatio
 import QuitGroupNotification from './notification/quitGroupNotification'
 import RecallMessageNotification from './notification/recallMessageNotification'
 import KickoffGroupMemberNotification from './notification/kickoffGroupMemberNotification'
+import DismissGroupNotification from './notification/dismissGroupNotification'
 import LocalStore from '../store/localstore'
 export default class MessageConfig{
     static getMessageContentClazz(type) {
@@ -162,6 +163,7 @@ export default class MessageConfig{
             name: 'dismissGroupNotification',
             flag: PersistFlag.Persist,
             type: MessageContentType.DismissGroup_Notification,
+            contentClazz: DismissGroupNotification
         },
         {
             name: 'kickoffGroupMemberNotification',

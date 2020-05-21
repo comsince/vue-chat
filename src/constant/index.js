@@ -23,6 +23,7 @@ export const GC = 'GC';
 export const GMI = 'GMI';
 export const GKM = 'GKM';
 export const GQ = 'GQ';
+export const GD = 'GD';
 export const MP = 'MP';
 export const MS = "MS";
 export const MN = "MN";

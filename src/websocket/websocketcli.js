@@ -43,6 +43,10 @@ export class WebSocketClient {
        return vuexStore.state.vueSocket.quitGroup(groupId);
     }
 
+    dismissGroup(groupId){
+       return vuexStore.state.vueSocket.dismissGroup(groupId);
+    }
+
     getGroupMember(groupId){
        return vuexStore.state.vueSocket.getGroupMember(groupId);
     }

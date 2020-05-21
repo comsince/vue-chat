@@ -26,7 +26,7 @@
             </div>
             <div class="flex-bottom" v-if="!isSingleConversation">
                 <p class="quit-group" v-if="!isGroupOwner" @click="quitGroup">退出群聊</p>
-                <p class="dismiss-group" v-if="isGroupOwner">解散群聊</p>
+                <p class="dismiss-group" v-if="isGroupOwner" @click="dismissGroup">解散群聊</p>
             </div>
         </div>
         
@@ -154,6 +154,14 @@ export default {
             webSocketClient.quitGroup(this.targetId).then(data => {
                 if(data.code == SUCCESS_CODE){
                     this.$store.dispatch('deleteConversation',this.targetId)
+                }
+                this.$store.state.showGroupInfo = false;
+            })
+        },
+        dismissGroup(){
+            webSocketClient.dismissGroup(this.targetId).then(data => {
+                if(data.code == SUCCESS_CODE){
+                    
                 }
                 this.$store.state.showGroupInfo = false;
             })

@@ -76,6 +76,9 @@
 
 ![image](https://user-gold-cdn.xitu.io/2020/5/8/171f4c271ba2b4dd?w=2064&h=1144&f=png&s=428322)
 
+### V1.0.6
+* 增加解散群组的功能
+
 ## Build Setup
 
 ``` bash
@@ -111,3 +114,16 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 * [vue-wechat](https://github.com/zhaohaodang/vue-WeChat)
 * [vue-chat](https://github.com/aermin/vue-chat)
 * [QRCodeLogin](https://github.com/HeyJC/QRCodeLogin/blob/master/Web/auth/src/components/Input.vue) 说明二维码和密码登录的切换操作
+
+
+## 一次性赞助
+
+是采用 MIT 许可的开源项目，个人研究使用完全免费。但是随着项目的增长，也需要相应的资金支持，你可以通过以下方式来赞助此项目
+
+| 支付宝      | 微信| 
+| :--------: | :--------:| 
+|<img src="http://image.comsince.cn/zfb-purse.png" alt="图片替换文本" width="300" height="300" align="center" />|<img src="http://image.comsince.cn/wx-purse.png" alt="图片替换文本" width="300" height="300" align="center" />|
+
+## 永久授权
+
+如果公司采用本项目或者需要有商业需求，需要二次开发，可以申请软件授权，收取一次性费用，可以提供6个月的技术支持，联系QQ：`1282212195`
