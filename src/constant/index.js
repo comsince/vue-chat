@@ -1,5 +1,5 @@
 export const WS_PROTOCOL = 'wss';
-export const WS_IP = 'github.comsince.cn';
+export const WS_IP = 'chat.comsince.cn';
 // export const WS_IP = 'localhost';
 export const WS_PORT = 9326;
 export const HEART_BEAT_INTERVAL = 25 * 1000;
@@ -37,7 +37,7 @@ export const FHR = "FHR";
 export const FN = "FN";
 export const MMI = "MMI";
 
-export const HTTP_HOST = "https://"+WS_IP + ":8443/"
+export const HTTP_HOST = "https://"+WS_IP + "/"
 export const LOGIN_API = HTTP_HOST + "login";
 export const SNED_VERIFY_CODE_API = HTTP_HOST + "send_code";;
 

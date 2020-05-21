@@ -780,10 +780,20 @@ const getters = {
     // 通过当前选择是哪个对话匹配相应的对话
     selectedChat (state) {
        let chatMessage = state.messages.find(chatMessage => chatMessage.target === state.selectTarget);
+       console.log("select target "+state.selectTarget)
        if(chatMessage == null){
+           var conversationName = "";
+           var conversationTarget = '';
+           if(state.friendlist){
+             var friend = state.friendlist.find(friend => friend.wxid == state.selectTarget) 
+             if(friend){
+                 conversationName = friend.displayName;
+                 conversationTarget = friend.wxid;
+             }
+           }
           chatMessage = {
-              name: '',
-              target: '',
+              name: conversationName,
+              target: conversationTarget,
               protoMessages: []
           }
        }
