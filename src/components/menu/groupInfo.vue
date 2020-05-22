@@ -151,20 +151,54 @@ export default {
     },
     methods: {
         quitGroup(){
-            webSocketClient.quitGroup(this.targetId).then(data => {
-                if(data.code == SUCCESS_CODE){
-                    this.$store.dispatch('deleteConversation',this.targetId)
-                }
-                this.$store.state.showGroupInfo = false;
-            })
+            this.$confirm('你将退出此群组, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+            }).then(() => {
+                webSocketClient.quitGroup(this.targetId).then(data => {
+                    if(data.code == SUCCESS_CODE){
+                        this.$message({
+                            type: 'success',
+                            message: '退出群组成功!'
+                        });
+                        this.$store.state.showGroupInfo = false;
+                        setTimeout(() => this.$store.dispatch('deleteConversation',this.targetId), 500) 
+                    }
+               })  
+                    
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消退出群组'
+                });          
+            });  
+
+            
         },
         dismissGroup(){
-            webSocketClient.dismissGroup(this.targetId).then(data => {
-                if(data.code == SUCCESS_CODE){
-                    
-                }
-                this.$store.state.showGroupInfo = false;
-            })
+          this.$confirm('此操作将永久解散群组, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                webSocketClient.dismissGroup(this.targetId).then(data => {
+                    if(data.code == SUCCESS_CODE){
+                        this.$message({
+                            type: 'success',
+                            message: '解散群组成功!'
+                        });
+                        this.$store.state.showGroupInfo = false;
+                        setTimeout(() => this.$store.dispatch('deleteConversation',this.targetId), 500)
+                    }
+                })
+                
+          }).catch(() => {
+            this.$message({
+                type: 'info',
+                message: '已取消解散群组'
+            });          
+          });    
         },
         addGroupMemberFromSingle(){
             this.$store.state.groupOperateState = 3;

@@ -787,7 +787,7 @@ const getters = {
            if(state.friendlist){
              var friend = state.friendlist.find(friend => friend.wxid == state.selectTarget) 
              if(friend){
-                 conversationName = friend.displayName;
+                 conversationName = friend.nickname;
                  conversationTarget = friend.wxid;
              }
            }

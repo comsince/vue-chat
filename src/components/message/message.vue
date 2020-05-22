@@ -155,24 +155,31 @@ export default {
 
                 if(data.code == SUCCESS_CODE){
 
-                    this.groupMemberMap.set(this.selectedChat.target,data.result);
-
-                    for(var groupMember of data.result){
-                        if(groupMember.memberId == LocalStore.getUserId()){
-                            isGroupMember = true;
-                            break;
-                        }
-                        
-                    }
-
-                    if(!isGroupMember){
-                        this.$message.error("您不是群组成员，无法查看群组信息");
+                    if(data.result.length == 0){
+                        this.$message.error("该群组已经解散,即将删除该会话");
+                        this.$store.dispatch('deleteConversation',this.selectedChat.target)
                     } else {
-                        this.showGroupInfo = !this.showGroupInfo ;
-                        if(this.showGroupInfo){
-                            this.$store.dispatch("getGroupInfo",this.selectedChat.target);
+                        this.groupMemberMap.set(this.selectedChat.target,data.result);
+
+                        for(var groupMember of data.result){
+                            if(groupMember.memberId == LocalStore.getUserId()){
+                                isGroupMember = true;
+                                break;
+                            }
+                            
+                        }
+
+                        if(!isGroupMember){
+                            this.$message.error("您不是群组成员，无法查看群组信息,即将删除该会话");
+                            this.$store.dispatch('deleteConversation',this.selectedChat.target)
+                        } else {
+                            this.showGroupInfo = !this.showGroupInfo ;
+                            if(this.showGroupInfo){
+                                this.$store.dispatch("getGroupInfo",this.selectedChat.target);
+                            }
                         }
                     }
+                    
                 }
             })
         },

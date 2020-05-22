@@ -221,8 +221,16 @@ export default {
                                 var result = JSON.parse(data.result);
                                 this.fullscreenLoading = false;
                                 this.exit();
+                                this.$message({
+                                    type: 'success',
+                                    message: '创建'+groupName+'群组成功!'
+                                 });
                             } else {
                                 this.fullscreenLoading = false;
+                                this.$message({
+                                    type: 'success',
+                                    message: '创建'+groupName+'群组失败,请重试!'
+                                 });
                             }
                         });
                         break

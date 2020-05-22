@@ -1,4 +1,6 @@
 
+[![star](https://gitee.com/comsince/vue-chat/badge/star.svg?theme=white)](https://gitee.com/comsince/vue-chat)
+[![GitHub stars](https://img.shields.io/github/stars/comsince/vue-chat?style=social)](https://github.com/comsince/vue-chat)
 
 # 飞享
 
@@ -78,7 +80,8 @@
 
 ### V1.0.6
 * 增加解散群组的功能
-
+* 优化群组退出与解散交互体验
+* 对于解散的群组与退出的群组,做删除会话处理
 ## Build Setup
 
 ``` bash
