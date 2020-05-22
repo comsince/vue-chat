@@ -178,11 +178,10 @@ export default {
   }
   .login_panel .login_title img {
     margin-top: 60px;
-    height: 70px;
-    width: 70px;
+    height: 80px;
+    width: 80px;
     border-radius: 50%;
     padding: 10px;
-    border: 3px solid #d7e8fc;
   }
   .login_panel .login_title p {
     margin-top: 15px;
