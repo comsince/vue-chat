@@ -131,6 +131,12 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 | :--------: | :--------:| 
 |<img src="http://image.comsince.cn/zfb-purse.png" alt="图片替换文本" width="300" height="300" align="center" />|<img src="http://image.comsince.cn/wx-purse.png" alt="图片替换文本" width="300" height="300" align="center" />|
 
+## QQ 群交流
+
+| QQ群      | QQ群 |
+| :--------: | :--------: | 
+|<img src="http://image.comsince.cn/1-VYVLVL22-1587711095978-/storage/emulated/0/Tencent/QQ_Images/qrcode_1587711062833.jpg" alt="图片替换文本" width="300" height="300" align="center" />|![image](./attachment/qq_qrcode_universe_push.jpg)|
+
 ## 技术支持
 
 如果公司采用本项目或者需要有商业需求，需要二次开发,提供技术支持,联系QQ：`1282212195`
