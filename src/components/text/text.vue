@@ -115,6 +115,8 @@ import SessionCallback from '../../webrtc/sessionCallback'
 import EngineCallback from '../../webrtc/engineCallback'
 import SendMessage from '../../websocket/message/sendMessage'
 import CallState from '../../webrtc/callState'
+import { MINIO_ENDPOINT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_IMAGE_BUCKEY, UPLOAD_BY_QINIU, SUCCESS_CODE } from '../../constant'
+import webSocketCli from '../../websocket/websocketcli'
 export default {
     data () {
         return {
@@ -144,7 +146,7 @@ export default {
             showTalkTime: false,
             talkInterval: 0,
             talkTime: '00:00',
-            talkTimerInterval: null
+            talkTimerInterval: null,
         };
     },
     computed: {
@@ -163,34 +165,56 @@ export default {
     methods: {
         sendPic(e){
            var store = this.$store;
-           store.dispatch('getUploadToken', MessageContentMediaType.Image);
-           console.log("sendpic "+e.target.value);
            var file = e.target.files[0];
-           var key = MessageContentMediaType.Image +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
-           setTimeout(()=> {
-                var token = LocalStore.getImageUploadToken();
-                console.log("upload file key "+key+" token "+token);
-                if(token){
-                    var observable = qiniu.upload(file, key, token, null, null);
-                    var observer = {
-                            next(res){
-                                console.log('uploading '+res.total.percent);
-                            },
-                            error(err){
-                                console.log("upload error "+err.code +" message "+err.message);
-                            }, 
-                            complete(res){
-                                console.log("upload complete "+res);
+           if(UPLOAD_BY_QINIU){
+                store.dispatch('getUploadToken', MessageContentMediaType.Image);
+                console.log("sendpic "+e.target.value);
+                var key = MessageContentMediaType.Image +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
+                setTimeout(()=> {
+                        var token = LocalStore.getImageUploadToken();
+                        console.log("upload file key "+key+" token "+token);
+                        if(token){
+                            var observable = qiniu.upload(file, key, token, null, null);
+                            var observer = {
+                                    next(res){
+                                        console.log('uploading '+res.total.percent);
+                                    },
+                                    error(err){
+                                        console.log("upload error "+err.code +" message "+err.message);
+                                    }, 
+                                    complete(res){
+                                        console.log("upload complete "+res);
+                                        var localPath = e.target.value;
+                                        var remotePath = "http://image.comsince.cn/"+key;
+                                        var imageMessageContent = new ImageMessageContent(localPath,remotePath,null);
+                                        store.dispatch('sendMessage', new SendMessage(null,imageMessageContent))
+                                    }
+                                }
+                            observable.subscribe(observer);
+                        }
+                        
+                },200);
+           } else {
+                var key = MessageContentMediaType.Image +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
+                webSocketCli.getMinioUploadUrl(MessageContentMediaType.Image,key).then(data => {
+                    if(data.code == SUCCESS_CODE){
+                        console.log("url "+data.result)
+                        fetch(data.result, {
+                            method: 'PUT',
+                            body: file
+                            }).then(() => {
+                                var remotePath = "http://"+MINIO_ENDPOINT+"/"+MINIO_IMAGE_BUCKEY+"/"+key;
                                 var localPath = e.target.value;
-                                var remotePath = "http://image.comsince.cn/"+key;
                                 var imageMessageContent = new ImageMessageContent(localPath,remotePath,null);
                                 store.dispatch('sendMessage', new SendMessage(null,imageMessageContent))
-                            }
-                        }
-                    observable.subscribe(observer);
-                }
+                            }).catch((e) => {
+                                console.error(e);
+                            });
+                    }
+                })
                 
-           },200);
+           }
+           
            this.$refs.uploadPic.value = null;
         },
         // 按回车发送信息

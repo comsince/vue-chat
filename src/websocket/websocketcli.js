@@ -63,6 +63,10 @@ export class WebSocketClient {
        return vuexStore.state.vueSocket.recallMessage(messageUid);
     }
 
+    getMinioUploadUrl(mediaType,key){
+       return vuexStore.state.vueSocket.getMinioUploadUrl(mediaType,key);
+    }
+
 
 }
 

@@ -30,6 +30,7 @@ export const MN = "MN";
 export const MR = "MR";
 export const RMN = "RMN";
 export const GQNUT = "GQNUT";
+export const GMURL = "GMURL";
 export const US = "US";
 export const FAR =  "FAR";
 export const FRN = "FRN";
@@ -51,7 +52,13 @@ export const CLINET_ID = 'bccdb58cfdb34d861576810441000';
 //token
 export const TOKEN = '6Yz2rQDrtRPRc3j9PesLy0De17uX2RlVcvkxU/UmGEaMamd/kaagwWNThIWSGMd6SPVHxLeynho03sJWdbm7wFMRO8VTKf5Wogv7l7gKLsq81mswRha3j6FMdDVHVJ+MLJrVjrThkqXrK1rHwsZvGxpqSGcekHIggI1UEEJSXyQ=';
 
-
+//是否使用七牛上传文件
+export const UPLOAD_BY_QINIU = false;
+export const MINIO_ENDPOINT = "172.16.46.201"
+export const MINIO_PORT = "80"
+export const MINIO_ACCESS_KEY = "minioadmin";
+export const MINIO_SECRET_KEY = "minioadmin"
+export const MINIO_IMAGE_BUCKEY = "minio-bucket-image-name"
 
 export const ERROR_CODE = 400;
 export const SUCCESS_CODE = 200;
