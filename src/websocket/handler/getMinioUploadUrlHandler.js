@@ -7,7 +7,6 @@ export default class GetMinioUploadUrlHandler extends AbstractMessageHandler {
     }
     notifyContent(content){
         var result = JSON.parse(content);
-        var url = result.url;
-        return url;
+        return result;
     }
 }

@@ -115,7 +115,7 @@ import SessionCallback from '../../webrtc/sessionCallback'
 import EngineCallback from '../../webrtc/engineCallback'
 import SendMessage from '../../websocket/message/sendMessage'
 import CallState from '../../webrtc/callState'
-import { MINIO_ENDPOINT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_IMAGE_BUCKEY, UPLOAD_BY_QINIU, SUCCESS_CODE } from '../../constant'
+import {UPLOAD_BY_QINIU, SUCCESS_CODE } from '../../constant'
 import webSocketCli from '../../websocket/websocketcli'
 export default {
     data () {
@@ -198,12 +198,12 @@ export default {
                 var key = MessageContentMediaType.Image +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
                 webSocketCli.getMinioUploadUrl(MessageContentMediaType.Image,key).then(data => {
                     if(data.code == SUCCESS_CODE){
-                        console.log("url "+data.result)
-                        fetch(data.result, {
+                        console.log("domain "+data.result.domain+" url "+data.result.url)
+                        fetch(data.result.url, {
                             method: 'PUT',
                             body: file
                             }).then(() => {
-                                var remotePath = "http://"+MINIO_ENDPOINT+"/"+MINIO_IMAGE_BUCKEY+"/"+key;
+                                var remotePath = data.result.domain+"/"+key;
                                 var localPath = e.target.value;
                                 var imageMessageContent = new ImageMessageContent(localPath,remotePath,null);
                                 store.dispatch('sendMessage', new SendMessage(null,imageMessageContent))
@@ -211,8 +211,7 @@ export default {
                                 console.error(e);
                             });
                     }
-                })
-                
+                })  
            }
            
            this.$refs.uploadPic.value = null;

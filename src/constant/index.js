@@ -54,11 +54,6 @@ export const TOKEN = '6Yz2rQDrtRPRc3j9PesLy0De17uX2RlVcvkxU/UmGEaMamd/kaagwWNThI
 
 //是否使用七牛上传文件
 export const UPLOAD_BY_QINIU = false;
-export const MINIO_ENDPOINT = "172.16.46.201"
-export const MINIO_PORT = "80"
-export const MINIO_ACCESS_KEY = "minioadmin";
-export const MINIO_SECRET_KEY = "minioadmin"
-export const MINIO_IMAGE_BUCKEY = "minio-bucket-image-name"
 
 export const ERROR_CODE = 400;
 export const SUCCESS_CODE = 200;
