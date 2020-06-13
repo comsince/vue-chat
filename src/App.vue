@@ -3,6 +3,7 @@
     <router-view></router-view>
     <searchfriend></searchfriend>
     <creategroup></creategroup>
+    <relayMessage></relayMessage>
   </div>
 </template>
 
@@ -10,11 +11,13 @@
 import { mapActions } from 'vuex'
 import searchfriend from './page/friend/searchfriend'
 import creategroup from './page/group/creategroup'
+import relayMessage from './components/menu/relayMessage'
 export default {
    name : 'AppChat',
    components: {
      searchfriend,
      creategroup,
+     relayMessage
    }
 }
 </script>

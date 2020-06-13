@@ -307,16 +307,12 @@ export default {
             }
         },
         isShowMessageMenu(item){
-           if(item.direction == 0){
-                var menuSetting = this.showMessageRightMenu.find(setting => setting.messageId == item.messageId)
-                if(menuSetting){
-                    return menuSetting.show;
-                } else {
-                    return false;
-                }
-           } else {
-               return false;
-           }
+            var menuSetting = this.showMessageRightMenu.find(setting => setting.messageId == item.messageId)
+            if(menuSetting){
+                return menuSetting.show;
+            } else {
+                return false;
+            }
            
         }
     },

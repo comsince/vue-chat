@@ -47,6 +47,8 @@ import MessageContentMediaType from '../../websocket/message/messageContentMedia
 import LocalStore from '../../websocket/store/localstore';
 import * as qiniu from 'qiniu-js'
 import { mapGetters, mapState } from 'vuex'
+import { UPLOAD_BY_QINIU,SUCCESS_CODE } from '../../constant';
+import webSocketCli from '../../websocket/websocketcli'
 export default {
     name: 'persionCard',
     props: ['userId'],
@@ -85,37 +87,61 @@ export default {
        changeAvatar(e){
            var _this = this;
            var store = this.$store;
-           store.dispatch('getUploadToken', MessageContentMediaType.Image);
-           console.log("changeAvatar "+e.target.value);
-           var file = e.target.files[0];
-           var key = MessageContentMediaType.Image +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
-           setTimeout(()=> {
-                var token = LocalStore.getImageUploadToken();
-                console.log("upload avatar key "+key+" token "+token);
-                if(token){
-                    var observable = qiniu.upload(file, key, token, null, null);
-                    var observer = {
-                            next(res){
-                                console.log('uploading '+res.total.percent);
-                            },
-                            error(err){
-                                console.log("upload error "+err.code +" message "+err.message);
-                            }, 
-                            complete(res){
-                                console.log("upload complete "+res);
-                                var localPath = e.target.value;
-                                var remotePath = "http://image.comsince.cn/"+key;
-                                _this.$store.state.user.img = remotePath;
-                                store.dispatch("modifyMyInfo",{
-                                    type: MyInfoType.Modify_Portrait,
-                                    value: remotePath
-                                });
-                            }
+           if(UPLOAD_BY_QINIU){
+                store.dispatch('getUploadToken', MessageContentMediaType.Image);
+                console.log("changeAvatar "+e.target.value);
+                var file = e.target.files[0];
+                var key = MessageContentMediaType.Image +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
+                setTimeout(()=> {
+                        var token = LocalStore.getImageUploadToken();
+                        console.log("upload avatar key "+key+" token "+token);
+                        if(token){
+                            var observable = qiniu.upload(file, key, token, null, null);
+                            var observer = {
+                                    next(res){
+                                        console.log('uploading '+res.total.percent);
+                                    },
+                                    error(err){
+                                        console.log("upload error "+err.code +" message "+err.message);
+                                    }, 
+                                    complete(res){
+                                        console.log("upload complete "+res);
+                                        var localPath = e.target.value;
+                                        var remotePath = "http://image.comsince.cn/"+key;
+                                        _this.$store.state.user.img = remotePath;
+                                        store.dispatch("modifyMyInfo",{
+                                            type: MyInfoType.Modify_Portrait,
+                                            value: remotePath
+                                        });
+                                    }
+                                }
+                            observable.subscribe(observer);
                         }
-                    observable.subscribe(observer);
-                }
-                
-           },200);
+                        
+                },200);
+           } else {
+               var file = e.target.files[0];
+               var key = MessageContentMediaType.Image +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
+               webSocketCli.getMinioUploadUrl(MessageContentMediaType.Image,key).then(data => {
+                    if(data.code == SUCCESS_CODE){
+                        console.log("domain "+data.result.domain+" url "+data.result.url)
+                        fetch(data.result.url, {
+                            method: 'PUT',
+                            body: file
+                            }).then(() => {
+                                var remotePath = data.result.domain+"/"+key;
+                                _this.$store.state.user.img = remotePath;
+                                    store.dispatch("modifyMyInfo",{
+                                            type: MyInfoType.Modify_Portrait,
+                                            value: remotePath
+                                });
+                            }).catch((e) => {
+                                console.error(e);
+                            });
+                    }
+                }) 
+           }
+           
            this.$refs.changeAvatar.value = null;
        }
     },

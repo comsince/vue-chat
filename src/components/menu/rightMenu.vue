@@ -1,10 +1,13 @@
 <template>
-  <div class="add-content">
-   <div @click="recallMessage">
+  <div v-bind:class="menuStyle">
+   <div @click="recallMessage" v-if="isFrom">
     <a> 撤回消息 </a>
    </div> 
    <div @click="deleteMessage">
     <a> 删除消息 </a>
+   </div>
+   <div @click="relayMessage">
+    <a> 转发 </a>
    </div>
   </div>
 </template>
@@ -20,11 +23,34 @@ export default {
 	props:['message'],
 	computed:{
 		...mapState([
-            'showMessageRightMenu'
-        ]),
+			'showMessageRightMenu',
+		]),
+		menuStyle(){
+            return {
+				"right-menu-content": this.message.direction == 0,
+				"right-menu-content-left": this.message.direction != 0
+			}
+		},
+		isFrom(){
+			return this.message.direction == 0
+		}
 	},
+	mounted() {
+        document.addEventListener("click", e => {
+            var isString = typeof(e.target.className) == 'string'
+            let rightMenuDom = document.getElementById("right-menu-content");
+			//注意点击显示按钮事件的处理，防止状态发生反转
+			var menuSetting = this.showMessageRightMenu.find(setting => setting.messageId == this.message.messageId)
+			var show = menuSetting ? menuSetting.show : false
+			// console.log("isString "+isString +" show " +e.target.className.search('right-menu-content')+" show "+show+" contain "+rightMenuDom)
+			if (isString && e.target.className.search('right-menu-content') == -1 && show) {
+				this.noShowMenu();
+            }
+        });
+    },
 	methods:{
 		recallMessage(){
+			this.$store.state.currentRightMenuMessage = this.message
 			webSocketClient.recallMessage(this.message.messageUid).then(data => {
 				if(data.code == SUCCESS_CODE){
 					var recallMessageContent = new RecallMessageNotification(LocalStore.getUserId(),this.message.messageUid);
@@ -35,6 +61,14 @@ export default {
 			this.noShowMenu();
 		},
 		deleteMessage(){
+			this.$store.state.currentRightMenuMessage = this.message
+			console.log("delete message id "+this.message.messageId)
+			this.$store.dispatch('deleteMessage',this.message.messageId)
+            this.noShowMenu();
+		},
+		relayMessage(){
+			this.$store.state.currentRightMenuMessage = this.message
+			this.$store.state.showRelayMessageDialog = true;
             this.noShowMenu();
 		},
 		noShowMenu(){
@@ -49,7 +83,7 @@ export default {
 
 
 <style scoped>
-.add-content {
+.right-menu-content {
 	position: absolute;
 	background: #fff;
 	width: 80px;
@@ -61,7 +95,21 @@ export default {
 	box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
 	border-radius: 4px
 }
-.add-content a {
+
+.right-menu-content-left {
+	position: absolute;
+	background: #fff;
+	width: 80px;
+	text-align: center;
+	left: 0px;
+	bottom: 40px;
+	z-index: 20;
+	padding: 2px 0;
+	box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
+	border-radius: 4px
+}
+
+div a {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -72,11 +120,11 @@ export default {
 	color: #333
 }
 
-.add-content a:hover {
+div a:hover {
 	color: rgb(0,220,65)
 }
 
-.add-content a:hover i {
+div a:hover i {
 	color: rgb(0,220,65)
 }
 

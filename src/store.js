@@ -135,8 +135,10 @@ const state = {
     showAudioBox: false,
     showSearchFriendDialog: false,
     showCreateGroupDialog: false,
+    showRelayMessageDialog: false,
     showGroupInfo: false,
     showMessageRightMenu: [],
+    currentRightMenuMessage: null,
     //待请求用户id信息列表
     waitUserIds: [],
     //0创建群组，1,添加群组人员，2,移除群组人员 3 单聊用户创建群组
@@ -561,9 +563,16 @@ const mutations = {
             var protoMessage = stateChatMessage.protoMessages.find(message => message.messageId == updateMessage.messageId);
             if(protoMessage){
                 protoMessage.messageUid = updateMessage.messageUid;
+                return
             }
-        } else {
-            //如果切换聊天，需要全局遍历，暂定
+        } 
+        //如果切换聊天，需要全局遍历，暂定
+        for(var stateChatMessage of state.messages){
+            for(var protoMessage of stateChatMessage.protoMessages){
+                if(protoMessage.messageId == updateMessage.messageId){
+                     protoMessage.messageUid = updateMessage.messageUid;
+                }
+            }
         }
     },
 
@@ -574,9 +583,33 @@ const mutations = {
             var protoMessage = stateChatMessage.protoMessages.find(message => message.messageId == updateMessageStatus.messageId);
             if(protoMessage){
                 protoMessage.status = updateMessageStatus.status;
+                return
             }
-        } else {
-            //如果切换聊天，需要全局遍历，暂定
+        }
+        //如果切换聊天，需要全局遍历，暂定。转发消息可能出现这个问题
+        for(var stateChatMessage of state.messages){
+            for(var protoMessage of stateChatMessage.protoMessages){
+                if(protoMessage.messageId == updateMessageStatus.messageId){
+                    protoMessage.status = updateMessageStatus.status;
+                }
+            }
+        }
+    },
+
+    deleteMessage(state,messageId){
+        var stateChatMessage = state.messages.find(stateChatMessage => stateChatMessage.target === state.selectTarget);
+        if(stateChatMessage){
+            var index = -1;
+            for(var i = 0; i < stateChatMessage.protoMessages.length; i++){
+                var protoMessage = stateChatMessage.protoMessages[i]
+                if(protoMessage.messageId == messageId){
+                     index = i;
+                }
+            }
+            console.log("delete index "+index+" messageId "+messageId)
+            if(index != -1){
+                stateChatMessage.protoMessages.splice(index,1)
+            }
         }
     },
 
@@ -873,6 +906,7 @@ const actions = {
     updateMessageStatus: ({ commit }, value) => commit('updateMessageStatus', value),
     updateMessageContent: ({ commit }, value) => commit('updateMessageContent', value),
     deleteConversation: ({ commit }, value) => commit('deleteConversation', value),
+    deleteMessage: ({ commit }, value) => commit('deleteMessage', value),
 }
 const store = new Vuex.Store({
   state,
