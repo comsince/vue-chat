@@ -13,10 +13,17 @@
           title="转发"
           :visible.sync="innerVisible"
           append-to-body>
-          <el-input  
+          <div v-if="isTextMessage">
+            <el-input  
              type="textarea"
              :rows="3"
              v-model="waitRelayMessage"></el-input>
+          </div>
+
+          <div v-if="isImageMessage" style="text-align:center">
+                <img :src="waitRelayImageUrl" class="preview-image">
+          </div>
+          
           <span slot="footer" class="dialog-footer">
             <el-button size="medium" type="info" plain round @click="innerVisible=false">取 消</el-button>
             <el-button size="medium" type="success" plain round @click="sendRelayMessage">确 定</el-button>
@@ -67,6 +74,7 @@ export default {
         return {
             conversationInput: '',
             waitRelayMessage: '',
+            waitRelayImageUrl: '',
             innerVisible: false,
             waitSendTarget: null,
             currentSendMessage: null,
@@ -95,7 +103,7 @@ export default {
               if(messageContent instanceof TextMessageContent){
                    this.waitRelayMessage = messageContent.digest();
               } else if(messageContent instanceof ImageMessageContent){
-
+                   this.waitRelayImageUrl = messageContent.remotePath;
               }
               this.currentSendMessage = new SendMessage(target,messageContent);
           }
@@ -103,7 +111,8 @@ export default {
       sendRelayMessage(){
         this.innerVisible=false;
         this.$store.dispatch('sendMessage', this.currentSendMessage)
-      }
+      },
+      
    },
    computed: {
      ...mapState([
@@ -132,12 +141,37 @@ export default {
              }
          }
          return conversationList;
+     },
+     isTextMessage(){
+          var flag = false
+          if(this.currentRightMenuMessage){
+              flag = this.currentRightMenuMessage.content.type == 1
+          }
+          console.log("flag "+flag)
+          return flag
+     },
+     isImageMessage(){
+         var flag = false
+          if(this.currentRightMenuMessage){
+              flag = this.currentRightMenuMessage.content.type == 3
+          }
+          console.log("flag "+flag)
+          return flag
      }
    }
 }
 </script>
 
 <style scoped>
+
+.preview-image{
+    max-width : 115px;
+    max-height : 330px;
+    text-align: center;
+    border-radius: 3px
+}
+      
+
 .relay-message .icon {
    display: inline-block;
    font-size: 26px; 
