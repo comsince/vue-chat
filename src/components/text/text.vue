@@ -166,6 +166,7 @@ export default {
         sendPic(e){
            var store = this.$store;
            var file = e.target.files[0];
+           var localPath = e.target.value
            if(UPLOAD_BY_QINIU){
                 store.dispatch('getUploadToken', MessageContentMediaType.Image);
                 console.log("sendpic "+e.target.value);
@@ -203,19 +204,70 @@ export default {
                             method: 'PUT',
                             body: file
                             }).then(() => {
-                                var remotePath = data.result.domain+"/"+key;
-                                var localPath = e.target.value;
-                                var imageMessageContent = new ImageMessageContent(localPath,remotePath,null);
-                                store.dispatch('sendMessage', new SendMessage(null,imageMessageContent))
+                                //获取缩略图,同时也为了适配android 端适配的问题，防止转发图片报错
+                                console.log("upload success"+file)
+                                var reader = new FileReader()
+                                reader.readAsDataURL(file)
+                                reader.onload = (e) => {
+                                    var result = e.target.result
+                                    this.canvasDataURL(result,{
+                                        width: 120,
+                                        height: 280
+                                    },base64Img => {
+                                        var thunmbanilwithoutDesc = base64Img.split(',')[1]
+
+                                        var remotePath = data.result.domain+"/"+key;
+                                        console.log("remote path "+remotePath)
+                                        var imageMessageContent = new ImageMessageContent(localPath,remotePath,thunmbanilwithoutDesc);
+                                        store.dispatch('sendMessage', new SendMessage(null,imageMessageContent))
+                                    })
+                                }
                             }).catch((e) => {
                                 console.error(e);
                             });
                     }
                 })  
            }
-           
            this.$refs.uploadPic.value = null;
         },
+ 
+        /*** js 图片压缩上传(纯js的质量压缩，非长宽压缩) 
+         * https://www.cnblogs.com/xiangsj/p/8932525.html
+        */
+        canvasDataURL(path, obj, callback){
+            var img = new Image();
+            img.src = path;
+            img.onload = function(){
+                var that = this;
+                // 默认按比例压缩
+                var w = that.width,
+                    h = that.height,
+                    scale = w / h;
+                w = obj.width || w;
+                h = obj.height || (w / scale);
+                var quality = 0.7;  // 默认图片质量为0.7
+                //生成canvas
+                var canvas = document.createElement('canvas');
+                var ctx = canvas.getContext('2d');
+                // 创建属性节点
+                var anw = document.createAttribute("width");
+                anw.nodeValue = w;
+                var anh = document.createAttribute("height");
+                anh.nodeValue = h;
+                canvas.setAttributeNode(anw);
+                canvas.setAttributeNode(anh);
+                ctx.drawImage(that, 0, 0, w, h);
+                // 图像质量
+                if(obj.quality && obj.quality <= 1 && obj.quality > 0){
+                    quality = obj.quality;
+                }
+                // quality值越小，所绘制出的图像越模糊
+                var base64 = canvas.toDataURL('image/jpeg', quality);
+                // 回调函数返回base64的值
+                callback(base64);
+            }
+        },
+
         // 按回车发送信息
         sendMessage (e) {
             console.log("send code "+e.keyCode);
