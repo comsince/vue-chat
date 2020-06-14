@@ -33,8 +33,8 @@
                                     <div v-if="item.content.type === 2">
                                         [语音消息]
                                     </div>
-                                    <div v-if="item.content.type === 3" v-viewer>
-                                        <img :src="item.content.remoteMediaUrl" class="receive-image">
+                                    <div v-if="item.content.type === 3" v-viewer="options">
+                                        <img :src="imageThumnailSrc(item)" :data-src="item.content.remoteMediaUrl" class="receive-image">
                                     </div>
                                     <div v-if="item.content.type === 4">
                                         [位置消息]
@@ -96,6 +96,9 @@ export default {
     data(){
         return {
             Player: null,
+            options: {
+                url: 'data-src'
+            },
         }
     },
     
@@ -314,6 +317,15 @@ export default {
                 return false;
             }
            
+        },
+        imageThumnailSrc(item){
+            var thumbnail = item.content.binaryContent;
+            if(thumbnail && thumbnail != ''){
+                thumbnail = "data:image/png;base64," +item.content.binaryContent;
+            } else {
+                thumbnail = item.content.remoteMediaUrl
+            }
+            return thumbnail 
         }
     },
     filters: {
