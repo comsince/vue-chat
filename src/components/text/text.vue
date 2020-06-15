@@ -211,8 +211,7 @@ export default {
                                 reader.onload = (e) => {
                                     var result = e.target.result
                                     this.canvasDataURL(result,{
-                                        width: 120,
-                                        height: 280
+                                       
                                     },base64Img => {
                                         var thunmbanilwithoutDesc = base64Img.split(',')[1]
 
@@ -243,9 +242,10 @@ export default {
                 var w = that.width,
                     h = that.height,
                     scale = w / h;
-                w = obj.width || w;
-                h = obj.height || (w / scale);
-                var quality = 0.7;  // 默认图片质量为0.7
+                w =  w * 0.5 > 113 ? 113 : w * 0.5;
+                h =  w / scale;
+                console.log("scale "+scale+" transfer size "+w+":"+h)
+                var quality = 0.5;  // 默认图片质量为0.7
                 //生成canvas
                 var canvas = document.createElement('canvas');
                 var ctx = canvas.getContext('2d');
