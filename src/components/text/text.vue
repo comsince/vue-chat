@@ -117,6 +117,8 @@ import SendMessage from '../../websocket/message/sendMessage'
 import CallState from '../../webrtc/callState'
 import {UPLOAD_BY_QINIU, SUCCESS_CODE } from '../../constant'
 import webSocketCli from '../../websocket/websocketcli'
+import Message from '../../websocket/message/message'
+import ProtoMessage from '../../websocket/message/protomessage'
 export default {
     data () {
         return {
@@ -200,27 +202,33 @@ export default {
                 webSocketCli.getMinioUploadUrl(MessageContentMediaType.Image,key).then(data => {
                     if(data.code == SUCCESS_CODE){
                         console.log("domain "+data.result.domain+" url "+data.result.url)
+                        var messageId;
+                        var thunmbanilwithoutDesc;
+                        //获取缩略图,同时也为了适配android 端适配的问题，防止转发图片报错
+                        var reader = new FileReader()
+                        reader.readAsDataURL(file)
+                        reader.onload = (e) => {
+                            var result = e.target.result
+                            this.canvasDataURL(result,{   
+                            },base64Img => {
+                                thunmbanilwithoutDesc = base64Img.split(',')[1]
+                                //添加缩略消息
+                                var imageMessageContent = new ImageMessageContent(localPath,null,thunmbanilwithoutDesc);
+                                var message = Message.conert2Message(new SendMessage(null,imageMessageContent));
+                                var protoMessage = ProtoMessage.convertToProtoMessage(message);
+                                messageId = protoMessage.messageId
+                                store.dispatch('preAddProtoMessage', protoMessage);
+                            })
+                        }
+
                         fetch(data.result.url, {
                             method: 'PUT',
                             body: file
                             }).then(() => {
-                                //获取缩略图,同时也为了适配android 端适配的问题，防止转发图片报错
-                                console.log("upload success"+file)
-                                var reader = new FileReader()
-                                reader.readAsDataURL(file)
-                                reader.onload = (e) => {
-                                    var result = e.target.result
-                                    this.canvasDataURL(result,{
-                                       
-                                    },base64Img => {
-                                        var thunmbanilwithoutDesc = base64Img.split(',')[1]
-
-                                        var remotePath = data.result.domain+"/"+key;
-                                        console.log("remote path "+remotePath)
-                                        var imageMessageContent = new ImageMessageContent(localPath,remotePath,thunmbanilwithoutDesc);
-                                        store.dispatch('sendMessage', new SendMessage(null,imageMessageContent))
-                                    })
-                                }
+                                var remotePath = data.result.domain+"/"+key;
+                                console.log("remote path "+remotePath)
+                                var imageMessageContent = new ImageMessageContent(localPath,remotePath,thunmbanilwithoutDesc);
+                                store.dispatch('updateSendMessage', {messageId: messageId,messageContent:imageMessageContent})
                             }).catch((e) => {
                                 console.error(e);
                             });

@@ -1,5 +1,7 @@
 import Conversation from '../model/conversation'
 import MessageStatus from './messageStatus'
+import store from '../../store'
+import LocalStore from '../store/localstore';
 /***
  *  message in json format
     {
@@ -71,8 +73,31 @@ export default class Message {
         message.conversation = new Conversation(stateConversationInfo.conversationInfo.conversationType,
             stateConversationInfo.conversationInfo.target,
             stateConversationInfo.conversationInfo.line);
+            console.log("send message content "+sendMessage.messageContent)
         message.content = sendMessage.messageContent;
         message.from = state.userId;
+        message.status = MessageStatus.Sending;
+        message.timestamp = new Date().getTime();
+        message.direction = 0;
+        message.messageId = new Date().getTime(); 
+        return message;
+    }
+
+    //方法不支持重载
+    static conert2Message(sendMessage){
+        var message = new Message();
+        var target = sendMessage.target;
+        if(!target){
+            target = store.state.selectTarget;
+        }
+        console.log("to message target "+target);
+        let stateConversationInfo =  store.state.conversations.find(conversation => conversation.conversationInfo.target === target);
+        console.log("conversationtype "+stateConversationInfo.conversationInfo.conversationType +" target "+stateConversationInfo.conversationInfo.target);
+        message.conversation = new Conversation(stateConversationInfo.conversationInfo.conversationType,
+            stateConversationInfo.conversationInfo.target,
+            stateConversationInfo.conversationInfo.line);
+        message.content = sendMessage.messageContent;
+        message.from = LocalStore.getUserId();
         message.status = MessageStatus.Sending;
         message.timestamp = new Date().getTime();
         message.direction = 0;

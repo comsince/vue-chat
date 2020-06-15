@@ -19,6 +19,7 @@ import ChatManager from './websocket/chatManager';
 import ProtoMessageContent from './websocket/message/protomessageContent';
 import Logger from './websocket/utils/logger';
 import RecallMessageNotification from './websocket/message/notification/recallMessageNotification';
+import MessageStatus from './websocket/message/messageStatus';
 
 Vue.use(Vuex)
 
@@ -354,6 +355,35 @@ const mutations = {
         var protoMessage = ProtoMessage.convertToProtoMessage(message);
         console.log("send protomessage "+JSON.stringify(protoMessage));
         
+        // if(MessageConfig.isDisplayableMessage(protoMessage)){
+        //     var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
+        //     stateConversationInfo.conversationInfo.lastMessage = protoMessage;
+        //     stateConversationInfo.conversationInfo.timestamp = protoMessage.timestamp;
+
+        //     var stateChatMessage = state.messages.find(chatmessage => chatmessage.target === protoMessage.target);
+        //     if(!stateChatMessage){
+        //         stateChatMessage = new StateSelectChateMessage();
+        //         stateChatMessage.target = protoMessage.target;
+        //         var friend = state.friendlist.find(friend => friend.wxid === protoMessage.target);
+        //         if(friend != null){
+        //          stateChatMessage.name =  friend.nickname;
+        //         }
+        //         stateChatMessage.protoMessages.push(protoMessage);
+        //         state.messages.push(stateChatMessage);
+        //     } else {
+        //         stateChatMessage.protoMessages.push(protoMessage);
+        //     }
+            
+        // }
+        this.commit("preAddProtoMessage",protoMessage)
+
+        //发送消息到对端
+        state.vueSocket.sendMessage(protoMessage);
+    },
+
+    //图片，视频类消息，需要先加入消息，然后上传成功后在更新message content
+    preAddProtoMessage(state,protoMessage){
+        
         if(MessageConfig.isDisplayableMessage(protoMessage)){
             var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
             stateConversationInfo.conversationInfo.lastMessage = protoMessage;
@@ -374,10 +404,21 @@ const mutations = {
             }
             
         }
+    },
 
-        //发送消息到对端
+    updateSendMessage(state,updateMessage){
+        var stateChatMessage = state.messages.find(stateChatMessage => stateChatMessage.target === state.selectTarget);
+        if(stateChatMessage){
+            var protoMessage = stateChatMessage.protoMessages.find(message => message.messageId == updateMessage.messageId);
+            if(protoMessage){
+                protoMessage.status = MessageStatus.Sending;
+                var messagePayload = updateMessage.messageContent.encode();
+                protoMessage.content = ProtoMessageContent.toProtoMessageContent(messagePayload);
+            }
+        }
         state.vueSocket.sendMessage(protoMessage);
     },
+
 
     // 选择好友后，点击发送信息。判断在聊天列表中是否有该好友，有的话跳到该好友对话。没有的话
     // 添加该好友的对话 并置顶
@@ -907,6 +948,8 @@ const actions = {
     updateMessageContent: ({ commit }, value) => commit('updateMessageContent', value),
     deleteConversation: ({ commit }, value) => commit('deleteConversation', value),
     deleteMessage: ({ commit }, value) => commit('deleteMessage', value),
+    preAddProtoMessage: ({ commit }, value) => commit('preAddProtoMessage', value),
+    updateSendMessage: ({ commit }, value) => commit('updateSendMessage', value),
 }
 const store = new Vuex.Store({
   state,

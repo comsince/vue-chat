@@ -64,6 +64,7 @@ export default class ProtoMessage {
         protoMessage.messageId = message.messageId;
         protoMessage.messageUid = message.messageUid;
         protoMessage.timestamp = message.timestamp;
+        console.log("protomessage content "+message.content)
         var payload = message.content.encode();
         protoMessage.content = ProtoMessageContent.toProtoMessageContent(payload);
         return protoMessage;
