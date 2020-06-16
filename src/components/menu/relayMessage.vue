@@ -23,6 +23,10 @@
           <div v-if="isImageMessage" style="text-align:center">
                 <img :src="waitRelayImageUrl" class="preview-image">
           </div>
+
+          <div v-if="isVideoMessage && innerVisible" style="text-align:center">
+            <Xgplayer :config="videoConfig" @player="Player = $event"/>
+          </div>
           
           <span slot="footer" class="dialog-footer">
             <el-button size="medium" type="info" plain round @click="innerVisible=false">取 消</el-button>
@@ -50,8 +54,7 @@
             </el-table-column>
             <el-table-column
                 prop="name"
-                label="会话名称"
-                width="300">
+                label="会话名称">
                 <template slot-scope="scope">
                     <div>
                         <p class="conversation-name">{{scope.row.name}}</p>
@@ -69,7 +72,12 @@ import MessageConfig from '../../websocket/message/messageConfig';
 import TextMessageContent from '../../websocket/message/textMessageContent';
 import ImageMessageContent from '../../websocket/message/imageMessageContent';
 import SendMessage from '../../websocket/message/sendMessage'
+import Xgplayer from 'xgplayer-vue';
+import VideoMessageContent from '../../websocket/message/videoMessageContent';
 export default {
+    components:{
+        Xgplayer
+    },
     data() {
         return {
             conversationInput: '',
@@ -78,6 +86,8 @@ export default {
             innerVisible: false,
             waitSendTarget: null,
             currentSendMessage: null,
+            videoConfig: null,
+            Player: null,
         }
     },
     methods: {
@@ -104,6 +114,20 @@ export default {
                    this.waitRelayMessage = messageContent.digest();
               } else if(messageContent instanceof ImageMessageContent){
                    this.waitRelayImageUrl = messageContent.remotePath;
+              } else if(messageContent instanceof VideoMessageContent){
+                  var posterBase64 = "data:image/png;base64,"+messageContent.thumbnail;
+                   this.videoConfig = {
+                        id: 'vs'+new Date().getTime(),
+                        // url 为空,可能导致不显示,这里强制写入poster
+                        url: messageContent.remotePath == ''? posterBase64: messageContent.remotePath,
+                        // height: 330,
+                        // width: 250,
+                        fluid: true,
+                        // fitVideoSize: 'fixHeight',
+                        poster: posterBase64,
+                        autoplay: false,
+                        download: true
+                    }
               }
               this.currentSendMessage = new SendMessage(target,messageContent);
           }
@@ -154,6 +178,14 @@ export default {
          var flag = false
           if(this.currentRightMenuMessage){
               flag = this.currentRightMenuMessage.content.type == 3
+          }
+          console.log("flag "+flag)
+          return flag
+     },
+     isVideoMessage(){
+         var flag = false
+          if(this.currentRightMenuMessage){
+              flag = this.currentRightMenuMessage.content.type == 6
           }
           console.log("flag "+flag)
           return flag

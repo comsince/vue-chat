@@ -90,7 +90,7 @@ export default {
 	text-align: center;
 	right: 0px;
 	bottom: 40px;
-	z-index: 20;
+	z-index: 2000;
 	padding: 2px 0;
 	box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
 	border-radius: 4px
@@ -103,7 +103,7 @@ export default {
 	text-align: center;
 	left: 0px;
 	bottom: 40px;
-	z-index: 20;
+	z-index: 2000;
 	padding: 2px 0;
 	box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
 	border-radius: 4px
