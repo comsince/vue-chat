@@ -43,7 +43,7 @@
                                         [文件消息]
                                     </div>
                                     <div v-if="item.content.type === 6" >
-                                        <Xgplayer :config="videoConfig(item.content.remoteMediaUrl,index === selectedChat.protoMessages.length - 1)" @player="Player = $event"/>
+                                        <Xgplayer :config="videoConfig(item,false,imageThumnailSrc(item))" @player="Player = $event"/>
                                     </div>
                                     <div v-if="item.content.type === 7">
                                         [表情消息]
@@ -242,13 +242,16 @@ export default {
            return false;
         },
 
-        videoConfig(remoteMediaUrl,paly = false){
+        videoConfig(protoMessage,paly = false,posterBase64){
            return {
-            id: 'vs'+remoteMediaUrl,
-            url: remoteMediaUrl,
+            id: 'vs'+protoMessage.messageId,
+            // url 为空,可能导致不显示,这里强制写入poster
+            url: protoMessage.content.remoteMediaUrl == ''? posterBase64: protoMessage.content.remoteMediaUrl,
             height: 330,
             width: 250,
-            autoplay: paly,
+            fitVideoSize: 'auto',
+            poster:posterBase64,
+            autoplay: false,
             download: true
            }
         },
@@ -323,10 +326,10 @@ export default {
             if(thumbnail && thumbnail != ''){
                 thumbnail = "data:image/png;base64," +item.content.binaryContent;
             } else {
-                thumbnail = item.content.remoteMediaUrl
+                thumbnail = ''
             }
             return thumbnail 
-        }
+        },
     },
     filters: {
             // 将日期过滤为 hour:minutes

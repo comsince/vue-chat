@@ -8,6 +8,9 @@
         <i title="发送图片" class="icon iconfont icon-tupian" >
             <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
         </i>
+        <i title="发送视频" class="icon iconfont icon-shipin" >
+            <input type="file" accept="video/*" id="chat-send-video" ref="uploadVideo" @change="sendVideoMessage">
+        </i>
         <i title="发送文件" class="icon iconfont icon-wenjian">
             <input type="file" accept="*" id="chat-send-file">
         </i>
@@ -119,6 +122,7 @@ import {UPLOAD_BY_QINIU, SUCCESS_CODE } from '../../constant'
 import webSocketCli from '../../websocket/websocketcli'
 import Message from '../../websocket/message/message'
 import ProtoMessage from '../../websocket/message/protomessage'
+import VideoMessageContent from '../../websocket/message/videoMessageContent'
 export default {
     data () {
         return {
@@ -274,6 +278,82 @@ export default {
                 // 回调函数返回base64的值
                 callback(base64);
             }
+        },
+
+        //https://github.com/metroluffy/blog/issues/18
+        sendVideoMessage(e){
+            var store = this.$store;
+            var file = e.target.files[0];
+            var localPath = e.target.value
+
+            var key = MessageContentMediaType.Video +"-"+LocalStore.getUserId()+"-"+new Date().getTime()+"-"+file.name;
+            webSocketCli.getMinioUploadUrl(MessageContentMediaType.Video,key).then(data => {
+                    if(data.code == SUCCESS_CODE){
+                        console.log("domain "+data.result.domain+" url "+data.result.url)
+                        var messageId;
+                        var thunmbanilwithoutDesc;
+                        //获取缩略图,同时也为了适配android 端适配的问题，防止转发图片报错
+                        var url = URL.createObjectURL(file);
+                        console.log("video url "+url)
+
+                        this.getVideoImage(url,base64Img =>{
+                            console.log("base64Img "+base64Img)
+                            thunmbanilwithoutDesc = base64Img.split(',')[1]
+                                //添加缩略消息
+                                var videoMessageContent = new VideoMessageContent(localPath,'',thunmbanilwithoutDesc);
+                                var message = Message.conert2Message(new SendMessage(null,videoMessageContent));
+                                var protoMessage = ProtoMessage.convertToProtoMessage(message);
+                                messageId = protoMessage.messageId
+                                store.dispatch('preAddProtoMessage', protoMessage);
+                            },2)
+
+                        fetch(data.result.url, {
+                            method: 'PUT',
+                            body: file
+                            }).then(() => {
+                                var remotePath = data.result.domain+"/"+key;
+                                console.log("remote path "+remotePath)
+                                var imageMessageContent = new VideoMessageContent(localPath,remotePath,thunmbanilwithoutDesc);
+                                store.dispatch('updateSendMessage', {messageId: messageId,messageContent:imageMessageContent})
+                            }).catch((e) => {
+                                console.error(e);
+                            });
+                    }
+                }) 
+
+            this.$refs.uploadVideo.value = null;
+        },
+
+        getVideoImage(path, callback, secs = 1) {
+            var me = this,
+            video = document.createElement('video');
+            video.onloadedmetadata = function () {
+                if ('function' === typeof secs) {
+                    secs = secs(this.duration);
+                }
+                this.currentTime = Math.min(Math.max(0, (secs < 0 ? this.duration : 0) + secs), this.duration);
+                console.log("secs "+secs+" currentTime "+this.currentTime)
+            };
+            video.onseeked = function (e) {
+                var canvas = document.createElement('canvas');
+                var w = video.videoHeight,
+                    h = video.videoWidth,
+                    scale = w / h;
+                w =  w  > 250 ? 250 : w;
+                h =  w / scale;
+                console.log("scale "+scale+" transfer size "+w+":"+h)
+                canvas.height = h;
+                canvas.width = w;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                var imgBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                callback(imgBase64);
+            };
+            video.onerror = function (e) {
+                console.log("excption"+e)
+                callback.call(me, undefined, undefined, e);
+            };
+            video.src = path;
         },
 
         // 按回车发送信息

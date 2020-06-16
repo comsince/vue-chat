@@ -252,7 +252,7 @@ export default {
     width: 220px
     top: 61px
     right: 0px
-    z-index: 20
+    z-index: 2000
     border-left: 1px solid #e7e7e7 
     .flex-layout
         width: 100%

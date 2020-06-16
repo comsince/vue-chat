@@ -19,6 +19,7 @@ import RecallMessageNotification from './notification/recallMessageNotification'
 import KickoffGroupMemberNotification from './notification/kickoffGroupMemberNotification'
 import DismissGroupNotification from './notification/dismissGroupNotification'
 import LocalStore from '../store/localstore'
+import VideoMessageContent from './videoMessageContent'
 export default class MessageConfig{
     static getMessageContentClazz(type) {
         for (const content of MessageConfig.MessageContents) {
@@ -115,6 +116,7 @@ export default class MessageConfig{
             name: 'video',
             flag: PersistFlag.Persist_And_Count,
             type: MessageContentType.Video,
+            contentClazz: VideoMessageContent
         },
         {
             name: 'sticker',
