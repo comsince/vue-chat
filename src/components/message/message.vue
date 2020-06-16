@@ -249,7 +249,7 @@ export default {
             url: protoMessage.content.remoteMediaUrl == ''? posterBase64: protoMessage.content.remoteMediaUrl,
             height: 330,
             width: 250,
-            fitVideoSize: 'auto',
+            // fitVideoSize: 'auto',
             poster:posterBase64,
             autoplay: false,
             download: true
