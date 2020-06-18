@@ -1,4 +1,4 @@
-import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC, GQ, PUB_ACK, ERROR_CODE, MR, GAM, GMI, GKM, GD, GMURL} from '../constant'
+import {PUBLISH, FP, UPUI, MP, MS, KEY_VUE_USER_ID, KEY_VUE_DEVICE_ID, DISCONNECT, GPGI, GQNUT, US, FAR, FRP, FHR, MMI, GPGM, GC, GQ, PUB_ACK, ERROR_CODE, MR, GAM, GMI, GKM, GD, GMURL, FALS} from '../constant'
 import {decrypt,encrypt} from './utils/aes'
 import {CONNECT} from '../constant'
 import {WebSocketProtoMessage} from './message/websocketprotomessage'
@@ -37,6 +37,7 @@ import AddGroupMemberHandler from './handler/addGroupMemberHandler';
 import KickGroupMemberHandler from './handler/kickGroupmemberHandler'
 import DismissGroupHandler from './handler/dismissGroupHandler';
 import GetMinioUploadUrlHandler from './handler/getMinioUploadUrlHandler';
+import SetFriendAliasRequestHandler from './handler/setFriendAliasRequestHandler';
 export default class VueWebSocket {
     handlerList = [];
     userDisconnect = false;
@@ -175,6 +176,7 @@ export default class VueWebSocket {
         this.handlerList.push(new KickGroupMemberHandler(this));
         this.handlerList.push(new DismissGroupHandler(this));
         this.handlerList.push(new GetMinioUploadUrlHandler(this))
+        this.handlerList.push(new SetFriendAliasRequestHandler(this))
     }
 
     processMessage(data){
@@ -228,8 +230,8 @@ export default class VueWebSocket {
     /**
      * 获取朋友列表
      */
-    getFriend(){
-        this.sendPublishMessage(FP,{version : 0});
+    getFriend(version = 0){
+        this.sendPublishMessage(FP,{version : version});
     }
 
     searchUser(keyword){
@@ -378,6 +380,14 @@ export default class VueWebSocket {
             key: key
         }
         return await this.sendPublishMessage(GMURL,content)
+    }
+
+    async modifyFriendAlias(targetUid,alias){
+        var content = {
+            reason: alias,
+            targetUserId: targetUid
+        }
+        return await this.sendPublishMessage(FALS,content)
     }
 
     /**

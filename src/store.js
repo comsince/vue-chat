@@ -49,6 +49,7 @@ const state = {
         
     ],
     friendIds: [],
+    friendDatas: [],
     //emoji表情
     emojis: [
         { file: '100.gif', code: '/::)', title: '微笑',reg:/\/::\)/g },
@@ -235,12 +236,17 @@ const mutations = {
             if(currentUser.wxid != state.userId){
                 var friendUid = state.friendIds.find(friendUid => friendUid === currentUser.wxid);
                 if(friendUid){
+                  var friendData = state.friendDatas.find(friend => friend.friendUid == friendUid)
+                  if(friendData && friendData.alias && friendData.alias != ""){
+                     currentUser.remark = friendData.alias
+                  }  
                   var isExist = false;
                   for(var friend of state.friendlist){
                     if(friend.wxid === currentUser.wxid){
                         isExist = true;
                         friend.nickname = currentUser.nickname;
                         friend.img = currentUser.img;
+                        friend.remark = currentUser.remark;
                     }
                   }
                   if(!isExist){
@@ -254,7 +260,7 @@ const mutations = {
         for(var stateConversationInfo of state.conversations){
             var friend = state.friendlist.find(friend => friend.wxid === stateConversationInfo.conversationInfo.target);
             if(friend){
-                stateConversationInfo.name = friend.nickname;
+                stateConversationInfo.name = friend.remark ? friend.remark: friend.nickname;
                 stateConversationInfo.img = friend.img;
             }
         }
@@ -263,7 +269,7 @@ const mutations = {
         for(var stateChatMessage of state.messages){
             var friend = state.friendlist.find(friend => friend.wxid === stateChatMessage.target);
             if(friend){
-                stateChatMessage.name = friend.nickname;
+                stateChatMessage.name = friend.remark ? friend.remark: friend.nickname;
             }
         }
     },
@@ -684,6 +690,7 @@ const mutations = {
         state.messages = [];
         state.friendlist = [];
         state.friendIds = [];
+        state.friendDatas = [];
         state.selectFriendId = 0;
         state.friendRequests = [];
         state.waitUserIds = [];
@@ -748,9 +755,14 @@ const mutations = {
         friendRequest.status = 1;
         state.vueSocket.handleFriendRequest(value);
     },
-    updateFriendIds(state,value){
-       if(value){
-           state.friendIds = value;
+    updateFriendIds(state,friendList){
+       if(friendList){
+        state.friendDatas = friendList;   
+        var userIds = [];
+        for(var i in friendList){
+            userIds[i] = friendList[i].friendUid;
+        }
+        state.friendIds = userIds;
        }
     },
     modifyMyInfo(state,value){

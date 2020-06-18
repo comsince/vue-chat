@@ -13,7 +13,7 @@ export default class GetFriendResultHandler extends AbstractMessageHandler{
         for(var i in friendList){
             userIds[i] = friendList[i].friendUid;
         }
-        this.vueWebsocket.sendAction("updateFriendIds",userIds);
+        this.vueWebsocket.sendAction("updateFriendIds",friendList);
         //获取当前登录用户信息
         userIds.push(LocalStore.getUserId());
         this.vueWebsocket.getUserInfos(userIds);

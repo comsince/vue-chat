@@ -8,7 +8,10 @@ export class WebSocketClient {
        var userInfolist = vuexStore.state.userInfoList;
        var userInfo = userInfolist.find(user => user.uid == userId);
        var displayName = userId;
-       if(userInfo){
+       var friendData = vuexStore.state.friendDatas.find(friend => friend.friendUid == userId)
+       if(friendData && friendData.alias && friendData.alias != ""){
+           displayName = friendData.alias
+       } else if(userInfo){
           displayName = userInfo.displayName;
           if(displayName == ''){
              displayName = userInfo.mobile;
@@ -66,7 +69,10 @@ export class WebSocketClient {
     getMinioUploadUrl(mediaType,key){
        return vuexStore.state.vueSocket.getMinioUploadUrl(mediaType,key);
     }
-
+  
+    modifyFriendAlias(targetUid,alias){
+       return vuexStore.state.vueSocket.modifyFriendAlias(targetUid,alias)
+    }
 
 }
 

@@ -15,6 +15,7 @@ export const PUB_ACK = 'PUB_ACK';
 //subsignal
 export const FRP = 'FRP';
 export const FP = 'FP';
+export const FALS = 'FALS';
 export const UPUI = 'UPUI';
 export const GPGI = 'GPGI';
 export const GPGM = 'GPGM';

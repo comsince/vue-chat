@@ -61,7 +61,10 @@
 	   	    	</div>
 	   	    </div>
 	   	    <div class="detInfo">
-	   	    	<div class="remark"><span>备&nbsp&nbsp&nbsp注</span>{{selectedFriend.remark}}</div>
+                <div class="remark">
+                    <label class="title" for="">备注：</label>
+                    <p class="value" contenteditable="true" @keydown.enter="modifyRemark" @blur="modifyRemarkBlur">{{selectedFriend.remark}}</p>
+                </div>
 	   	    	<div class="area"><span>地&nbsp&nbsp&nbsp区</span>{{selectedFriend.area}}</div>
 	   	    	<div class="wxid"><span>微信号</span>{{selectedFriend.wxid}}</div>
 	   	    </div>
@@ -76,6 +79,8 @@
 import router from '../../router'
 import { mapGetters,mapState } from 'vuex'
 import LocalStore from '../../websocket/store/localstore'
+import webSocketCli from '../../websocket/websocketcli'
+import { SUCCESS_CODE } from '../../constant'
 export default {
     computed: {
         ...mapGetters([
@@ -86,6 +91,17 @@ export default {
           'appHeight',
           'userInfoList'
         ]),
+        // friendRemark:{
+        //     get(){
+        //         console.log("remark test")
+        //         return "test"
+        //         //return this.selectedFriend.remark 
+        //     },
+        //     set(value){
+        //         console.log("remark vaule "+value)
+        //         // this.selectedFriend.remark = value;
+        //     }
+        // }
     },
     methods: {
     	send () {
@@ -129,6 +145,30 @@ export default {
                 portrait =  "static/images/vue.jpg";
             }
             return portrait;
+        },
+        modifyRemark(e){
+            if(e.keyCode == 13){
+              e.preventDefault();
+              this.modifyRemarkBlur(e)
+           }
+        },
+        modifyRemarkBlur(e){
+            var remark = e.target.innerText;
+            if(remark == this.selectedFriend.remark){
+               return
+            }
+            this.selectedFriend.remark = remark;
+            if(remark != '' && remark.length < 15){
+                webSocketCli.modifyFriendAlias(this.selectedFriend.wxid,remark).then(data =>{
+                   if(data.code == SUCCESS_CODE){
+                       this.$message.success("修改好友备注成功");
+                   } else {
+                       this.$message.error("修改好友备注失败");
+                   }
+                })
+            } else {
+                this.$message.error("备注过长最好不要超过15个字符");
+            }
         }
 		
     }
@@ -188,6 +228,22 @@ export default {
 	            color: rgba(153,153,153,.8)
 	            margin-right: 40px
 	    .remark
+            .title
+                float: left;
+                font-size: 14px;
+                line-height: 1.6
+                color: rgba(153,153,153,.8);
+                margin-right: 10px;
+            .value
+                font-size: 14px;
+                width: 200px;
+                line-height: 1.6
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                word-wrap: normal;
+                padding-left: 5px;
+                padding-right: 5px;    
 	        margin-top: 0
 	.send
         position: relative
