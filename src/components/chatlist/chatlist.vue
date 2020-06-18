@@ -33,6 +33,7 @@ import TimeUtils from '../../websocket/utils/timeUtils';
 import MessageConfig from '../../websocket/message/messageConfig';
 import NotificationMessageContent from '../../websocket/message/notification/notificationMessageContent';
 import Logger from '../../websocket/utils/logger';
+import webSocketClient from '../../websocket/websocketcli';
 export default {
     data(){
         return {
@@ -75,14 +76,7 @@ export default {
                     var isCurrentUser = protoConversationInfo.lastMessage.from === LocalStore.getUserId();
                     if(protoConversationInfo.conversationType == ConversationType.Group && !isCurrentUser){
                         var from = protoConversationInfo.lastMessage.from;
-                        var displayUserInfo = this.userInfoList.find(userInfo => userInfo.uid == from);
-                        var displayName = from;
-                        if(displayUserInfo){
-                            displayName = displayUserInfo.displayName;
-                            if(!displayName){
-                                displayName = displayUserInfo.mobile;
-                            }
-                        }
+                        var displayName = this.getDisplayName(from);
                         displayContent = displayName +":"+protoConversationInfo.lastMessage.content.searchableContent;
                     }
                 }
@@ -91,14 +85,8 @@ export default {
            return displayContent;
         },
         getDisplayName(from){
-            var displayUserInfo = this.userInfoList.find(userInfo => userInfo.uid == from);
             var displayName = from;
-            if(displayUserInfo){
-                displayName = displayUserInfo.displayName;
-                if(!displayName){
-                    displayName = displayUserInfo.mobile;
-                }
-            }
+            displayName = webSocketClient.getDisplayName(from);
             return displayName;
         }	
     },

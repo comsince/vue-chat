@@ -19,7 +19,7 @@ export class WebSocketClient {
        } else {
          vuexStore.state.vueSocket.getUserInfo(userId);
        }
-      //   console.log("userId "+userId +" displayName "+displayName) 
+      //    console.log("userId "+userId +" displayName "+displayName) 
        return displayName;
     }
 

@@ -202,15 +202,7 @@ export default {
             return avarimgUrl;
         },
         showUserName(from){
-            var displayName = from;
-            var user = this.userInfoList.find(user => user.uid == from);
-            if(user){
-                 if(user.displayName){
-                     displayName = user.displayName;
-                 } else {
-                     displayName = user.mobile;
-                 }
-            }
+            var displayName = webSocketClient.getDisplayName(from);;
             return displayName;
         },
         //  在发送信息之后，将输入的内容中属于表情的部分替换成emoji图片标签
