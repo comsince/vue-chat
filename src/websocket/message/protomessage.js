@@ -12,10 +12,10 @@ export default class ProtoMessage {
     line;
     from = '';
     content = {}; 
-    messageId = 0;
+    messageId = '0';
     direction = 0;
     status = 0;
-    messageUid = 0;
+    messageUid = '0';
     timestamp = 0;
     to = '';
 

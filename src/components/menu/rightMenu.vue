@@ -32,7 +32,8 @@ export default {
 			}
 		},
 		isFrom(){
-			return this.message.direction == 0
+			// return this.message.direction == 0
+			return true
 		}
 	},
 	mounted() {
@@ -53,9 +54,14 @@ export default {
 			this.$store.state.currentRightMenuMessage = this.message
 			webSocketClient.recallMessage(this.message.messageUid).then(data => {
 				if(data.code == SUCCESS_CODE){
-					var recallMessageContent = new RecallMessageNotification(LocalStore.getUserId(),this.message.messageUid);
-					this.message.content = recallMessageContent.encode();
-					console.log("recall message "+this.message.messageId);
+					if(data.result == 200){
+						var recallMessageContent = new RecallMessageNotification(LocalStore.getUserId(),this.message.messageUid);
+						this.message.content = recallMessageContent.encode();
+						console.log("recall message "+this.message.messageId);
+					} else {
+						this.$message.error('非管理员只能撤回自己发送的消息');
+					}
+					
 				}
 			});
 			this.noShowMenu();
