@@ -1,5 +1,5 @@
 <template>
-  <div v-bind:class="menuStyle">
+  <div v-bind:class="menuStyle" @contextmenu.prevent="">
    <div @click="recallMessage" v-if="isFrom">
     <a> 撤回消息 </a>
    </div> 
@@ -89,6 +89,14 @@ export default {
 
 
 <style scoped>
+div {
+	-o-user-select: none;
+    -moz-user-select: none; /*火狐 firefox*/
+    -webkit-user-select: none; /*webkit浏览器*/
+    -ms-user-select: none; /*IE10+*/
+    -khtml-user-select :none; /*早期的浏览器*/
+    user-select: none; 
+}
 .right-menu-content {
 	position: absolute;
 	background: #fff;

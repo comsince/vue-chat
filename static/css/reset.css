@@ -68,16 +68,6 @@ body {
     background-size: cover;
 }
 
-/** 禁止文字选中，优化体验*/
-body{
-    -o-user-select: none;
-    -moz-user-select: none; /*火狐 firefox*/
-    -webkit-user-select: none; /*webkit浏览器*/
-    -ms-user-select: none; /*IE10+*/
-    -khtml-user-select :none; /*早期的浏览器*/
-    user-select: none; 
-}
-
 /*在mac上，增加此设置，会导致滚动条不能自动显示与隐藏，滚动条会一直显示 */
 ::-webkit-scrollbar {
     width: 8px;
