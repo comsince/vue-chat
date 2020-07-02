@@ -1,6 +1,6 @@
 {
   "name": "wechat",
-  "version": "1.0.14-SNAPSHOT",
+  "version": "1.0.14",
   "description": "基于unverse-push的开源即时通讯web客户端",
   "author": "comsince",
   "private": true,
