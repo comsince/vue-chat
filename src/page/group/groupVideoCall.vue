@@ -1,39 +1,53 @@
 <template>
-    <!-- <el-dialog
-        :visible.sync="showGroupCallVideoDialog"
-        :show-close="false"
-        width="30%"
-        center> -->
-        <div class="callContent" v-show="showGroupCallVideoDialog">
-            <div class="callercontent callshow" style="">
-                <div class="exchange-content">
-                    <div class="playcontent left-big-content">
+    <div class="callContent" v-show="showGroupCallVideoDialog">
+        <div class="callercontent callshow" style="">
+            <div class="exchange-content">
+                <div class="playcontent left-big-content">
+                    <div class="remote-video">
                         <img id="wxCallRemoteImg" class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
                         <p id="wxCallTips" class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
                         <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
-                    </div> 
-                    <div class="playcontent right-sml-content">
-                        <img id = "wxCallLocalImg" :src="callLocalImg" class="bigavatar" v-show="showCallLocalImg"/> 
-                        <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;" v-show="showCallLocalVideo"></video>
                     </div>
+
+                    <div class="remote-video">
+                        <img class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
+                        <p  class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
+                        <video  autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
+                    </div>
+
+                    <div class="remote-video">
+                        <img class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
+                        <p  class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
+                        <video  autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
+                    </div>
+
+                    <div class="remote-video">
+                        <img class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
+                        <p  class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
+                        <video  autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
+                    </div>
+                    
                 </div> 
-                <div class="opera-content flexbox">
-                    <img class="calleravatar" :src="callRemoteImg" /> 
-                    <span class="flexauto overell callnick" v-text="callDisplayName"></span> 
-                    <span class="flexbox">
-                        <span class="operabtn canclecall btnopacity" v-show="cancelCall" @click="cancel">取消</span> 
-                        <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span> 
-                        <span class="operabtn upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>
-                    </span> 
-                    <span class="talktime flexbox" style="display: none;" v-show="showTalkTime"><i class="iconfont icon-ai-video"></i> <span v-text="talkTime">00:00</span></span> 
-                    <span class="operabtn canclecall btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span> 
-                    <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button> 
-                    <button class="screenbtn" style="display: none;"><i class="iconfont icon-tuichuquanping iconfull"></i></button>
+                <div class="playcontent right-sml-content">
+                    <img id = "wxCallLocalImg" :src="callLocalImg" class="bigavatar" v-show="showCallLocalImg"/> 
+                    <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;" v-show="showCallLocalVideo"></video>
                 </div>
+            </div> 
+            <div class="opera-content flexbox">
+                <img class="calleravatar" :src="callRemoteImg" /> 
+                <span class="flexauto overell callnick" v-text="callDisplayName"></span> 
+                <span class="flexbox">
+                    <span class="operabtn canclecall btnopacity" v-show="cancelCall" @click="cancel">取消</span> 
+                    <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span> 
+                    <span class="operabtn upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>
+                </span> 
+                <span class="talktime flexbox" style="display: none;" v-show="showTalkTime"><i class="iconfont icon-ai-video"></i> <span v-text="talkTime">00:00</span></span> 
+                <span class="operabtn canclecall btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span> 
+                <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button> 
+                <button class="screenbtn" style="display: none;"><i class="iconfont icon-tuichuquanping iconfull"></i></button>
             </div>
         </div>
-
-    <!-- </el-dialog> -->
+    </div>
     
 </template>
 
@@ -106,7 +120,8 @@ export default {
         z-index: 2000
 
     .callercontent video
-        width: 100%;
+        width: 160px;
+        height: 120px;
         background: #000
 
     .callercontent.callnone
@@ -114,19 +129,23 @@ export default {
     .callercontent.callshow
         display: block
     .left-big-content
-        width: 680px;
+        width: 659px;
         height: 360px;
         position: absolute;
+        background: #fff;
         left: 0;
         top: 0
+    .left-big-content 
+        .remote-video
+            display inline-block   
     .left-big-content .bigavatar
-        width: 100%;
-        height: 100%;
+        width: 160px;
+        height: 120px;
         filter: blur(6px)
 
     .left-big-content video
-        width: 100%;
-        height: 100%;
+        width: 160px;
+        height: 120px;
         background: #000
     .right-sml-content
         width: 160px;
@@ -134,7 +153,7 @@ export default {
         box-shadow: 0 6px 20px 0 rgba(48,52,58,0.5);
         border-radius: 4px;
         position: absolute;
-        right: -41px;
+        right: -25px;
         bottom: 54px
     .right-sml-content .bigavatar
         width: 100%;
@@ -144,7 +163,7 @@ export default {
         padding: 10px 16px;
         box-shadow: 0 6px 20px 0 rgba(48,52,58,0.5);
         height: 56px;
-        width: 680px;
+        width: 659px;
         background: #fff;
         position: absolute;
         bottom: 0;
