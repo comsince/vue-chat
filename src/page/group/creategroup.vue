@@ -132,6 +132,24 @@ export default {
                         isChecked = true;
                         isDisabled = true;
                     }
+                } else if(this.groupOperateState == 4){
+                    var trackTime = this.groupMemberTracker;
+                    var groupMembers = this.groupMemberMap.get(this.selectTarget);
+                    if(groupMembers){
+                        var currentMember = groupMembers.find( member => member.memberId == friend.wxid)
+                        if(currentMember){
+                            isChecked = false;
+                            isShow = true;
+                        }
+                    } else {
+                        webSocketClient.getGroupMember(this.selectTarget).then(data => {
+                            if(data.code == SUCCESS_CODE){
+                                this.groupMemberMap.set(this.selectTarget,data.result);
+                                this.$store.state.groupMemberTracker += 1;
+                            }
+                        })
+                    }
+                    
                 }
                 Logger.log("friend nickname "+friend.remark+" ischecked "+isChecked)
                 if(isShow){
@@ -156,6 +174,10 @@ export default {
                 return '添加成员'
             } else if(this.groupOperateState == 2){
                 return '移除成员'
+            } else if(this.groupOperateState == 3){
+                return '加入群聊'
+            } else if(this.groupOperateState == 4){
+                return '选择群组音视频成员'
             }
         }
    },
@@ -267,7 +289,14 @@ export default {
                             } else {
                                 this.fullscreenLoading = false;
                             }
-                       })             
+                       })
+                    case 4:
+                        memberIds.push(LocalStore.getUserId());
+                        this.$store.state.showGroupCallVideoDialog = true
+                        console.log("group call members "+memberIds)
+                        this.fullscreenLoading = false;
+                        this.exit();
+                        break;                
                     default:
                         break
 

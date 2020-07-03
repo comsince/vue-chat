@@ -1,6 +1,6 @@
 {
   "name": "wechat",
-  "version": "1.0.14",
+  "version": "1.1.0-SNAPSHOT",
   "description": "基于unverse-push的开源即时通讯web客户端",
   "author": "comsince",
   "private": true,
@@ -14,6 +14,7 @@
     "axios": "^0.19.0",
     "crypto-js": "^3.1.9-1",
     "element-ui": "^2.13.0",
+    "kurento-utils": "^6.14.0",
     "pinyin": "^2.9.0",
     "qiniu-js": "^2.5.5",
     "stylus": "^0.54.5",

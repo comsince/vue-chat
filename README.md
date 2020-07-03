@@ -6,6 +6,8 @@
 
 ![image](http://image.comsince.cn/fx-chat.png)
 
+**NOTE:** [飞享]IM系统开始进行商业化探索,欢迎有需要的`个人`,`企业`, `工作室`使用,关于授权合作事项,请咨询QQ `1282212195` 
+
 该项目是`飞享`聊天系统客户端源码
 
 基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯，支持文本，图片类型发送，支持实时音视频，支持音视频与[android-chat](https://github.com/comsince/android-chat)客户端互通
@@ -96,13 +98,16 @@
 ### V1.0.14
 * 修复群组管理员撤回其他成员发送消息的问题
 
+### V1.1.0-SNAPSHOT
+* 加入群组音视频功能
+
 ## Build Setup
 
 ``` bash
 # install dependencies
 npm install
 
-# serve with hot reload at localhost:8080
+# serve with hot reload at localhost:9080
 npm run dev
 # 运行请先检查如下配置：TCP服务配置，HTTPS配置，是否支持WSS,是否支持HTTPS，HTTP监听端口8081,HTTPS监听端口8443
 

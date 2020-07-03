@@ -4,6 +4,7 @@
     <searchfriend></searchfriend>
     <creategroup></creategroup>
     <relayMessage></relayMessage>
+    <groupVideoCall></groupVideoCall>
   </div>
 </template>
 
@@ -12,12 +13,14 @@ import { mapActions } from 'vuex'
 import searchfriend from './page/friend/searchfriend'
 import creategroup from './page/group/creategroup'
 import relayMessage from './components/menu/relayMessage'
+import groupVideoCall from './page/group/groupVideoCall'
 export default {
    name : 'AppChat',
    components: {
      searchfriend,
      creategroup,
-     relayMessage
+     relayMessage,
+     groupVideoCall
    }
 }
 </script>

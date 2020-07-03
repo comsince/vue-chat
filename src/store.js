@@ -138,12 +138,13 @@ const state = {
     showSearchFriendDialog: false,
     showCreateGroupDialog: false,
     showRelayMessageDialog: false,
+    showGroupCallVideoDialog: false,
     showGroupInfo: false,
     showMessageRightMenu: [],
     currentRightMenuMessage: null,
     //待请求用户id信息列表
     waitUserIds: [],
-    //0创建群组，1,添加群组人员，2,移除群组人员 3 单聊用户创建群组
+    //0创建群组，1,添加群组人员，2,移除群组人员 3 单聊用户创建群组 4 创建群组音视频聊天
     groupOperateState: 0,
     groupMemberMap: new Map(),
     groupMemberTracker: 0

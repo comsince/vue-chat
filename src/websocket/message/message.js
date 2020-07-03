@@ -41,7 +41,7 @@ export default class Message {
     status = 0;
     messageUid = 0;
     timestamp = 0;
-    to = '';
+    tos = '';
 
     // static toMessage(obj){
     //     let msg = new Message();
@@ -66,6 +66,9 @@ export default class Message {
         var target = sendMessage.target;
         if(!target){
             target = state.selectTarget;
+        }
+        if(sendMessage.tos != ''){
+           message.tos = sendMessage.tos;
         }
         console.log("to message target "+target);
         let stateConversationInfo =  state.conversations.find(conversation => conversation.conversationInfo.target === target);

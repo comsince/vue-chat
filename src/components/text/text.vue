@@ -4,7 +4,7 @@
     <div class="emoji">
         <i class="icon iconfont icon-biaoqing" @click="showEmoji=!showEmoji"></i>
         <i title="语音聊天" class="icon iconfont icon-dianhua" v-show="isSingleConversation" @click="sendAudio"></i>
-        <i title="视频聊天" class="icon iconfont icon-ai-video" v-show="isSingleConversation" @click="sendVideo"></i>
+        <i title="视频聊天" class="icon iconfont icon-ai-video"  @click="sendVideo"></i>
         <i title="发送图片" class="icon iconfont icon-tupian" >
             <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
         </i>
@@ -411,18 +411,26 @@ export default {
         },
         //发送视频聊天
         sendVideo(){
-            this.$store.state.showChatBox = true;
-            this.rejectCall = false;
-            this.acceptCall = false;
-            this.hangUpCall = false;
-            this.cancelCall = true;
-            this.showCallRemoteVideo = false;
-            this.showCallRemoteImg = true;
-            this.showCallTips = true;
-            this.videoTextCallTips = "正在接通，请稍候...";
-            this.initCallUserInfo(this.$store.state.selectTarget);
-            this.isAudioOnly = false;
-            this.voipClient.startCall(this.$store.state.selectTarget,this.isAudioOnly);
+            if(this.isSingleConversation){
+                this.$store.state.showChatBox = true;
+                this.rejectCall = false;
+                this.acceptCall = false;
+                this.hangUpCall = false;
+                this.cancelCall = true;
+                this.showCallRemoteVideo = false;
+                this.showCallRemoteImg = true;
+                this.showCallTips = true;
+                this.videoTextCallTips = "正在接通，请稍候...";
+                this.initCallUserInfo(this.$store.state.selectTarget);
+                this.isAudioOnly = false;
+                this.voipClient.startCall(this.$store.state.selectTarget,this.isAudioOnly);
+            } else {
+                this.$store.state.groupOperateState = 4;
+                //触发groupMap以是vue相应变更
+                this.$store.state.groupMemberTracker += 1;
+                this.$store.state.showCreateGroupDialog = true;
+            }
+            
         },
         initCallUserInfo(target){
             var portrait = this.getUserPortrait(target);
