@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import router from './router'
 import VueWebSocket from './websocket';
 import VoipClient from './webrtc/voipclient'
+import GroupCallClient from './webrtc/groupCallClient'
 import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE, KEY_VUE_USER_ID, KEY_VUE_TOKEN} from './constant/index'
 import StateConversationInfo from './websocket/model/stateConversationInfo';
 import StateChatMessage from './websocket/model/stateSelectChatMessage'
@@ -111,6 +112,7 @@ const state = {
     selectFriendId: 0,
     vueSocket: null,
     voipClient: null,
+    groupCallClient: null,
     //会话列表
     conversations: [],
     //消息列表
@@ -139,6 +141,7 @@ const state = {
     showCreateGroupDialog: false,
     showRelayMessageDialog: false,
     showGroupCallVideoDialog: false,
+    groupCallMembers: [],
     showGroupInfo: false,
     showMessageRightMenu: [],
     currentRightMenuMessage: null,
@@ -159,6 +162,7 @@ const mutations = {
         state.vueSocket = vueSocket;
         //voip client
         state.voipClient = new VoipClient(store);
+        state.groupCallClient = new GroupCallClient(store)
         let conversations = LocalStore.getConversations();
         if(conversations){
             state.conversations = conversations;

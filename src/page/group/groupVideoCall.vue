@@ -1,36 +1,18 @@
 <template>
-    <div class="callContent" v-show="showGroupCallVideoDialog">
+    <div class="callContent" v-if="showGroupCallVideoDialog">
         <div class="callercontent callshow" style="">
             <div class="exchange-content">
                 <div class="playcontent left-big-content">
-                    <div class="remote-video">
-                        <img id="wxCallRemoteImg" class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
-                        <p id="wxCallTips" class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
-                        <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
-                    </div>
-
-                    <div class="remote-video">
-                        <img class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
-                        <p  class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
-                        <video  autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
-                    </div>
-
-                    <div class="remote-video">
-                        <img class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
-                        <p  class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
-                        <video  autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
-                    </div>
-
-                    <div class="remote-video">
-                        <img class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
-                        <p  class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
-                        <video  autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
+                    <div class="remote-video"  v-bind:key = index v-for="(item, index) in currentGroupCallMembers">
+                        <img class="bigavatar" :src="item.img" v-show="showCallRemoteImg"/> 
+                        <p class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
+                        <video :id="item.id" autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
                     </div>
                     
                 </div> 
                 <div class="playcontent right-sml-content">
                     <img id = "wxCallLocalImg" :src="callLocalImg" class="bigavatar" v-show="showCallLocalImg"/> 
-                    <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;" v-show="showCallLocalVideo"></video>
+                    <video :id="userId" autoplay="autoplay" muted="muted" playsinline="" style="display: none;" v-show="showCallLocalVideo"></video>
                 </div>
             </div> 
             <div class="opera-content flexbox">
@@ -52,9 +34,12 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
+import SessionCallback from '../../webrtc/sessionCallback';
 export default {
     data(){
         return {
+            groupCallClient: null,
             showCallLocalImg: true,
             showCallLocalVideo: false,
             showCallRemoteImg: true,
@@ -70,11 +55,26 @@ export default {
             callDisplayName: '',
             talkTime: '00:00',
             showTalkTime: false,
+            isAudioOnly: true
         }
     },
     methods:{
+        startVideoCall(){
+            var sessionCallback = new SessionCallback();
+            sessionCallback.didError = error =>{
+                this.$message.error('请确认你的设备具有音视频设备');
+                this.cancel()
+            }
+            this.groupCallClient = this.$store.state.groupCallClient
+            this.groupCallClient.setCurrentSessionCallback(sessionCallback)
+            this.cancelCall = true
+            this.isAudioOnly = false
+            this.initCallUserInfo();
+            this.groupCallClient.startCall(this.selectTarget,this.groupCallMembers,this.isAudioOnly)
+        },
         cancel(){
-
+            this.cancelCall = false
+            this.showGroupCallVideoDialog = false
         },
         hangUp(){
 
@@ -84,9 +84,50 @@ export default {
         },
         accept(){
 
-        }
+        },
+        initCallUserInfo(target){
+            var portrait = this.getUserPortrait(target);
+            if(portrait){
+                this.callRemoteImg = portrait;
+            }
+            this.callLocalImg = this.$store.state.user.img;
+            this.callDisplayName = this.getDisplayName(target);
+        },
+        getUserPortrait(target){
+            var userInfo = this.userInfoList.find(userInfo => userInfo.uid == target);
+            if(userInfo){
+                return userInfo.portrait;
+            }
+            return null;
+        },
+        getDisplayName(target){
+            var userInfo = this.userInfoList.find(userInfo => userInfo.uid == target);
+            if(userInfo){
+                return userInfo.displayName;
+            } else {
+                return ''
+            }
+        },
     },
     computed:{
+        ...mapState([
+            'groupCallMembers',
+            'userInfoList',
+            'selectTarget',
+            'userId'
+        ]),
+        currentGroupCallMembers(){
+            var groupMemberInfos = [];
+            this.groupCallMembers.forEach(memberId => {
+                var user = this.userInfoList.find(user => user.uid == memberId)
+                groupMemberInfos.push({
+                    id: user.uid,
+                    name: user.displayName,
+                    img: user.portrait != '' ? user.portrait : 'static/images/vue.jpg'
+                })
+            });
+            return groupMemberInfos;
+        },
         showGroupCallVideoDialog : {
             get () {
                 return this.$store.state.showGroupCallVideoDialog;
@@ -95,6 +136,16 @@ export default {
                 this.$store.state.showGroupCallVideoDialog = val;
             }
         },
+    },
+
+    watch: {
+        showGroupCallVideoDialog(){
+            if(this.showGroupCallVideoDialog){
+               this.startVideoCall()
+            } else {
+                this.cancel()
+            }
+        }
     }
 }
 </script>
@@ -141,7 +192,7 @@ export default {
     .left-big-content .bigavatar
         width: 160px;
         height: 120px;
-        filter: blur(6px)
+        filter: blur(0px)
 
     .left-big-content video
         width: 160px;

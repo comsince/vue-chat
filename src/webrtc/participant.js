@@ -8,8 +8,9 @@ export default class Participant {
         this.groupCallClient = groupCallClient;
     }
 
+    
     getVideoElement(clientId){
-        return null;
+      return document.getElementById(clientId);
     }
 
     onIceCandidate(candidate, wp) {

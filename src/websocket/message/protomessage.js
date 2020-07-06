@@ -17,7 +17,7 @@ export default class ProtoMessage {
     status = 0;
     messageUid = '0';
     timestamp = 0;
-    to = '';
+    tos = '';
 
 
     static toProtoMessage(obj){
@@ -59,6 +59,7 @@ export default class ProtoMessage {
         protoMessage.target = message.conversation.target;
         protoMessage.line = message.conversation.line;
         protoMessage.from = message.from;
+        protoMessage.tos = message.tos;
         protoMessage.direction = message.direction;
         protoMessage.status = message.status;
         protoMessage.messageId = message.messageId;

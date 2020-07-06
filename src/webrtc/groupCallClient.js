@@ -10,6 +10,8 @@ import CallByeMessageContent from "./message/callByeMessageContent";
 import CallEndReason from "./callEndReason";
 import Participant from "./participant";
 import kurentoUtils from "kurento-utils"
+import MessageConfig from '../websocket/message/messageConfig'
+import LocalStore from "../websocket/store/localstore";
 
 export default class GroupCallClient extends OnReceiverMessageListener {
     currentSession;
@@ -77,6 +79,7 @@ export default class GroupCallClient extends OnReceiverMessageListener {
     }
 
     onReceiveMessage(protoMessage){
+      console.log(" receive message "+protoMessage.direction)
         if(new Date().getTime() - protoMessage.timestamp < 90000 && protoMessage.direction === 1){
           let contentClazz = MessageConfig.getMessageContentClazz(protoMessage.content.type);
           if(contentClazz){
@@ -102,14 +105,7 @@ export default class GroupCallClient extends OnReceiverMessageListener {
             } else if(content instanceof CallSignalMessageContent){
               if(this.currentSession && this.currentSession.callState != CallState.STATUS_IDLE){
                 console.log("current state "+this.currentSession.callState+" call signal payload "+content.payload);
-                if(this.currentSession.callState === CallState.STATUS_CONNECTING || this.currentSession.callState === CallState.STATUS_CONNECTED){
-                  if(protoMessage.from === this.currentSession.clientId && content.callId === this.currentSession.callId){
-                    this.handleSignalMsg(content.payload);
-                  }
-                } else {
-                    this.currentSession.endCall(CallEndReason.REASON_AcceptByOtherClient);
-                  // this.currentSession.sessionCallback.didCallEndWithReason(CallEndReason.REASON_AcceptByOtherClient);
-                }
+                this.handleSignalMsg(content.payload);
               }
             } else if(content instanceof CallByeMessageContent){
                 if(!this.currentSession || this.currentSession.callState === CallState.STATUS_IDLE || protoMessage.from != this.currentSession.clientId || content.callId != this.currentSession.callId){
@@ -130,11 +126,11 @@ export default class GroupCallClient extends OnReceiverMessageListener {
       if(type === "newParticipantArrived"){
           var name = signalMessage.name;
           console.log("new participant name "+name)
-          onNewParticipant(name)
+          this.onNewParticipant(name)
       } else if(type == "existingParticipants"){
           var existingParticipants = signalMessage.data;
-          console.log("existingParticipants "+existingParticipants)
-          this.onExistingParticipants(existingParticipants)
+          console.log("existingParticipants "+signalMessage.data)
+          this.onExistingParticipants(signalMessage)
       } else if(type == "participantLeft"){
           var participantLeft = signalMessage.name;
           console.log("participantLeft "+participantLeft)
@@ -182,9 +178,10 @@ export default class GroupCallClient extends OnReceiverMessageListener {
           }
         }
       };
+      var currentUserId = LocalStore.getUserId();
       var participant = new Participant(this.currentSession.clientId);
-      this.participants[name] = participant;
-      var video = participant.getVideoElement(this.currentSession.clientId);
+      this.participants[currentUserId] = participant;
+      var video = participant.getVideoElement(currentUserId);
     
       var options = {
             localVideo: video,
@@ -194,12 +191,17 @@ export default class GroupCallClient extends OnReceiverMessageListener {
       participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
         (error) => {
           if(error) {
-            return console.error(error);
+            console.error(error)
+            if(this.currentSessionCallback){
+                this.currentSessionCallback.didError(error)
+            }
           }
           participant.rtcPeer.generateOffer (participant.offerToReceiveVideo.bind(participant));
       });
-    
-      msg.data.forEach(this.receiveVideo);
+      
+      for(var sender of msg.data){
+          this.receiveVideo(sender)
+      }
     }
 
     receiveVideo(sender) {

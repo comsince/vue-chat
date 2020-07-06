@@ -291,8 +291,8 @@ export default {
                             }
                        })
                     case 4:
-                        memberIds.push(LocalStore.getUserId());
                         this.$store.state.showGroupCallVideoDialog = true
+                        this.$store.state.groupCallMembers = memberIds
                         console.log("group call members "+memberIds)
                         this.fullscreenLoading = false;
                         this.exit();
