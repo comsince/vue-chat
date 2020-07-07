@@ -65,6 +65,10 @@ export default {
                 this.$message.error('请确认你的设备具有音视频设备');
                 this.cancel()
             }
+            sessionCallback.didCreateLocalVideoTrack = stream => {
+                this.showCallLocalImg = false;
+                this.showCallLocalVideo = true;
+            }
             this.groupCallClient = this.$store.state.groupCallClient
             this.groupCallClient.setCurrentSessionCallback(sessionCallback)
             this.cancelCall = true

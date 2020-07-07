@@ -168,8 +168,9 @@ export default class GroupCallClient extends OnReceiverMessageListener {
 
 
     onExistingParticipants(msg) {
+      console.log("audioOnly "+this.currentSession.audioOnly)
       var constraints = {
-        audio : this.currentSession.audioOnly,
+        audio : true,
         video : {
           mandatory : {
             maxWidth : 320,
@@ -179,24 +180,29 @@ export default class GroupCallClient extends OnReceiverMessageListener {
         }
       };
       var currentUserId = LocalStore.getUserId();
-      var participant = new Participant(currentUserId);
+      var participant = new Participant(this.currentSession.clientId,currentUserId,this);
       this.participants[currentUserId] = participant;
       var video = participant.getVideoElement();
+      console.log("person video "+video.tagName)
     
       var options = {
             localVideo: video,
             mediaConstraints: constraints,
             onicecandidate: participant.onIceCandidate.bind(participant)
           }
+      var _this = this
       participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
-        (error) => {
+        function(error) {
           if(error) {
-            if(this.currentSessionCallback){
-                this.currentSessionCallback.didError(error)
+            if(_this.currentSessionCallback){
+                _this.currentSessionCallback.didError(error)
             }
             return console.error(error)
           }
-          participant.rtcPeer.generateOffer (participant.offerToReceiveVideo.bind(participant));
+          if(_this.currentSessionCallback){
+             _this.currentSessionCallback.didCreateLocalVideoTrack()
+          }
+          this.generateOffer (participant.offerToReceiveVideo.bind(participant));
       });
       
       for(var sender of msg.data){
@@ -205,9 +211,9 @@ export default class GroupCallClient extends OnReceiverMessageListener {
     }
 
     receiveVideo(sender) {
-      var participant = new Participant(sender);
+      var participant = new Participant(this.currentSession.clientId,sender,this);
       participants[sender] = participant;
-      var video = participant.getVideoElement(sender);
+      var video = participant.getVideoElement();
     
       var options = {
           remoteVideo: video,

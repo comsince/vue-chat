@@ -1,6 +1,6 @@
 export const WS_PROTOCOL = 'ws';
 // export const WS_IP = 'chat.comsince.cn';
-export const WS_IP = 'localhost';
+export const WS_IP = '172.16.46.201';
 export const WS_PORT = 9326;
 export const HEART_BEAT_INTERVAL = 25 * 1000;
 export const RECONNECT_INTERVAL = 30 * 1000;

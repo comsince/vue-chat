@@ -1,16 +1,20 @@
+import CallSignalMessageContent from "./message/callSignalMessageContent";
+
 export default class Participant {
     target;
+    sender;
     groupCallClient;
     rtcPeer;
 
-    constructor(target,groupCallClient){
+    constructor(target,sender,groupCallClient){
         this.target = target;
+        this.sender = sender;
         this.groupCallClient = groupCallClient;
     }
 
     
     getVideoElement(){
-      return document.getElementById(this.target);
+      return document.getElementById(this.sender);
     }
 
     onIceCandidate(candidate, wp) {
@@ -21,21 +25,28 @@ export default class Participant {
           candidate: candidate,
           name: name
         };
-        this.groupCallClient.sendMessage(this.target,message)
+        this.sendSignalMessage(message);
     }
 
     offerToReceiveVideo(error, offerSdp, wp){
-      if (error) return console.error ("sdp offer error")
+      if (error) return console.error ("sdp offer error"+error)
       console.log('Invoking SDP offer callback function');
       var msg =  { id : "receiveVideoFrom",
-          sender : this.target,
+          sender : this.sender,
           sdpOffer : offerSdp
       };
-      this.groupCallClient.sendMessage(msg);
+      this.sendSignalMessage(msg);
     }
     
     dispose() {
       console.log('Disposing participant ' + this.name);
       this.rtcPeer.dispose();
-	};
+    }
+    
+    sendSignalMessage(msg){
+      var callSignalMessageContent = new CallSignalMessageContent();
+              //callSignalMessageContent.callId = this.currentSession.callId;
+      callSignalMessageContent.payload = JSON.stringify(msg);
+      this.groupCallClient.sendMessage(this.target,callSignalMessageContent);
+    }
 }
