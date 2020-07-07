@@ -179,9 +179,9 @@ export default class GroupCallClient extends OnReceiverMessageListener {
         }
       };
       var currentUserId = LocalStore.getUserId();
-      var participant = new Participant(this.currentSession.clientId);
+      var participant = new Participant(currentUserId);
       this.participants[currentUserId] = participant;
-      var video = participant.getVideoElement(currentUserId);
+      var video = participant.getVideoElement();
     
       var options = {
             localVideo: video,
@@ -191,10 +191,10 @@ export default class GroupCallClient extends OnReceiverMessageListener {
       participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
         (error) => {
           if(error) {
-            console.error(error)
             if(this.currentSessionCallback){
                 this.currentSessionCallback.didError(error)
             }
+            return console.error(error)
           }
           participant.rtcPeer.generateOffer (participant.offerToReceiveVideo.bind(participant));
       });

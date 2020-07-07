@@ -9,8 +9,8 @@ export default class Participant {
     }
 
     
-    getVideoElement(clientId){
-      return document.getElementById(clientId);
+    getVideoElement(){
+      return document.getElementById(this.target);
     }
 
     onIceCandidate(candidate, wp) {
@@ -25,18 +25,17 @@ export default class Participant {
     }
 
     offerToReceiveVideo(error, offerSdp, wp){
-		if (error) return console.error ("sdp offer error")
-		console.log('Invoking SDP offer callback function');
-		var msg =  { id : "receiveVideoFrom",
-				sender : name,
-				sdpOffer : offerSdp
-			};
-        this.groupCallClient.sendMessage(msg);
+      if (error) return console.error ("sdp offer error")
+      console.log('Invoking SDP offer callback function');
+      var msg =  { id : "receiveVideoFrom",
+          sender : this.target,
+          sdpOffer : offerSdp
+      };
+      this.groupCallClient.sendMessage(msg);
     }
     
     dispose() {
-		console.log('Disposing participant ' + this.name);
-		this.rtcPeer.dispose();
-		// container.parentNode.removeChild(container);
+      console.log('Disposing participant ' + this.name);
+      this.rtcPeer.dispose();
 	};
 }
