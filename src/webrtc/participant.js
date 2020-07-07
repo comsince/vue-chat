@@ -21,7 +21,7 @@ export default class Participant {
         console.log("Local candidate" + JSON.stringify(candidate));
 
         var message = {
-          id: 'onIceCandidate',
+          type: 'onIceCandidate',
           candidate: candidate,
           name: name
         };
@@ -31,7 +31,8 @@ export default class Participant {
     offerToReceiveVideo(error, offerSdp, wp){
       if (error) return console.error ("sdp offer error"+error)
       console.log('Invoking SDP offer callback function');
-      var msg =  { id : "receiveVideoFrom",
+      var msg =  { 
+          type : "receiveVideoFrom",
           sender : this.sender,
           sdpOffer : offerSdp
       };

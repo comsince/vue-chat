@@ -134,7 +134,7 @@ export default class GroupCallClient extends OnReceiverMessageListener {
       } else if(type == "participantLeft"){
           var participantLeft = signalMessage.name;
           console.log("participantLeft "+participantLeft)
-          onParticipantLeft(participantLeft)
+          this.onParticipantLeft(participantLeft)
       } else if(type == 'iceCandidate'){
           this.participants[signalMessage.name].rtcPeer.addIceCandidate(signalMessage.candidate, function (error) {
                 if (error) {
@@ -142,7 +142,14 @@ export default class GroupCallClient extends OnReceiverMessageListener {
                 return;
                 }
           });
-      } 
+      } else if(type == 'receiveVideoAnswer'){
+        this.participants[signalMessage.name].rtcPeer.addIceCandidate(signalMessage.candidate, function (error) {
+	        if (error) {
+            console.error("Error adding candidate: " + error);
+            return;
+	        }
+	    });
+      }
     }
 
 
