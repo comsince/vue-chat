@@ -79,6 +79,7 @@ export default {
         cancel(){
             this.cancelCall = false
             this.showGroupCallVideoDialog = false
+            this.groupCallClient.endCall(this.groupCallMembers)
         },
         hangUp(){
 
@@ -146,8 +147,6 @@ export default {
         showGroupCallVideoDialog(){
             if(this.showGroupCallVideoDialog){
                this.startVideoCall()
-            } else {
-                this.cancel()
             }
         }
     }

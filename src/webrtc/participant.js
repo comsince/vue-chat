@@ -25,7 +25,7 @@ export default class Participant {
           candidate: candidate,
           name: name
         };
-        this.sendSignalMessage(message);
+        this.groupCallClient.sendSignalMessage(message);
     }
 
     offerToReceiveVideo(error, offerSdp, wp){
@@ -36,18 +36,18 @@ export default class Participant {
           sender : this.sender,
           sdpOffer : offerSdp
       };
-      this.sendSignalMessage(msg);
+      this.groupCallClient.sendSignalMessage(msg);
     }
     
     dispose() {
-      console.log('Disposing participant ' + this.name);
+      console.log('Disposing participant ' + this.sender);
       this.rtcPeer.dispose();
     }
     
-    sendSignalMessage(msg){
-      var callSignalMessageContent = new CallSignalMessageContent();
-              //callSignalMessageContent.callId = this.currentSession.callId;
-      callSignalMessageContent.payload = JSON.stringify(msg);
-      this.groupCallClient.sendMessage(this.target,callSignalMessageContent);
-    }
+    // sendSignalMessage(msg){
+    //   var callSignalMessageContent = new CallSignalMessageContent();
+    //           //callSignalMessageContent.callId = this.currentSession.callId;
+    //   callSignalMessageContent.payload = JSON.stringify(msg);
+    //   this.groupCallClient.sendMessage(this.target,callSignalMessageContent);
+    // }
 }

@@ -62,20 +62,36 @@ export default class GroupCallClient extends OnReceiverMessageListener {
       answerMesage.isAudioOnly = audioOnly;
       answerMesage.callId = this.currentSession.callId;
       this.sendMessage(this.currentSession.clientId,answerMesage);
-  }
-
-    /**
-     * 群组成员离开音视频通话
-     */
-    leaveCall(){
-
     }
 
     /**
      * 结束群组音视频通话
      */
-    endCall(){
+    endCall(tos){
+      //发起者发送End call指令
+      if(this.isInitiator){
+        this.sendByeMessage(tos)
+      } else {
+         this.sendSignalMessage({
+           type: 'leaveRoom'
+         })
+      }
 
+      for(var key in this.participants){
+         this.participants[key].dispose()
+      }
+    }
+
+    sendByeMessage(tos){
+      var byeMessage = new CallByeMessageContent();
+      this.sendMessage(this.currentSession.clientId,byeMessage,tos)
+    }
+
+    sendSignalMessage(msg){
+      var callSignalMessageContent = new CallSignalMessageContent();
+              //callSignalMessageContent.callId = this.currentSession.callId;
+      callSignalMessageContent.payload = JSON.stringify(msg);
+      this.sendMessage(this.currentSession.clientId,callSignalMessageContent);
     }
 
     onReceiveMessage(protoMessage){
