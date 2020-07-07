@@ -137,7 +137,7 @@ export default class GroupCallClient extends OnReceiverMessageListener {
     async handleSignalMsg(payload){
       var signalMessage = JSON.parse(payload);
       var type = signalMessage.type;
-      console.log('message type '+type);
+      console.log('message type '+type+" name "+signalMessage.name);
       //新的用户来临
       if(type === "newParticipantArrived"){
           var name = signalMessage.name;
@@ -159,14 +159,10 @@ export default class GroupCallClient extends OnReceiverMessageListener {
                 }
           });
       } else if(type == 'receiveVideoAnswer'){
-        this.participants[signalMessage.name].rtcPeer.addIceCandidate(signalMessage.candidate, function (error) {
-	        if (error) {
-            console.error("Error adding candidate: " + error);
-            return;
-	        }
-	    });
-      }
+        this.onReceiverAnswer(signalMessage)
+	    }
     }
+    
 
 
     newSession(clientId, audioOnly, callId){
@@ -187,6 +183,12 @@ export default class GroupCallClient extends OnReceiverMessageListener {
         byeMessage.callId = callId;
         this.log('reject other callId '+callId +" clientId "+clientId);
         this.sendMessage(clientId,byeMessage);
+    }
+
+    onReceiverAnswer(result){
+      this.participants[result.name].rtcPeer.processAnswer (result.sdpAnswer, function (error) {
+        if (error) return console.error (error);
+      });
     }
 
 
