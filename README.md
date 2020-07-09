@@ -101,6 +101,9 @@
 ### V1.1.0-SNAPSHOT
 * 加入群组音视频功能
 
+**NOTE:** 待解决问题列表
+* groupCallClient 初始化问题
+
 ## Build Setup
 
 ``` bash

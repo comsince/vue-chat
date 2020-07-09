@@ -110,8 +110,8 @@ export default {
             this.showCallLocalImg = true;
             this.showCallLocalVideo = false;
             this.showCallTips = true;
-            this.initGroupInfo();
-            this.initCallUserInfo(this.userId)
+            this.initGroupInfo(session.clientId);
+            //this.initCallUserInfo(this.userId)
         }
 
         this.groupCallClient = this.$store.state.groupCallClient
@@ -125,8 +125,8 @@ export default {
             this.acceptCall = false;
             this.hangUpCall = false;
             this.isAudioOnly = false
-            this.initGroupInfo();
-            this.initCallUserInfo(this.userId)
+            this.initGroupInfo(this.selectTarget);
+            //this.initCallUserInfo(this.userId)
             this.groupCallClient.startCall(this.selectTarget,this.groupCallMembers,this.isAudioOnly)
         },
         cancel(){
@@ -149,8 +149,8 @@ export default {
            this.hangUpCall = true;
            this.groupCallClient.answerCall(false);
         },
-        initGroupInfo(){
-           var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.selectTarget)
+        initGroupInfo(target){
+           var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == target)
            console.log("group info "+groupInfo)
            if(groupInfo && groupInfo.portrait != ''){
               this.callRemoteImg = groupInfo.portrait
