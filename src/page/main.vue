@@ -6,6 +6,7 @@
     <div class="main">
       <router-view></router-view>
     </div>
+    <groupVideoCall></groupVideoCall>
   </div>
 </template>
 
@@ -14,9 +15,11 @@ import mycard from '../components/mycard/mycard'
 import { mapActions, mapState } from 'vuex'
 import VueWebSocket from '../websocket';
 import {WS_PROTOCOL,WS_IP,WS_PORT,HEART_BEAT_INTERVAL,RECONNECT_INTERVAL,BINTRAY_TYPE} from '../constant/index'
+import groupVideoCall from './group/groupVideoCall'
 export default {
    components: {
-     mycard
+     mycard,
+     groupVideoCall
    },
    created () {
        this.$store.dispatch('initData');

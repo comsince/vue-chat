@@ -228,6 +228,7 @@ export default {
     left: 0
     overflow: auto
     margin: 0;
+    z-index: 2000
     .callercontent
         width: 634px;
         height: 414px;
