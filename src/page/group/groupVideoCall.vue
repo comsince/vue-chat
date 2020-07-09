@@ -40,6 +40,7 @@ import EngineCallback from '../../webrtc/engineCallback';
 export default {
     data(){
         return {
+            currentGroupTarget: '',
             groupCallClient: null,
             showCallLocalImg: true,
             showCallLocalVideo: false,
@@ -79,13 +80,13 @@ export default {
            if(this.userId == sender){
               this.isSender = true  
               this.showGroupCallVideoDialog = false
+              this.groupMemberInfos = []
            } else {
                var user = this.currentGroupCallMembers.find(user => user.id == sender)
                if(user){
                 user.showRemoteVideo = false
                }
            }
-           this.groupMemberInfos = []
         }
 
         sessionCallback.didReceiveRemoteVideoTrack = (stream,sender) => {
@@ -111,7 +112,7 @@ export default {
             this.showCallLocalVideo = false;
             this.showCallTips = true;
             this.initGroupInfo(session.clientId);
-            //this.initCallUserInfo(this.userId)
+            this.initCallUserInfo()
         }
 
         this.groupCallClient = this.$store.state.groupCallClient
@@ -126,7 +127,7 @@ export default {
             this.hangUpCall = false;
             this.isAudioOnly = false
             this.initGroupInfo(this.selectTarget);
-            //this.initCallUserInfo(this.userId)
+            this.initCallUserInfo()
             this.groupCallClient.startCall(this.selectTarget,this.groupCallMembers,this.isAudioOnly)
         },
         cancel(){
@@ -150,16 +151,18 @@ export default {
            this.groupCallClient.answerCall(false);
         },
         initGroupInfo(target){
+           this.currentGroupTarget = target
            var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == target)
            console.log("group info "+groupInfo)
            if(groupInfo && groupInfo.portrait != ''){
               this.callRemoteImg = groupInfo.portrait
               this.callDisplayName = groupInfo.name
+           } else {
+               this.$store.dispatch("getGroupInfo",target);
            }
         },
-        initCallUserInfo(target){
+        initCallUserInfo(){
             this.callLocalImg = this.$store.state.user.img;
-            this.callDisplayName = this.getDisplayName(target);
         },
         getUserPortrait(target){
             var userInfo = this.userInfoList.find(userInfo => userInfo.uid == target);
@@ -214,6 +217,15 @@ export default {
             if(this.showGroupCallVideoDialog && this.isSender){
                this.startVideoCall()
             }
+        },
+        groupInfoList(){
+           var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.currentGroupTarget)
+           if(groupInfo){
+               if(groupInfo.portrait != ''){
+                this.callRemoteImg = groupInfo.portrait
+               }
+              this.callDisplayName = groupInfo.name
+           }
         }
     }
 }
