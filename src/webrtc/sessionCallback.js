@@ -1,5 +1,5 @@
 export default class SessionCallback{
-    didCallEndWithReason(callEndReason){}
+    didCallEndWithReason(callEndReason,sender = ''){}
 
     didChangeState(callState){}
 
@@ -7,7 +7,7 @@ export default class SessionCallback{
 
     didCreateLocalVideoTrack(stream){}
 
-    didReceiveRemoteVideoTrack(stream){}
+    didReceiveRemoteVideoTrack(stream,sender = ''){}
 
     didReceiveRemoteAudioTrack(stream){}
 

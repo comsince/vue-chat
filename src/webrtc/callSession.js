@@ -7,6 +7,7 @@ export default class CallSession{
     sessionCallback;
     callState;
     voipClient;
+    tos;
 
     constructor(voipClient){
         this.startTime = new Date().getTime();
@@ -21,12 +22,12 @@ export default class CallSession{
        }
     }
 
-    endCall(endCallReason){
+    endCall(endCallReason,sender=''){
        this.setState(CallState.STATUS_IDLE);
        this.voipClient.closeCall();
        this.voipClient.currentSession = null;
        if(this.sessionCallback){
-         this.sessionCallback.didCallEndWithReason(endCallReason);
+         this.sessionCallback.didCallEndWithReason(endCallReason,sender);
        }
     }
 }

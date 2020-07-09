@@ -30,7 +30,7 @@ export default class Participant {
 
     offerToReceiveVideo(error, offerSdp, wp){
       if (error) return console.error ("sdp offer error"+error)
-      console.log('Invoking SDP offer callback function');
+      console.log(this.sender + ' Invoking SDP offer callback function');
       var msg =  { 
           type : "receiveVideoFrom",
           sender : this.sender,

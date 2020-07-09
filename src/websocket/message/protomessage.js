@@ -30,6 +30,7 @@ export default class ProtoMessage {
             protoMessage.direction = 1;
             protoMessage.status = MessageStatus.Unread;
         }
+        protoMessage.tos = obj.tos;
         protoMessage.messageId = obj.messageId;
         protoMessage.messageUid = obj.messageId;
         protoMessage.timestamp = obj.timestamp;

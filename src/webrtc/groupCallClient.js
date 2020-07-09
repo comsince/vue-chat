@@ -77,9 +77,13 @@ export default class GroupCallClient extends OnReceiverMessageListener {
          })
       }
 
+      this.currentSession.endCall(CallEndReason.REASON_RemoteHangup,LocalStore.getUserId()); 
+    }
+
+    closeCall(){
       for(var key in this.participants){
-         this.participants[key].dispose()
-      }
+        this.participants[key].dispose()
+     }
     }
 
     sendByeMessage(tos){
@@ -96,7 +100,7 @@ export default class GroupCallClient extends OnReceiverMessageListener {
 
     onReceiveMessage(protoMessage){
       console.log(" receive message "+protoMessage.direction)
-        if(new Date().getTime() - protoMessage.timestamp < 90000 && protoMessage.direction === 1){
+        if(new Date().getTime() - protoMessage.timestamp < 90000 && protoMessage.direction === 1 && protoMessage.conversationType == 1){
           let contentClazz = MessageConfig.getMessageContentClazz(protoMessage.content.type);
           if(contentClazz){
             let content = new contentClazz();
@@ -113,7 +117,15 @@ export default class GroupCallClient extends OnReceiverMessageListener {
               if(this.currentSession && this.currentSession.callState !== CallState.STATUS_IDLE){
                 this.rejectOtherCall(content.callId,protoMessage.from);
               } else {
-                this.currentSession = this.newSession(protoMessage.from,content.audioOnly,content.callId);
+                //这里client 要指定为group的target
+                this.currentSession = this.newSession(protoMessage.target,content.audioOnly,content.callId);
+                console.log("before receive call tos "+protoMessage.tos+" from "+protoMessage.from)
+                //去除自己，加入对方的id
+                var tos = protoMessage.tos;
+                tos.splice(tos.findIndex(item => item === LocalStore.getUserId()), 1);
+                tos.push(protoMessage.from)
+                this.currentSession.tos = tos
+                console.log("after receive call tos "+this.currentSession.tos)
                 this.currentSession.setState(CallState.STATUS_INCOMING);
                 this.currentEngineCallback.onReceiveCall(this.currentSession);
               }
@@ -124,10 +136,10 @@ export default class GroupCallClient extends OnReceiverMessageListener {
                 this.handleSignalMsg(content.payload);
               }
             } else if(content instanceof CallByeMessageContent){
-                if(!this.currentSession || this.currentSession.callState === CallState.STATUS_IDLE || protoMessage.from != this.currentSession.clientId || content.callId != this.currentSession.callId){
+                if(!this.currentSession || this.currentSession.callState === CallState.STATUS_IDLE ){
                   return;
                 }
-                this.cancelCall();
+                this.endCall();
             }
           }
         }
@@ -213,7 +225,8 @@ export default class GroupCallClient extends OnReceiverMessageListener {
       var options = {
             localVideo: video,
             mediaConstraints: constraints,
-            onicecandidate: participant.onIceCandidate.bind(participant)
+            onicecandidate: participant.onIceCandidate.bind(participant),
+            // iceServers: [{"urls":"turn:turn.liyufan.win:3478","username":"wfchat","credential":"wfchat"}]
           }
       var _this = this
       participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
@@ -237,20 +250,26 @@ export default class GroupCallClient extends OnReceiverMessageListener {
 
     receiveVideo(sender) {
       var participant = new Participant(this.currentSession.clientId,sender,this);
-      participants[sender] = participant;
+      this.participants[sender] = participant;
       var video = participant.getVideoElement();
+      console.log("receiveVideo "+sender + " video "+video.tagName)
+
     
       var options = {
           remoteVideo: video,
-          onicecandidate: participant.onIceCandidate.bind(participant)
+          onicecandidate: participant.onIceCandidate.bind(participant),
+          // iceServers: [{"urls":"turn:turn.liyufan.win:3478","username":"wfchat","credential":"wfchat"}]
         }
-    
+      var _this = this
       participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options,
-          (error) => {
+          function(error) {
             if(error) {
               return console.error(error);
             }
-            participant.rtcPeer.generateOffer (participant.offerToReceiveVideo.bind(participant));
+            if(_this.currentSessionCallback){
+               _this.currentSessionCallback.didReceiveRemoteVideoTrack(null,sender)
+            }
+            this.generateOffer (participant.offerToReceiveVideo.bind(participant));
       });;
     }
 
@@ -263,5 +282,6 @@ export default class GroupCallClient extends OnReceiverMessageListener {
       var participant = this.participants[name];
       participant.dispose();
       delete this.participants[name];
+      this.currentSessionCallback.didCallEndWithReason(CallEndReason.REASON_Hangup,name)
     }
 }

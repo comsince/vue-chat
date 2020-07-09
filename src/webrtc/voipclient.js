@@ -111,7 +111,7 @@ export default class VoipClient extends OnReceiverMessageListener{
      */
     onReceiveMessage(protoMessage){
       //只处理接收消息，对于同一用户不同session会话忽略
-      if(new Date().getTime() - protoMessage.timestamp < 90000 && protoMessage.direction === 1){
+      if(new Date().getTime() - protoMessage.timestamp < 90000 && protoMessage.direction === 1 && protoMessage.conversationType == 0){
         let contentClazz = MessageConfig.getMessageContentClazz(protoMessage.content.type);
         if(contentClazz){
           let content = new contentClazz();

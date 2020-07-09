@@ -4,9 +4,9 @@
             <div class="exchange-content">
                 <div class="playcontent left-big-content">
                     <div class="remote-video"  v-bind:key = index v-for="(item, index) in currentGroupCallMembers">
-                        <img class="bigavatar" :src="item.img" v-show="showCallRemoteImg"/> 
+                        <img class="bigavatar" :src="item.img" v-show="!item.showRemoteVideo"/> 
                         <p class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
-                        <video :id="item.id" autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
+                        <video :id="item.id" autoplay="autoplay" playsinline="" style="display: none;" v-show="item.showRemoteVideo"></video>
                     </div>
                     
                 </div> 
@@ -36,6 +36,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import SessionCallback from '../../webrtc/sessionCallback';
+import EngineCallback from '../../webrtc/engineCallback';
 export default {
     data(){
         return {
@@ -55,46 +56,108 @@ export default {
             callDisplayName: '',
             talkTime: '00:00',
             showTalkTime: false,
-            isAudioOnly: true
+            isAudioOnly: true,
+            isSender: true,
+            groupMemberInfos: []
         }
+    },
+    mounted(){
+        console.log("group call mounted")
+        var sessionCallback = new SessionCallback();
+        sessionCallback.didError = error =>{
+            this.$message.error('请确认你的设备具有音视频设备');
+            this.cancel()
+            this.groupMemberInfos = []
+        }
+        sessionCallback.didCreateLocalVideoTrack = stream => {
+            console.log("didCreateLocalVideoTrack")
+            this.showCallLocalImg = false;
+            this.showCallLocalVideo = true;
+        }
+
+        sessionCallback.didCallEndWithReason = (callEndReason,sender) => {
+           if(this.userId == sender){
+              this.isSender = true  
+              this.showGroupCallVideoDialog = false
+           } else {
+               var user = this.currentGroupCallMembers.find(user => user.id == sender)
+               if(user){
+                user.showRemoteVideo = false
+               }
+           }
+           this.groupMemberInfos = []
+        }
+
+        sessionCallback.didReceiveRemoteVideoTrack = (stream,sender) => {
+           var user = this.currentGroupCallMembers.find(user => user.id == sender)
+           console.log("didReceiveRemoteVideoTrack user "+user.id+" sender "+sender)
+           if(user){
+              user.showRemoteVideo = true
+           }
+        }
+
+
+        var engineCallback = new EngineCallback()
+        engineCallback.onReceiveCall = session => {
+            this.$store.state.groupCallMembers = session.tos
+            this.isSender = false
+            this.showGroupCallVideoDialog = true
+            this.rejectCall = true;
+            this.cancelCall = false;
+            this.acceptCall = true;
+            this.hangUpCall = false;
+            this.videoTextCallTips = '';
+            this.showCallLocalImg = true;
+            this.showCallLocalVideo = false;
+            this.showCallTips = true;
+            this.initGroupInfo();
+            this.initCallUserInfo(this.userId)
+        }
+
+        this.groupCallClient = this.$store.state.groupCallClient
+        this.groupCallClient.setCurrentSessionCallback(sessionCallback)
+        this.groupCallClient.setCurrentEngineCallback(engineCallback)
     },
     methods:{
         startVideoCall(){
-            var sessionCallback = new SessionCallback();
-            sessionCallback.didError = error =>{
-                this.$message.error('请确认你的设备具有音视频设备');
-                this.cancel()
-            }
-            sessionCallback.didCreateLocalVideoTrack = stream => {
-                this.showCallLocalImg = false;
-                this.showCallLocalVideo = true;
-            }
-            this.groupCallClient = this.$store.state.groupCallClient
-            this.groupCallClient.setCurrentSessionCallback(sessionCallback)
             this.cancelCall = true
+            this.rejectCall = false;
+            this.acceptCall = false;
+            this.hangUpCall = false;
             this.isAudioOnly = false
-            this.initCallUserInfo();
+            this.initGroupInfo();
+            this.initCallUserInfo(this.userId)
             this.groupCallClient.startCall(this.selectTarget,this.groupCallMembers,this.isAudioOnly)
         },
         cancel(){
             this.cancelCall = false
             this.showGroupCallVideoDialog = false
+            this.groupMemberInfos = []
             this.groupCallClient.endCall(this.groupCallMembers)
         },
         hangUp(){
-
+            this.groupCallClient.endCall()
+            this.groupMemberInfos = []
         },
         reject(){
-
+           this.groupCallClient.endCall()
+           this.groupMemberInfos = []
         },
         accept(){
-
+           this.rejectCall = false;
+           this.acceptCall = false;
+           this.hangUpCall = true;
+           this.groupCallClient.answerCall(false);
+        },
+        initGroupInfo(){
+           var groupInfo = this.groupInfoList.find(groupInfo => groupInfo.target == this.selectTarget)
+           console.log("group info "+groupInfo)
+           if(groupInfo && groupInfo.portrait != ''){
+              this.callRemoteImg = groupInfo.portrait
+              this.callDisplayName = groupInfo.name
+           }
         },
         initCallUserInfo(target){
-            var portrait = this.getUserPortrait(target);
-            if(portrait){
-                this.callRemoteImg = portrait;
-            }
             this.callLocalImg = this.$store.state.user.img;
             this.callDisplayName = this.getDisplayName(target);
         },
@@ -119,19 +182,22 @@ export default {
             'groupCallMembers',
             'userInfoList',
             'selectTarget',
-            'userId'
+            'userId',
+            'groupInfoList'
         ]),
         currentGroupCallMembers(){
-            var groupMemberInfos = [];
-            this.groupCallMembers.forEach(memberId => {
-                var user = this.userInfoList.find(user => user.uid == memberId)
-                groupMemberInfos.push({
-                    id: user.uid,
-                    name: user.displayName,
-                    img: user.portrait != '' ? user.portrait : 'static/images/vue.jpg'
-                })
-            });
-            return groupMemberInfos;
+            if(this.groupMemberInfos.length == 0){
+                this.groupCallMembers.forEach(memberId => {
+                    var user = this.userInfoList.find(user => user.uid == memberId)
+                    this.groupMemberInfos.push({
+                        id: user.uid,
+                        name: user.displayName,
+                        img: user.portrait != '' ? user.portrait : 'static/images/vue.jpg',
+                        showRemoteVideo: false
+                    })
+               });
+            }
+            return this.groupMemberInfos;
         },
         showGroupCallVideoDialog : {
             get () {
@@ -145,7 +211,7 @@ export default {
 
     watch: {
         showGroupCallVideoDialog(){
-            if(this.showGroupCallVideoDialog){
+            if(this.showGroupCallVideoDialog && this.isSender){
                this.startVideoCall()
             }
         }
