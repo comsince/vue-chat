@@ -743,6 +743,10 @@ const mutations = {
 
     updateFriendRequest(state,value){
         for(var newFriendRequst of value){
+            if(newFriendRequst.status == 0 && new Date().getTime() - newFriendRequst.timestamp > 7* 24 * 60 * 60 * 1000){
+                console.log("friend request over time")
+                continue
+            }
             var friendRequest = state.friendRequests.find(friendRequest => friendRequest.from === newFriendRequst.from);
             if(friendRequest){
                friendRequest.status = newFriendRequst.status;

@@ -98,7 +98,11 @@ export default class LocalStore {
     }
 
     static getFriendRequestVersion(){
-        return localStorage.getItem("friend_request_version");
+        var version = localStorage.getItem("friend_request_version");
+        if(!version){
+            version = 0
+        }
+        return version;
     }
 
     static saveMessageId(messageId){
