@@ -2,6 +2,8 @@
 [![star](https://gitee.com/comsince/vue-chat/badge/star.svg?theme=white)](https://gitee.com/comsince/vue-chat)
 [![GitHub stars](https://img.shields.io/github/stars/comsince/vue-chat?style=social)](https://github.com/comsince/vue-chat)
 
+__NOTE__: __项目已经迁移到这里[fsharechat/vue-chat](https://github.com/fsharechat/vue-chat)维护__
+
 # 飞享
 
 ![image](http://image.comsince.cn/fx-chat.png)
