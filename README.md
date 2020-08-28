@@ -233,3 +233,9 @@ git branch --set-upstream-to=origin/master
 ## 技术支持
 
 如果公司采用本项目或者需要有商业需求，需要二次开发,提供技术支持,联系QQ：`1282212195`
+
+## QQ群交流
+
+| QQ群 |
+| :--------: | 
+|<img src="https://media.comsince.cn/minio-bucket-image-name/qq-group.jpg" alt="图片替换文本" width="300" height="411" align="center" />|
