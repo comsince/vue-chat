@@ -1,139 +1,222 @@
 
-[![star](https://gitee.com/comsince/vue-chat/badge/star.svg?theme=white)](https://gitee.com/comsince/vue-chat)
-[![GitHub stars](https://img.shields.io/github/stars/comsince/vue-chat?style=social)](https://github.com/comsince/vue-chat)
+# 项目概述
+为了便于项目的管理与发展,将项目相关的仓库全部移动到这里[Github飞享开发组](https://github.com/fsharechat),[gitee](https://gitee.com/comsince)的个人账户下面的项目,原则上全部移动到这里维护
 
-__NOTE__: __项目已经迁移到这里[fsharechat/vue-chat](https://github.com/fsharechat/vue-chat)维护__
+# 项目列表
+## 服务端项目
+* [chat-server-release](https://github.com/fsharechat/chat-server-release) 飞享服务端发布项目,便于快速本地部署
+* [chat-server](https://github.com/fsharechat/chat-server)  IM服务端项目
+* [chat-proto](https://github.com/fsharechat/chat-proto) 基于protobuf的相关proto定义文件
 
-# 飞享
+## Android客户端
+* [android-chat](https://github.com/fsharechat/android-chat) Android客户端项目,仅仅支持一对一音视频
+* [android-chat-pro](https://github.com/fsharechat/android-chat-pro) Android专业版,支持群组音视频
 
-![image](http://image.comsince.cn/fx-chat.png)
+## Vue Web客户端
+* [vue-chat](https://github.com/fsharechat/vue-chat)  基于vue的web端项目
 
-该项目是`飞享`聊天系统客户端源码
+## vue 移动端
+* [vue-mobile-chat](https://github.com/fsharechat/vue-mobile-chat) 基于vue的移动端项目
 
-基于[universe-push](https://github.com/comsince/universe_push)的vue即时通讯web端实现，使用websocket进行消息通讯，支持文本，图片类型发送，支持实时音视频，支持音视频与[android-chat](https://github.com/comsince/android-chat)客户端互通
+## electron 客户端
+* [electron-chat](https://github.com/fsharechat/electron-chat) 基于electron的pc端项目
+
+**NOTE:** 专业版提供付费技术支持,并且提供源码授权,请联系QQ `1282212195`
 
 # 项目截图
-* 消息提示
 
-![image](./attachment/vue-chat-unread.png)
+## Android 客户端
 
-* 文字消息
+| 主界面      | 群组音视频聊天| 
+| :--------: | :--------:| 
+|<img src="https://media.comsince.cn/minio-bucket-image-name/android-main.png" alt="图片替换文本" width="300" height="533" align="center" />|<img src="https://media.comsince.cn/minio-bucket-image-name/android-group-call.png" alt="图片替换文本" width="300" height="533" align="center" />|
+## web 客户端
 
-![image](./attachment/vue-chat.png)
+![image](https://media.comsince.cn/minio-bucket-image-name/vue-chat-group-info.png)  
+![image](https://media.comsince.cn/minio-bucket-image-name/vue-chat-main.png)  
+![image](https://media.comsince.cn/minio-bucket-image-name/vue-chat-create-group.png)
 
-* 图片消息
+# 项目演示说明
 
-![image](./attachment/vue-chat-pic.png)
+* [vue-chat-web版本](https://www.comsince.cn/web)
+* [vue-mobile-chat移动版本](https://www.comsince.cn/mobile)
+* Android扫码下载  
 
-* 视频消息
+![image](https://media.comsince.cn/minio-bucket-image-name/1-373z3zNN-1594953226715-fshare-chat-apk-qrcode.png)
 
-![image](./attachment/vue-chat-video.png)
+**NOTE:** 由于现在没有开通短信功能,可以使用下演示帐号登录
 
-# 项目演示
-* [项目公测地址](https://chat.comsince.cn)
-* 请选择其中任何一个帐号密码进行登录即可
-```properties
+```shell
 帐号：13800000000, 13800000001, 13800000002
-密码：556677
-```
-* 暂时停止手机验证码注册登录，后续开通QQ群里面通知
-
-## 版本规划
-### V1.0.0
-* 登录认证流程
-* 实现朋友列表展示，用户信息获取
-* 会话信息拉取，会话消息缓存
-* 纯文本消息通讯
-* 支持图片，视频消息展示
-* 群会话功能
-
-### V1.0.1
-* 增加全屏幕模式支持，点击用户头像即可切换
-
-![image](https://user-gold-cdn.xitu.io/2020/4/13/171719952947e62a?w=1518&h=655&f=png&s=170160)
-
-### V1.0.2
-* 计划增加音视频聊天功能
-* 实现与android客户端音视频互通
-
-> 语音通话
-
-![image](https://user-gold-cdn.xitu.io/2020/3/20/170f70e65d19d2ac?w=2880&h=1800&f=png&s=1120425)
-
-> 视频通话
-
-![image](https://user-gold-cdn.xitu.io/2020/3/20/170f70e73e8ad91e?w=2880&h=1800&f=png&s=1323835)
-
-### V1.0.3
-* 增加好友搜索，好友添加功能，形成功能闭环
-
-### V1.0.4
-* 群组用户列表功能
-
-### V1.0.5
-* 增加websocket异步回调接口
-* 增加创建群组功能
-* 退出群聊
-* 撤回消息
-* 群组踢人与拉人
-* 修改群名称
-
-![image](https://user-gold-cdn.xitu.io/2020/5/8/171f4c271ba2b4dd?w=2064&h=1144&f=png&s=428322)
-
-### V1.0.6
-* 增加解散群组的功能
-* 优化群组退出与解散交互体验
-* 对于解散的群组与退出的群组,做删除会话处理
-
-### V1.0.7
-* 增加删除消息的功能
-* 增加转发消息
-
-### V1.0.8
-* 支持缩略图传输，防止android 客户端转发图片报错
-
-### V1.0.9
-* 支持缩略图显示
-
-### V1.0.14
-* 修复群组管理员撤回其他成员发送消息的问题
-
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-# 运行请先检查如下配置：TCP服务配置，HTTPS配置，是否支持WSS,是否支持HTTPS，HTTP监听端口8081,HTTPS监听端口8443
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
+验证码：556677
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## 项目迁移问题
+**NOTE:** 针对项目改变地址,可以使用以下方法快速切换代码拉取地址,以下以`chat-server-release`具体说明,其他项目基本类似
+```shell
+git remote rm origin
+git remote add origin git@github.com:fsharechat/chat-server-release.git
+## 同步以下主干分支提交
+git branch --set-upstream-to=origin/master
+```
+
+# 文档列表
+## 技术说明
+* [飞享-即时聊天系统技术文档](https://www.comsince.cn/2020/05/18/universe-push-tech-doc/)
+## 部署
+* [即时聊天系统在Centos上单机部署实践](https://www.comsince.cn/2020/04/13/universe-push-start-on-centos/)
+* [即时聊天系统在Windows上单机测试部署实践](https://www.comsince.cn/2020/05/07/universe-push-start-on-windows/)
+## 音视频方案
+* [实时音视频开发的工程化实践](https://www.comsince.cn/2020/03/04/web-rtc/)
+* [多人音视频会话方案预研](https://www.comsince.cn/2020/06/01/muti-conference-webrtc/)
 
 
+# 功能列表
 
-## 参考项目
+<table>
+    <tr>
+        <th>主功能</th>
+        <th>功能说明</th>
+        <th>web</th>
+        <th>h5</th>
+        <th>android</th>
+    </tr >
+    <tr>
+        <td >登录</td>
+        <td>支持腾讯云,阿里云验证码登录</td>
+        <td>√</td>
+        <td>√</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td rowspan="2">用户信息</td>
+        <td>修改用户头像</td>
+        <td>√</td>
+        <td>√</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>修改用户昵称</td>
+        <td>√</td>
+        <td>√</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td rowspan="4">好友列表</td>
+        <td>发送好友请求</td>
+        <td>√</td>
+        <td>√</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>处理好友请求</td>
+        <td>√</td>
+        <td>√</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>修改好友备注名</td>
+        <td>√</td>
+        <td>√</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>好友列表查看</td>
+        <td>√</td>
+        <td>√</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td rowspan="5">单聊</td>
+        <td>文本/视频/图片</td>
+        <td>√</td>
+        <td>√</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>语音</td>
+        <td>×</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>消息删除</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>消息撤回</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>消息转发</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td rowspan="7">群聊(含基本单聊功能)</td>
+        <td>群聊创建</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>修改群名称</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>群聊退出</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>群聊解散</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>群成员列表</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>成员邀请</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>成员删除</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td rowspan="2">实时音视频</td>
+        <td>一对一音视频</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    <tr>
+        <td>群组音视频</td>
+        <td>√</td>
+        <td>×</td>
+        <td>√</td>
+    </tr>
+    
+</table>
 
-* [Vue-chat](https://github.com/han960619/Vue-chat/)
-
-## 依赖组件
-* [常用的 vue 视频插件](https://wangchaoke.cn/?p=372)
-* [西瓜播放器](http://h5player.bytedance.com/gettingStarted)
-* [图标Icon支持](https://www.iconfont.cn/manage/index?spm=a313x.7781069.1998910419.11&manage_type=myprojects&projectId=1698562)
-
-## 推荐项目
-
-* [vue-wechat](https://github.com/zhaohaodang/vue-WeChat)
-* [vue-chat](https://github.com/aermin/vue-chat)
-* [QRCodeLogin](https://github.com/HeyJC/QRCodeLogin/blob/master/Web/auth/src/components/Input.vue) 说明二维码和密码登录的切换操作
-
+# 商业说明
 
 ## 开源协议
 
@@ -145,13 +228,7 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 
 | 支付宝      | 微信| 
 | :--------: | :--------:| 
-|<img src="http://image.comsince.cn/zfb-purse.png" alt="图片替换文本" width="300" height="300" align="center" />|<img src="http://image.comsince.cn/wx-purse.png" alt="图片替换文本" width="300" height="300" align="center" />|
-
-## QQ 群交流
-
-| QQ群      | QQ群 |
-| :--------: | :--------: | 
-|<img src="http://image.comsince.cn/1-VYVLVL22-1587711095978-/storage/emulated/0/Tencent/QQ_Images/qrcode_1587711062833.jpg" alt="图片替换文本" width="300" height="300" align="center" />|![image](./attachment/qq_qrcode_universe_push.jpg)|
+|<img src="https://media.comsince.cn/minio-bucket-image-name/zfb-purse.jpg" alt="图片替换文本" width="300" height="300" align="center" />|<img src="https://media.comsince.cn/minio-bucket-image-name/wx-purse.png" alt="图片替换文本" width="300" height="300" align="center" />|
 
 ## 技术支持
 
