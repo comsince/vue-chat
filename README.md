@@ -1,4 +1,3 @@
-
 # 项目概述
 为了便于项目的管理与发展,将项目相关的仓库全部移动到这里[Github飞享开发组](https://github.com/fsharechat),[gitee](https://gitee.com/comsince)的个人账户下面的项目,原则上全部移动到这里维护
 
@@ -29,12 +28,18 @@
 
 | 主界面      | 群组音视频聊天| 
 | :--------: | :--------:| 
-|<img src="https://media.comsince.cn/minio-bucket-image-name/android-main.png" alt="图片替换文本" width="300" height="533" align="center" />|<img src="https://media.comsince.cn/minio-bucket-image-name/android-group-call.png" alt="图片替换文本" width="300" height="533" align="center" />|
+|<img src="https://media.comsince.cn/minio-bucket-image-name/android-main.png" alt="图片替换文本" width="300" height="533" align="center"/>|<img src="https://media.comsince.cn/minio-bucket-image-name/android-group-call.png" alt="图片替换文本" width="300" height="533" align="center"/>|
+
 ## web 客户端
 
 ![image](https://media.comsince.cn/minio-bucket-image-name/vue-chat-group-info.png)  
 ![image](https://media.comsince.cn/minio-bucket-image-name/vue-chat-main.png)  
 ![image](https://media.comsince.cn/minio-bucket-image-name/vue-chat-create-group.png)
+
+## PC客户端
+
+![image](https://media.comsince.cn/minio-bucket-image-name/1-373z3zNN-1599900805150-image.png)
+![image](https://media.comsince.cn/minio-bucket-image-name/1-373z3zNN-1599900459066-image.png)
 
 # 项目演示说明
 
@@ -43,6 +48,12 @@
 * Android扫码下载  
 
 ![image](https://media.comsince.cn/minio-bucket-image-name/1-373z3zNN-1594953226715-fshare-chat-apk-qrcode.png)
+
+* pc 客户端下载
+  * [windows客户端](https://media.comsince.cn/minio-bucket-file-name/fshare-chat-window.exe)
+  * [windows免安装版本](https://media.comsince.cn/minio-bucket-file-name/fshare-eletron-vue-chat.exe)
+  * [macos客户端](https://media.comsince.cn/minio-bucket-file-name/fshare-chat-macos.dmg)
+  * [Linux客户端](https://media.comsince.cn/minio-bucket-file-name/fshare-chat-linux.AppImage)
 
 **NOTE:** 由于现在没有开通短信功能,可以使用下演示帐号登录
 
@@ -80,10 +91,12 @@ git branch --set-upstream-to=origin/master
         <th>web</th>
         <th>h5</th>
         <th>android</th>
+        <th>pc客户端</th>
     </tr >
     <tr>
         <td >登录</td>
         <td>支持腾讯云,阿里云验证码登录</td>
+        <td>√</td>
         <td>√</td>
         <td>√</td>
         <td>√</td>
@@ -94,9 +107,11 @@ git branch --set-upstream-to=origin/master
         <td>√</td>
         <td>√</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>修改用户昵称</td>
+        <td>√</td>
         <td>√</td>
         <td>√</td>
         <td>√</td>
@@ -107,9 +122,11 @@ git branch --set-upstream-to=origin/master
         <td>√</td>
         <td>√</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>处理好友请求</td>
+        <td>√</td>
         <td>√</td>
         <td>√</td>
         <td>√</td>
@@ -119,9 +136,11 @@ git branch --set-upstream-to=origin/master
         <td>√</td>
         <td>√</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>好友列表查看</td>
+        <td>√</td>
         <td>√</td>
         <td>√</td>
         <td>√</td>
@@ -132,11 +151,13 @@ git branch --set-upstream-to=origin/master
         <td>√</td>
         <td>√</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>语音</td>
         <td>×</td>
         <td>×</td>
+        <td>√</td>
         <td>√</td>
     </tr>
     <tr>
@@ -144,17 +165,20 @@ git branch --set-upstream-to=origin/master
         <td>√</td>
         <td>×</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>消息撤回</td>
         <td>√</td>
         <td>×</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>消息转发</td>
         <td>√</td>
         <td>×</td>
+        <td>√</td>
         <td>√</td>
     </tr>
     <tr>
@@ -163,11 +187,13 @@ git branch --set-upstream-to=origin/master
         <td>√</td>
         <td>×</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>修改群名称</td>
         <td>√</td>
         <td>×</td>
+        <td>√</td>
         <td>√</td>
     </tr>
     <tr>
@@ -175,11 +201,13 @@ git branch --set-upstream-to=origin/master
         <td>√</td>
         <td>×</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>群聊解散</td>
         <td>√</td>
         <td>×</td>
+        <td>√</td>
         <td>√</td>
     </tr>
     <tr>
@@ -187,17 +215,20 @@ git branch --set-upstream-to=origin/master
         <td>√</td>
         <td>×</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>成员邀请</td>
         <td>√</td>
         <td>×</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>成员删除</td>
         <td>√</td>
         <td>×</td>
+        <td>√</td>
         <td>√</td>
     </tr>
     <tr>
@@ -206,11 +237,13 @@ git branch --set-upstream-to=origin/master
         <td>√</td>
         <td>×</td>
         <td>√</td>
+        <td>√</td>
     </tr>
     <tr>
         <td>群组音视频</td>
         <td>√</td>
         <td>×</td>
+        <td>√</td>
         <td>√</td>
     </tr>
     
@@ -220,7 +253,7 @@ git branch --set-upstream-to=origin/master
 
 ## 开源协议
 
-本项目使用非商业性署名协议[Creative Commons Attribution Non Commercial 3.0 Unported](LICENSE)
+本项目使用非商业性署名协议,禁止演绎[Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License](LICENSE)
 
 ## 一次性赞助
 
@@ -238,4 +271,4 @@ git branch --set-upstream-to=origin/master
 
 | QQ群 |
 | :--------: | 
-|<img src="https://media.comsince.cn/minio-bucket-image-name/qq-group.jpg" alt="图片替换文本" width="300" height="411" align="center" />|
+|<img src="https://media.comsince.cn/minio-bucket-image-name/qq-group.jpg" alt="图片替换文本" width="300" height="400" align="center" />|
