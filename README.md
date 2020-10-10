@@ -1,3 +1,6 @@
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/">Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License</a>.
+
 # 项目概述
 为了便于项目的管理与发展,将项目相关的仓库全部移动到这里[Github飞享开发组](https://github.com/fsharechat),[gitee](https://gitee.com/comsince)的个人账户下面的项目,原则上全部移动到这里维护
 
@@ -17,8 +20,8 @@
 ## vue 移动端
 * [vue-mobile-chat](https://github.com/fsharechat/vue-mobile-chat) 基于vue的移动端项目
 
-## electron 客户端
-* [electron-chat](https://github.com/fsharechat/electron-chat) 基于electron的pc端项目
+## electron vue 客户端
+* [electron-vue-chat](https://github.com/fsharechat/electron-vue-chat) 基于electron的pc端项目
 
 **NOTE:** 专业版提供付费技术支持,并且提供源码授权,请联系QQ `1282212195`
 
@@ -43,17 +46,23 @@
 
 # 项目演示说明
 
-* [vue-chat-web版本](https://www.comsince.cn/web)
-* [vue-mobile-chat移动版本](https://www.comsince.cn/mobile)
+**NOTE:** 请使用同一环境的`PC`,`Android`端登录测试,演示环境的统一服务地址为`chat.comsince.cn`
+
+* [vue-chat-web版本](https://chat.comsince.cn)
+* [vue-mobile-chat移动版本](https://chat.comsince.cn/mobile)
 * Android扫码下载  
 
 ![image](https://media.comsince.cn/minio-bucket-image-name/1-373z3zNN-1594953226715-fshare-chat-apk-qrcode.png)
 
 * pc 客户端下载
   * [windows客户端](https://media.comsince.cn/minio-bucket-file-name/fshare-chat-window.exe)
-  * [windows免安装版本](https://media.comsince.cn/minio-bucket-file-name/fshare-eletron-vue-chat.exe)
   * [macos客户端](https://media.comsince.cn/minio-bucket-file-name/fshare-chat-macos.dmg)
   * [Linux客户端](https://media.comsince.cn/minio-bucket-file-name/fshare-chat-linux.AppImage)
+
+
+## 备用地址
+* [vue-chat-web版本](https://www.comsince.cn/web)
+* [vue-mobile-chat移动版本](https://www.comsince.cn/mobile)  
 
 **NOTE:** 由于现在没有开通短信功能,可以使用下演示帐号登录
 
