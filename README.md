@@ -1,6 +1,8 @@
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/">Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License</a>.
 
+**NOTE:** __飞享即时通讯IM[官网上线](https://fsharechat.comsince.cn/)__
+
 # 项目概述
 为了便于项目的管理与发展,将项目相关的仓库全部移动到这里[Github飞享开发组](https://github.com/fsharechat),[gitee](https://gitee.com/comsince)的个人账户下面的项目,原则上全部移动到这里维护
 
@@ -86,6 +88,8 @@ git branch --set-upstream-to=origin/master
 ## 部署
 * [即时聊天系统在Centos上单机部署实践](https://www.comsince.cn/2020/04/13/universe-push-start-on-centos/)
 * [即时聊天系统在Windows上单机测试部署实践](https://www.comsince.cn/2020/05/07/universe-push-start-on-windows/)
+* [即时聊天系统在Windows上单机部署指南](https://www.comsince.cn/2020/10/14/fshare-on-windows/)
+* [即时聊天系统在Ubuntu上单机部署实践](https://www.comsince.cn/2020/08/31/ubuntu-install-fshare/)
 ## 音视频方案
 * [实时音视频开发的工程化实践](https://www.comsince.cn/2020/03/04/web-rtc/)
 * [多人音视频会话方案预研](https://www.comsince.cn/2020/06/01/muti-conference-webrtc/)
