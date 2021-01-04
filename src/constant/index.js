@@ -1,5 +1,5 @@
 export const WS_PROTOCOL = 'wss';
-export const WS_IP = 'chat.comsince.cn';
+export const WS_IP = 'server.comsince.cn/ws';
 // export const WS_IP = 'localhost';
 export const WS_PORT = 9326;
 export const HEART_BEAT_INTERVAL = 25 * 1000;
