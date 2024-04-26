@@ -27,4 +27,4 @@ jobs:
       - name: Upload file via SCP
         run: |
           export SSHPASS="${{ secrets.SSH_PASSWORD }}"
-          scp -o StrictHostKeyChecking=no -P ${{ secrets.SSH_PORT }} path/to/local/file ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_PATH }}
+          scp -o StrictHostKeyChecking=no -P ${{ secrets.SSH_PORT }} build ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_PATH }}
