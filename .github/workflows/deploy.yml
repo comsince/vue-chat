@@ -21,13 +21,13 @@ jobs:
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
-          ssh
-          cat package.json
-          echo "SERVER_HOST is: $env:SERVER_HOST "
-          echo "V_SERVER_HOST: ${{ vars.V_SERVER_HOST }}"
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.ppk
-          cat private_key.ppk
-          ssh -i private_key.ppk root@fsharechat.cn
-          echo "login in fsharechat"
+          # ssh
+          # cat package.json
+          # echo "SERVER_HOST is: $env:SERVER_HOST "
+          # echo "V_SERVER_HOST: ${{ vars.V_SERVER_HOST }}"
+          # echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.ppk
+          # cat private_key.ppk
+          # ssh -i private_key.ppk root@fsharechat.cn
+          # echo "login in fsharechat"
           # echo "SSHPASS=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
           # scp -o StrictHostKeyChecking=no -P 22 build root@fsharechat.cn:/data/temp-release/windows
