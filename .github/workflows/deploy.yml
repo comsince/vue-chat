@@ -20,6 +20,7 @@ jobs:
         run: |
           choco install git -y
           choco install openssh -y
+          choco install putty -y
 
       - name: Set up Git Bash
         run: |
@@ -30,6 +31,8 @@ jobs:
           dir
           git version
           ssh
+          "C:\Program Files\PuTTY\pscp.exe" -batch -scp -v -pw ${{ secrets.SSH_PASSWORD }} -i key.ppk -P 22 -l root -s command.txt
+          
           ssh root@fsharechat.cn
           echo "SSHPASS=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
           scp -o StrictHostKeyChecking=no -P 22 build root@fsharechat.cn:/data/temp-release/windows
