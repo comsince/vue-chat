@@ -19,6 +19,7 @@ jobs:
       - name: Install Git
         run: |
           choco install git -y
+          choco install openssh -y
 
       - name: Set up Git Bash
         run: |
@@ -28,6 +29,7 @@ jobs:
         run: |
           dir
           git version
+          ssh
           ssh root@fsharechat.cn
           echo "SSHPASS=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
           scp -o StrictHostKeyChecking=no -P 22 build root@fsharechat.cn:/data/temp-release/windows
