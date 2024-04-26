@@ -28,10 +28,10 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           HOST: ${{secrets.SERVER_HOST}}
 
-      - name: Set up PuTTY
-        uses: jirutka/ssh-agent@v1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # - name: Set up PuTTY
+      #   uses: jirutka/ssh-agent@v1
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Execute remote command with Plink
         run: |
