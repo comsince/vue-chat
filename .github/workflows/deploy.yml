@@ -21,6 +21,7 @@ jobs:
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
+          echo "GITHUB_REF: ${{vars.GITHUB_REF}}"
           # ssh
           # cat package.json
           # echo "SERVER_HOST is: $env:SERVER_HOST "
