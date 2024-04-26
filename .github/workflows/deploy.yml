@@ -34,6 +34,10 @@ jobs:
           putty.exe -ssh
           "C:\Program Files\PuTTY\pscp.exe" 
           cat package.json
-          ssh root@fsharechat.cn
-          echo "SSHPASS=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
-          scp -o StrictHostKeyChecking=no -P 22 build root@fsharechat.cn:/data/temp-release/windows
+          
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.ppk
+          cat private_key.ppk
+          ssh -i private_key.ppk root@fsharechat.cn
+          echo "login in fsharechat"
+          # echo "SSHPASS=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
+          # scp -o StrictHostKeyChecking=no -P 22 build root@fsharechat.cn:/data/temp-release/windows
