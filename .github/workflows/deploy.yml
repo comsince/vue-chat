@@ -13,17 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install OpenSSH
-        run: |
-          Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
-          Start-Service ssh-agent
-
-      - name: Configure SSH Agent
-        run: |
-          ssh-add - <<<"${{ secrets.SERVER_PRIVATE_KEY }}"
+      - name: Set up Git Bash
+        uses: xt0rted/setup-msysgit@v1
 
       - name: Upload file via SCP
         run: |
-          scp -o StrictHostKeyChecking=no -i $env:SSH_AUTH_SOCK build ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_PATH }}
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          export SSHPASS="${{ secrets.SSH_PASSWORD }}"
+          scp -o StrictHostKeyChecking=no -P ${{ secrets.SSH_PORT }} path/to/local/file ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_PATH }}
