@@ -31,7 +31,7 @@ jobs:
           dir
           git version
           ssh
-          "C:\Program Files\PuTTY\pscp.exe" -P 22 build root@fsharechat.cn:/data/
+          "C:\Program Files\PuTTY\pscp.exe" 
           
           ssh root@fsharechat.cn
           echo "SSHPASS=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
