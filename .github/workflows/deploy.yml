@@ -13,18 +13,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-
       - name: Install Git
         run: |
-          choco install git -y
           choco install openssh -y
-          choco install putty -y
-
-      - name: Set up Git Bash
-        run: |
-          echo 'export PATH="/usr/bin:$PATH"' >> $GITHUB_ENV
 
       - name: Upload file via SCP
         run: |
@@ -34,7 +25,7 @@ jobs:
           putty.exe -ssh
           "C:\Program Files\PuTTY\pscp.exe" 
           cat package.json
-          
+          echo ${{secrets.SERVER_HOST}}
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.ppk
           cat private_key.ppk
           ssh -i private_key.ppk root@fsharechat.cn
