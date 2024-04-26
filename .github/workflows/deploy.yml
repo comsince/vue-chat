@@ -1,0 +1,41 @@
+name: Upload and Execute
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up WinSCP
+        uses: marketplace/actions/winscp@v1
+        with:
+          winscp-version: 'latest'
+
+      - name: Upload file via WinSCP
+        run: |
+          $session = New-WinSCPSession -Protocol Sftp -HostName $env:SERVER_HOST -UserName $env:USERNAME -Password $env:PASSWORD -SessionName "WinSCPSession"
+          Copy-WinSCPItem -Session $session -Path "build" -Destination "/data/temp-release/windows"
+          Remove-WinSCPSession -Session $session
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          HOST: ${{secrets.SERVER_HOST}}
+
+      - name: Set up PuTTY
+        uses: jirutka/ssh-agent@v1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Execute remote command with Plink
+        run: |
+          plink $env:USERNAME@$env:SERVER_HOST "ls -h"
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          HOST: ${{secrets.SERVER_HOST}}
