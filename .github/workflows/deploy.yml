@@ -24,6 +24,7 @@ jobs:
           ssh
           cat package.json
           echo "SERVER_HOST is: $env:SERVER_HOST "
+          echo "V_SERVER_HOST: ${{ vars.V_SERVER_HOST }}"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.ppk
           cat private_key.ppk
           ssh -i private_key.ppk root@fsharechat.cn
