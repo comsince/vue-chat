@@ -33,7 +33,7 @@ jobs:
           ssh
           putty.exe -ssh
           "C:\Program Files\PuTTY\pscp.exe" 
-          
+          cat package.json
           ssh root@fsharechat.cn
           echo "SSHPASS=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
           scp -o StrictHostKeyChecking=no -P 22 build root@fsharechat.cn:/data/temp-release/windows
