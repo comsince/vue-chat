@@ -27,5 +27,6 @@ jobs:
       - name: Upload file via SCP
         run: |
           dir
+          ssh root@fsharechat.cn
           echo "SSHPASS=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
           scp -o StrictHostKeyChecking=no -P 22 build root@fsharechat.cn:/data/temp-release/windows
