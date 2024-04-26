@@ -21,7 +21,7 @@ jobs:
         run: |
           ssh
           cat package.json
-          echo ${{secrets.SERVER_HOST}}
+          echo "SERVER_HOST is: ${{secrets.SERVER_HOST}} "
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.ppk
           cat private_key.ppk
           ssh -i private_key.ppk root@fsharechat.cn
