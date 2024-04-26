@@ -19,11 +19,7 @@ jobs:
 
       - name: Upload file via SCP
         run: |
-          dir
-          git version
           ssh
-          putty.exe -ssh
-          "C:\Program Files\PuTTY\pscp.exe" 
           cat package.json
           echo ${{secrets.SERVER_HOST}}
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.ppk
