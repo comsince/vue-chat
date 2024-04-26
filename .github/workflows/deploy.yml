@@ -1,4 +1,4 @@
-name: Upload and Execute
+name: Upload File to Linux Server
 
 on:
   push:
@@ -13,29 +13,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up WinSCP
-        uses: marketplace/actions/winscp@v1
-        with:
-          winscp-version: 'latest'
-
-      - name: Upload file via WinSCP
+      - name: Install OpenSSH
         run: |
-          $session = New-WinSCPSession -Protocol Sftp -HostName $env:SERVER_HOST -UserName $env:USERNAME -Password $env:PASSWORD -SessionName "WinSCPSession"
-          Copy-WinSCPItem -Session $session -Path "build" -Destination "/data/temp-release/windows"
-          Remove-WinSCPSession -Session $session
-        env:
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          HOST: ${{secrets.SERVER_HOST}}
+          Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+          Start-Service ssh-agent
 
-      # - name: Set up PuTTY
-      #   uses: jirutka/ssh-agent@v1
-      #   with:
-      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Execute remote command with Plink
+      - name: Configure SSH Agent
         run: |
-          plink $env:USERNAME@$env:SERVER_HOST "ls -h"
+          ssh-add - <<<"${{ secrets.SERVER_PRIVATE_KEY }}"
+
+      - name: Upload file via SCP
+        run: |
+          scp -o StrictHostKeyChecking=no -i $env:SSH_AUTH_SOCK build ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_PATH }}
         env:
-          USERNAME: ${{ secrets.USERNAME }}
-          HOST: ${{secrets.SERVER_HOST}}
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
