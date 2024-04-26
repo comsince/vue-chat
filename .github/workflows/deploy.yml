@@ -18,10 +18,12 @@ jobs:
           choco install openssh -y
 
       - name: Upload file via SCP
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
           ssh
           cat package.json
-          echo "SERVER_HOST is: ${{secrets.SERVER_HOST}} "
+          echo "SERVER_HOST is: $SERVER_HOST "
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.ppk
           cat private_key.ppk
           ssh -i private_key.ppk root@fsharechat.cn
