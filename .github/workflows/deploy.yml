@@ -31,6 +31,7 @@ jobs:
           dir
           git version
           ssh
+          putty.exe -ssh
           "C:\Program Files\PuTTY\pscp.exe" 
           
           ssh root@fsharechat.cn
