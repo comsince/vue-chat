@@ -34,18 +34,18 @@
 
 | 主界面      | 群组音视频聊天| 
 | :--------: | :--------:| 
-|<img src="https://media.comsince.cn/minio-bucket-image-name/android-main.png" alt="图片替换文本" width="300" height="533" align="center"/>|<img src="https://media.comsince.cn/minio-bucket-image-name/android-group-call.png" alt="图片替换文本" width="300" height="533" align="center"/>|
+|<img src="https://media.fsharechat.cn/minio-bucket-image-name/android-main.png" alt="图片替换文本" width="300" height="533" align="center"/>|<img src="https://media.fsharechat.cn/minio-bucket-image-name/android-group-call.png" alt="图片替换文本" width="300" height="533" align="center"/>|
 
 ### web 客户端
 
-![image](https://media.comsince.cn/minio-bucket-image-name/vue-chat-group-info.png)  
-![image](https://media.comsince.cn/minio-bucket-image-name/vue-chat-main.png)  
-![image](https://media.comsince.cn/minio-bucket-image-name/vue-chat-create-group.png)
+![image](https://media.fsharechat.cn/minio-bucket-image-name/vue-chat-group-info.png)  
+![image](https://media.fsharechat.cn/minio-bucket-image-name/vue-chat-main.png)  
+![image](https://media.fsharechat.cn/minio-bucket-image-name/vue-chat-create-group.png)
 
 ### PC客户端
 
-![image](https://media.comsince.cn/minio-bucket-image-name/1-373z3zNN-1599900805150-image.png)
-![image](https://media.comsince.cn/minio-bucket-image-name/1-373z3zNN-1599900459066-image.png)
+![image](https://media.fsharechat.cn/minio-bucket-image-name/1-373z3zNN-1599900805150-image.png)
+![image](https://media.fsharechat.cn/minio-bucket-image-name/1-373z3zNN-1599900459066-image.png)
 
 ## 项目演示说明
 
@@ -55,12 +55,12 @@
 * [vue-mobile-chat移动版本](https://chat.comsince.cn/mobile)
 * Android扫码下载  
 
-![image](https://media.comsince.cn/minio-bucket-image-name/1-373z3zNN-1594953226715-fshare-chat-apk-qrcode.png)
+![image](https://media.fsharechat.cn/minio-bucket-image-name/1-373z3zNN-1594953226715-fshare-chat-apk-qrcode.png)
 
 * pc 客户端下载
-  * [windows客户端](https://media.comsince.cn/minio-bucket-file-name/fshare-chat-window.exe)
-  * [macos客户端](https://media.comsince.cn/minio-bucket-file-name/fshare-chat-macos.dmg)
-  * [Linux客户端](https://media.comsince.cn/minio-bucket-file-name/fshare-chat-linux.AppImage) 
+  * [windows客户端](https://media.fsharechat.cn/minio-bucket-file-name/fshare-chat-window.exe)
+  * [macos客户端](https://media.fsharechat.cn/minio-bucket-file-name/fshare-chat-macos.dmg)
+  * [Linux客户端](https://media.fsharechat.cn/minio-bucket-file-name/fshare-chat-linux.AppImage) 
 
 **NOTE:** 由于现在没有开通短信功能,可以使用下演示帐号登录
 
@@ -275,7 +275,7 @@ git branch --set-upstream-to=origin/master
 
 | 飞享IM软件著作证书 |
 | :--------: | 
-|<img src="https://media.comsince.cn/minio-bucket-image-name/fsharechat-soft-cert.jpg" alt="图片替换文本" width="300" height="424" align="center" />|
+|<img src="https://media.fsharechat.cn/minio-bucket-image-name/fsharechat-soft-cert.jpg" alt="图片替换文本" width="300" height="424" align="center" />|
 
 ### 一次性赞助
 
@@ -283,7 +283,7 @@ git branch --set-upstream-to=origin/master
 
 | 支付宝      | 微信| 
 | :--------: | :--------:| 
-|<img src="https://media.comsince.cn/minio-bucket-image-name/zfb-purse.jpg" alt="图片替换文本" width="300" height="300" align="center" />|<img src="https://media.comsince.cn/minio-bucket-image-name/wx-purse.png" alt="图片替换文本" width="300" height="300" align="center" />|
+|<img src="https://media.fsharechat.cn/minio-bucket-image-name/zfb-purse.jpg" alt="图片替换文本" width="300" height="300" align="center" />|<img src="https://media.fsharechat.cn/minio-bucket-image-name/wx-purse.png" alt="图片替换文本" width="300" height="300" align="center" />|
 
 ### 技术支持
 
@@ -293,4 +293,4 @@ git branch --set-upstream-to=origin/master
 
 | QQ群 |
 | :--------: | 
-|<img src="https://media.comsince.cn/minio-bucket-image-name/qq-group.jpg" alt="图片替换文本" width="300" height="400" align="center" />|
+|<img src="https://media.fsharechat.cn/minio-bucket-image-name/qq-group.jpg" alt="图片替换文本" width="300" height="400" align="center" />|
