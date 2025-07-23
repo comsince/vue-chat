@@ -126,6 +126,7 @@ export default {
    display: inline-block;
    font-size: 26px; 
    color: rgb(0,220,65);
+   transition: color 0.3s ease;
 }
 .layout-container {
     width: 100%;

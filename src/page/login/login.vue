@@ -1,6 +1,6 @@
 <template>
   <!--  账号输入登录-->
-  <div class="login_box">
+  <div class="login_box" :class="{ 'dark-mode': isDarkMode }">
     <router-link to="#">
       <div class="login_close"></div>
     </router-link>
@@ -36,6 +36,12 @@ export default {
       sendVerifyBtnText: '发送验证码',
       sendVerifyBtnDisabled: false,
       loginAPI: LOGIN_API, // 通过用户ID登录接口
+    }
+  },
+  computed: {
+    isDarkMode() {
+      // 从localStorage读取夜间模式状态
+      return localStorage.getItem('vue-dark-mode') === 'true';
     }
   },
   destroyed() {
@@ -134,6 +140,43 @@ export default {
 </script>
 
 <style scoped>
+/* 引入CSS变量 */
+:root {
+  --bg-color: #fff;
+  --text-color: #333;
+  --sidebar-bg: #2b2c2f;
+  --main-bg: #ffffff;
+  --border-color: #e1e1e1;
+  --hover-bg: #f5f5f5;
+  --input-bg: #fff;
+  --input-border: #dcdfe6;
+  --card-bg: #fff;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode {
+  --bg-color: #1a1a1a;
+  --text-color: #e1e1e1;
+  --sidebar-bg: #1a1a1a;
+  --main-bg: #2d2d2d;
+  --border-color: #404040;
+  --hover-bg: #3a3a3a;
+  --input-bg: #3a3a3a;
+  --input-border: #505050;
+  --card-bg: #3a3a3a;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
+/* 登录页面占位符颜色 */
+.dark-mode input::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+
+body {
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease;
+}
   /*登录框*/
   .login_box {
     z-index: 99;
@@ -145,8 +188,9 @@ export default {
     margin-left: -190px;
     margin-top: -270px;
     border-radius: 6px;
-    background-color: #fff;
-    box-shadow: 0 2px 10px #999;
+    background-color: var(--main-bg);
+    box-shadow: 0 2px 10px var(--shadow);
+    transition: background-color 0.3s ease;
   }
   .login_close {
     position: absolute;
@@ -185,15 +229,19 @@ export default {
   }
   .login_panel .login_title p {
     margin-top: 15px;
-    color: #999999;
+    color: var(--text-color);
+    opacity: 0.7;
     font-size: 15px;
+    transition: color 0.3s ease;
   }
   .login_panel label {
     display: block;
     font-size: 12px;
     line-height: 18px;
-    color: #a9a8a5;
+    color: var(--text-color);
+    opacity: 0.6;
     margin-top: 10px;
+    transition: color 0.3s ease;
   }
   .login_panel input {
     display: inline;
@@ -201,12 +249,13 @@ export default {
     padding: 0 5%;
     line-height: 42px;
     font-size: 14px;
-    color: #333333;
+    color: var(--text-color);
     border-radius: 4px;
     outline: 0;
-    border: 0;
+    border: 1px solid var(--input-border);
     width: 100%;
-    background: #d7e8fc;
+    background: var(--input-bg);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
   /* 按钮 */
   .login_panel .bt {

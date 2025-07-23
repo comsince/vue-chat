@@ -106,6 +106,38 @@
   background-color: var(--hover-bg) !important;
 }
 
+/* Element UI 表格夜间模式样式 */
+.dark-mode .el-table {
+  background-color: var(--main-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-table th {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.dark-mode .el-table td {
+  background-color: var(--main-bg) !important;
+  color: var(--text-color) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.dark-mode .el-table tr:hover td {
+  background-color: var(--hover-bg) !important;
+}
+
+.dark-mode .el-table--enable-row-hover .el-table__body tr:hover > td {
+  background-color: var(--hover-bg) !important;
+}
+
+/* Element UI 头像组件 */
+.dark-mode .el-avatar {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
 /* 自定义组件夜间模式样式 */
 .dark-mode * {
   color: var(--text-color);

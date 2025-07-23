@@ -44,11 +44,12 @@ export default {
 .friendlist
     height: 87%
     overflow-y: auto
-    border-top: 1px solid #e7e7e7
-    border-right: 1px solid #e7e7e7
-    background: #f2f2f2
+    border-top: 1px solid var(--border-color)
+    border-right: 1px solid var(--border-color)
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
     .frienditem
-        border-top: 1px solid #dadada
+        border-top: 1px solid var(--border-color)
         &:first-child,&.noborder
             border-top: none
         .list_title
@@ -56,22 +57,27 @@ export default {
             width: 100%
             font-size: 12px
             padding: 15px 0 3px 12px
-            color: #999
+            color: var(--text-color)
+            opacity: 0.6
+            transition: color 0.3s ease
         .friend-info
             display: flex
             padding: 12px
-            transition: background-color .1s
+            transition: background-color .3s
             font-size: 0
+            color: var(--text-color)
             &:hover 
-                background-color: rgb(220,220,220)
+                background-color: var(--hover-bg)
             &.active 
-                background-color: #c4c4c4
+                background-color: var(--hover-bg)
             .avatar
                 border-radius: 2px
                 margin-right: 12px
             .remark
                 font-size: 14px
                 line-height: 36px
+                color: var(--text-color)
+                transition: color 0.3s ease
             .friend-item
                 position:relative
                 .unread-friend-request-num
