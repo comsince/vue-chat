@@ -366,6 +366,9 @@ export default {
         padding: 0px 0 0 30px
         box-sizing: border-box
         display:flex
+        background: var(--main-bg)
+        color: var(--text-color)
+        transition: background-color 0.3s ease, color 0.3s ease
         .friendname
             display: flex
             align-items: center
@@ -377,15 +380,18 @@ export default {
             margin-left : auto
             .icon
                 font-size: 24px
-                cursor: pointer 
+                cursor: pointer
+                color: var(--text-color)
+                transition: color 0.3s ease 
       .message-wrapper
         height: 86%
         padding: 10px 15px
         box-sizing: border-box
         overflow-y: auto
-        border-top: 1px solid #e7e7e7
-        border-bottom: 1px solid #e7e7e7
-        background: #f2f2f2
+        border-top: 1px solid var(--border-color)
+        border-bottom: 1px solid var(--border-color)
+        background: var(--main-bg)
+        transition: background-color 0.3s ease
         .message
             margin-bottom: 15px
         .time
@@ -396,9 +402,10 @@ export default {
             span
                 display: inline-block
                 padding: 4px 6px
-                color: #fff
+                color: var(--text-color)
                 border-radius: 3px
-                background-color: #dcdcdc
+                background-color: var(--hover-bg)
+                transition: background-color 0.3s ease, color 0.3s ease
         .main
             margin-top: 10px
             .avatar 
@@ -412,7 +419,8 @@ export default {
                     margin-left: 10px
                     margin-bottom: 5px
                     font-size: 8px
-                    color: #999
+                    color: var(--text-color)
+                    opacity: 0.7
                 .content-message-right-menu
                     position: relative    
                     .content-message
@@ -427,8 +435,10 @@ export default {
                         font-size: 14px
                         text-align: left
                         word-break: break-all
-                        background-color: #fafafa
+                        background-color: var(--card-bg)
+                        color: var(--text-color)
                         border-radius: 4px
+                        transition: background-color 0.3s ease, color 0.3s ease
                         .text
                             white-space: pre-wrap;
                         &:before
@@ -437,7 +447,7 @@ export default {
                             top: 12px
                             right: 100%
                             border: 6px solid transparent
-                            border-right-color: #fafafa
+                            border-right-color: var(--card-bg)
         .self
             text-align: right
             .avatar

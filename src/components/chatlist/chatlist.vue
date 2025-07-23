@@ -118,18 +118,20 @@ export default {
   overflow-y: auto
   overflow-x: hidden
   box-sizing: border-box
-  border-top: 1px solid #e7e7e7
-  border-right: 1px solid #e7e7e7
-  background: #f2f2f2
+  border-top: 1px solid var(--border-color)
+  border-right: 1px solid var(--border-color)
+  background: var(--main-bg)
+  transition: background-color 0.3s ease
   .sessionlist
     display: flex
     padding: 12px
-    transition: background-color .1s
+    transition: background-color .3s
     font-size: 0
+    color: var(--text-color)
     &:hover 
-        background-color: rgb(220,220,220)
+        background-color: var(--hover-bg)
     &.active 
-        background-color: #c4c4c4
+        background-color: var(--hover-bg)
     .avatar
         border-radius: 2px
         margin-right: 12px
@@ -153,7 +155,8 @@ export default {
                 flex: 0 0 auto
                 float: right
                 line-height: 15px
-                color: #999
+                color: var(--text-color)
+                opacity: 0.6
                 font-size: 10px
                 vertical-align: center
         .lastmsg-info
@@ -165,7 +168,8 @@ export default {
                 width: 130px
                 height: 15px
                 line-height: 15px
-                color: #999
+                color: var(--text-color)
+                opacity: 0.7
                 bottom: 4px
                 overflow: hidden
                 white-space:nowrap

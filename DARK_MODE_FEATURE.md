@@ -41,7 +41,31 @@
 **文件**: `src/page/chat/chat.vue`
 - 更新背景色使用CSS变量
 
-### 6. 全局样式
+### 6. 会话列表组件
+**文件**: `src/components/chatlist/chatlist.vue`
+- 更新所有颜色使用CSS变量
+- 添加hover和active状态的夜间模式适配
+- 修复文本颜色和时间显示
+
+### 7. 消息组件
+**文件**: `src/components/message/message.vue`
+- 更新消息框背景和边框颜色
+- 适配消息气泡的夜间模式样式
+- 修复头部和时间标签颜色
+
+### 8. 搜索组件
+**文件**: `src/components/search/search.vue`
+- 更新搜索框背景和边框
+- 适配输入框的夜间模式样式
+- 修复占位符文本颜色
+
+### 9. 文本输入组件
+**文件**: `src/components/text/text.vue`
+- 更新输入区域背景色
+- 适配发送按钮和工具栏图标
+- 修复emoji面板的夜间模式样式
+
+### 10. 全局样式
 **文件**: `src/assets/dark-mode.css` (新建)
 - 定义CSS变量系统
 - Element UI 夜间模式样式覆盖
@@ -117,7 +141,8 @@ if(darkMode !== null){
 
 ## 📱 演示页面
 
-打开项目根目录的 `demo.html` 文件可以预览夜间模式功能效果。
+打开项目根目录的 `test-dark-mode.html` 文件可以预览夜间模式功能效果，包括会话列表和聊天界面的完整夜间模式支持。
+
 
 ## 🔮 未来扩展
 
