@@ -108,6 +108,7 @@
 
 /* 自定义组件夜间模式样式 */
 .dark-mode * {
+  color: var(--text-color);
   transition: color 0.3s ease, background-color 0.3s ease;
 }
 
@@ -141,4 +142,5 @@
 
 .dark-mode ::-webkit-scrollbar-thumb:hover {
   background: var(--hover-bg);
+
 }
