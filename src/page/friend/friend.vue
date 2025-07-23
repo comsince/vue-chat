@@ -30,7 +30,10 @@ export default{
   height: 100%
   .friend-wrapper
     width: 250px
-    background: #fff
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
   .friendinfo
     flex: 1
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
 </style>

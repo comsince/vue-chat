@@ -180,13 +180,22 @@ export default {
     height: 60px
     padding: 28px 0 0 30px
     box-sizing: border-box
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
     .nickname
         font-size: 18px
+        color: var(--text-color)
+        transition: color 0.3s ease
 .friendrequest
-    border-top: 1px solid #e7e7e7
+    border-top: 1px solid var(--border-color)
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
 .friendInfo
     padding: 0 90px
-    border-top: 1px solid #e7e7e7
+    border-top: 1px solid var(--border-color)
+    background: var(--main-bg)
+    color: var(--text-color)
+    transition: background-color 0.3s ease, color 0.3s ease
 	.esInfo
 	    display: flex
 	    align-items: center
@@ -210,29 +219,32 @@ export default {
 	            .gender-female
 	                background-image: url(woman.png)
 	                background-size: cover
-	        .signature
-	            font-size: 14px
-	            color: rgba(153,153,153,.8)
+	                .signature
+            font-size: 14px
+            color: var(--text-color)
+            opacity: 0.6
 	    .right
 	        .avatar
 	            border-radius: 3px
 	.detInfo
 	    padding: 40px 0
-	    border-top: 1px solid #e7e7e7
-	    border-bottom: 1px solid #e7e7e7
+	    border-top: 1px solid var(--border-color)
+	    border-bottom: 1px solid var(--border-color)
 	    .remark,.area,.wxid
 	        font-size: 14px
 	        margin-top: 20px
 	        span
 	            font-size: 14px
-	            color: rgba(153,153,153,.8)
+	            color: var(--text-color)
+	            opacity: 0.6
 	            margin-right: 40px
 	    .remark
             .title
                 float: left;
                 font-size: 14px;
                 line-height: 1.6
-                color: rgba(153,153,153,.8);
+                color: var(--text-color);
+                opacity: 0.6;
                 margin-right: 10px;
             .value
                 font-size: 14px;
