@@ -47,8 +47,10 @@ export default {
     max-height: 60px
     min-height: 60px 
     height: 60px
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
 	.padding-wrapper
-	    border-right: 1px solid #e7e7e7
+	    border-right: 1px solid var(--border-color)
 	    padding: 22px 12px 12px 12px
 		.search-wrapper
 			position: relative
@@ -57,17 +59,21 @@ export default {
 			height: 100%
 			max-height: 26px
 			width: 100%
-			background-color: #e5e3e2
-			border: 1px solid #d9d7d6
+			background-color: var(--input-bg)
+			border: 1px solid var(--input-border)
 			border-radius: 2px
+			transition: background-color 0.3s ease
 			.searchInput
 				flex: 1
 				font-size: 12px
 				padding: 6px
-				background-color: #e5e3e2
+				background-color: var(--input-bg)
+				color: var(--text-color)
+				border: none
 				outline: none
+				transition: background-color 0.3s ease, color 0.3s ease
 				&:focus
-					background-color: #f2efee
+					background-color: var(--hover-bg)
 			.icon-sousuo
 				display: inline-block
 				width: 24px
@@ -75,6 +81,9 @@ export default {
 				font-size: 14px
 				line-height: 24px
 				text-align: center
+				color: var(--text-color)
+				opacity: 0.6
+				transition: color 0.3s ease
 			.searchInput-delete
 				display: block
 				position: absolute

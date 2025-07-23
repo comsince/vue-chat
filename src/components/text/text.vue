@@ -588,7 +588,8 @@ export default {
 .text
     position: relative
     height: 25%
-    background: #fff
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
     .emoji
         position: relative
         width: 100%
@@ -597,14 +598,18 @@ export default {
         font-size: 12px
         padding: 0 30px
         box-sizing: border-box
-        color: #7c7c7c
+        color: var(--text-color)
         i
             font-size: 20px;
             margin-right : 10px;
             cursor: pointer
             position: relative
+            color: var(--text-color)
+            opacity: 0.7
+            transition: color 0.3s ease, opacity 0.3s ease
             &:hover
                 color: #1aad19
+                opacity: 1
         input
             opacity: 0;
             height: 100%;
@@ -624,10 +629,11 @@ export default {
             width: 300px
             height: 200px
             padding: 5px
-            background-color: #fff
-            border: 1px solid #d1d1d1
+            background-color: var(--card-bg)
+            border: 1px solid var(--border-color)
             border-radius: 2px
-            box-shadow:0 1px 2px 1px #d1d1d1
+            box-shadow:0 1px 2px 1px var(--shadow)
+            transition: background-color 0.3s ease
             &.showbox-enter-active, &.showbox-leave-active
                 transition: all .5s
             &.showbox-enter,&.showbox-leave-active
@@ -868,6 +874,9 @@ export default {
         font-family: "Micrsofot Yahei"
         font-size: 13px
         resize: none
+        background: var(--main-bg)
+        color: var(--text-color)
+        transition: background-color 0.3s ease, color 0.3s ease
     .send
         position: absolute
         bottom: 10px
@@ -877,11 +886,13 @@ export default {
         line-height: 28px
         box-sizing: border-box
         text-align: center
-        border: 1px solid #e5e5e5
+        border: 1px solid var(--border-color)
         border-radius: 3px
-        background: #f5f5f5
+        background: var(--card-bg)
         font-size: 14px
-        color: #7c7c7c
+        color: var(--text-color)
+        cursor: pointer
+        transition: background-color 0.3s ease, color 0.3s ease
         &:hover
             background: rgb(18,150,17)
             color: #fff
