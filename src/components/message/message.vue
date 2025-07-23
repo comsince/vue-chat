@@ -10,6 +10,11 @@
             </div>
 		</header>
 		<div class="message-wrapper" ref="list" @scroll="scrollEvent" @click="messageBoxClick" :style="{height: (appHeight * 0.75-60) + 'px'}">
+		    <!-- 加载历史消息提示 -->
+		    <div v-if="isLoadingHistory" class="loading-history">
+		        <i class="el-icon-loading"></i>
+		        <span>加载历史消息中...</span>
+		    </div>
 		    <ul v-if="selectedChat">
 		    	<li v-bind:key = index v-for="(item, index) in selectedChat.protoMessages" class="message-item">
 		    		<div v-if="isShowTime(index,selectedChat.protoMessages)" class="time"><span>{{item.timestamp | getTimeStringAutoShort2}}</span></div>
@@ -99,6 +104,7 @@ export default {
             options: {
                 url: 'data-src'
             },
+            isLoadingHistory: false,
         }
     },
     
@@ -250,10 +256,58 @@ export default {
         // 参考资料 https://blog.csdn.net/qq449736038/article/details/80769507
         scrollEvent(e){
             let listheight= this.$refs.list.offsetHeight;
-            // console.log('scroll event top->'+e.srcElement.scrollTop+ ' scrollheight '+e.srcElement.scrollHeight+" list height->"+listheight);
-             if(e.srcElement.scrollHeight - e.srcElement.scrollTop > listheight){
-                 this.$store.dispatch('clearUnreadStatus', '')
-             }
+            let scrollTop = e.srcElement.scrollTop;
+            let scrollHeight = e.srcElement.scrollHeight;
+            
+            // console.log('scroll event top->'+scrollTop+ ' scrollheight '+scrollHeight+" list height->"+listheight);
+            
+            // 清除未读状态 - 当滚动到底部附近时
+            if(scrollHeight - scrollTop > listheight){
+                this.$store.dispatch('clearUnreadStatus', '')
+            }
+            
+            // 下拉刷新 - 当滚动到顶部时加载历史消息
+            if(scrollTop <= 5 && !this.isLoadingHistory) {
+                this.loadMoreHistory();
+            }
+        },
+
+        loadMoreHistory() {
+            if (this.isLoadingHistory || !this.selectedChat || !this.selectedChat.protoMessages.length) {
+                return;
+            }
+            
+            this.isLoadingHistory = true;
+            
+            try {
+                // 获取当前最早的消息ID
+                const oldestMessage = this.selectedChat.protoMessages[0];
+                if (oldestMessage && oldestMessage.messageId) {
+                    console.log('Loading history from messageId:', oldestMessage.messageId);
+                    
+                    // 保存当前滚动位置
+                    const currentScrollHeight = this.$refs.list.scrollHeight;
+                    
+                    // 调用websocket拉取历史消息
+                    // pullType = 2 表示拉取历史消息
+                    webSocketClient.pullMessage(oldestMessage.messageId, 0, 2, 0);
+                    
+                    // 等待DOM更新后恢复滚动位置
+                    this.$nextTick(() => {
+                        if (this.$refs.list) {
+                            const newScrollHeight = this.$refs.list.scrollHeight;
+                            const scrollDiff = newScrollHeight - currentScrollHeight;
+                            this.$refs.list.scrollTop = scrollDiff > 0 ? scrollDiff : 10;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('加载历史消息失败:', error);
+            } finally {
+                setTimeout(() => {
+                    this.isLoadingHistory = false;
+                }, 1000); // 防止频繁请求
+            }
         },
 
         messageBoxClick(e){
@@ -388,10 +442,21 @@ export default {
         padding: 10px 15px
         box-sizing: border-box
         overflow-y: auto
+        -webkit-overflow-scrolling: touch
         border-top: 1px solid var(--border-color)
         border-bottom: 1px solid var(--border-color)
         background: var(--main-bg)
         transition: background-color 0.3s ease
+        .loading-history
+            text-align: center
+            padding: 15px
+            color: var(--text-color)
+            font-size: 14px
+            opacity: 0.7
+            transition: color 0.3s ease
+            i
+                margin-right: 8px
+                animation: el-icon-loading 2s infinite linear
         .message
             margin-bottom: 15px
         .time
