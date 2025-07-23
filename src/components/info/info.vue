@@ -219,10 +219,10 @@ export default {
 	            .gender-female
 	                background-image: url(woman.png)
 	                background-size: cover
-	                .signature
-            font-size: 14px
-            color: var(--text-color)
-            opacity: 0.6
+	        .signature
+	            font-size: 14px
+	            color: var(--text-color)
+	            opacity: 0.6
 	    .right
 	        .avatar
 	            border-radius: 3px
