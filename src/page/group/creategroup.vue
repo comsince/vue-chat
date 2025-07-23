@@ -345,14 +345,15 @@ export default {
   .friendlist-area
     width: 50%
     padding: 2px 0px 0px 0px
-    background: #fff
-    border-right: 1px solid #e7e7e7
+    background: var(--main-bg)
+    border-right: 1px solid var(--border-color)
+    transition: background-color 0.3s ease
     .search-input
         margin-right: 10px
     .friendlist
         overflow-y: auto
         .frienditem
-            border-top: 1px solid #dadada
+            border-top: 1px solid var(--border-color)
             &:first-child,&.noborder
                 border-top: none
             .list_title
@@ -360,16 +361,19 @@ export default {
                 width: 100%
                 font-size: 12px
                 padding: 15px 0 3px 12px
-                color: #999
+                color: var(--text-color)
+                opacity: 0.6
+                transition: color 0.3s ease
             .friend-info
                 display: flex
                 padding: 5px
-                transition: background-color .1s
+                transition: background-color .3s
                 font-size: 0
+                color: var(--text-color)
                 &:hover 
-                    background-color: rgb(220,220,220)
+                    background-color: var(--hover-bg)
                 &.active 
-                    background-color: #c4c4c4 
+                    background-color: var(--hover-bg) 
                 .disable
                     pointer-events: none;     
                 .avatar
@@ -381,7 +385,9 @@ export default {
                     font-size: 14px
                     line-height: 26px
                     display: flex
-                    align-items: center 
+                    align-items: center
+                    color: var(--text-color)
+                    transition: color 0.3s ease 
                 .friend-check
                     margin-left : auto 
                     display: flex
@@ -392,6 +398,8 @@ export default {
     flex-flow: row wrap
     padding: 2px 0px 2px 10px
     width: 50%
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
     .checked-title
         display: flex
         padding: 5px 0px 10px 0px
@@ -399,12 +407,15 @@ export default {
         height: 30px
         .create-group-title
             font-size: 14px
-            color: black 
+            color: var(--text-color)
+            transition: color 0.3s ease
         .check-statu-title
             font-size: 10px
-            color: #999
+            color: var(--text-color)
+            opacity: 0.6
             line-height: 15px
             margin-left : auto
+            transition: color 0.3s ease
     .check-operate
         width: 100%
         align-self: flex-end
@@ -438,9 +449,10 @@ export default {
                 .remark
                     font-size: 14px
                     line-height: 26px
-                    color: black
+                    color: var(--text-color)
                     display: flex
                     align-items: center
+                    transition: color 0.3s ease
 
 .el-dialog__wrapper {
     display: flex;

@@ -247,13 +247,15 @@ export default {
 <style lang="stylus" scoped>
 .group-content
     position: absolute
-    background: #fff
+    background: var(--main-bg)
     height: 200px
     width: 220px
     top: 61px
     right: 0px
     z-index: 2000
-    border-left: 1px solid #e7e7e7 
+    border-left: 1px solid var(--border-color)
+    color: var(--text-color)
+    transition: background-color 0.3s ease, color 0.3s ease 
     .flex-layout
         width: 100%
         height: 100%
@@ -264,7 +266,7 @@ export default {
             width: 100%
             height: 120px
             padding 10px 5px 10px 5px
-            border-bottom: 1px solid #e7e7e7 
+            border-bottom: 1px solid var(--border-color) 
             .group-name-info
                 width: 100%
                 height: 50%
@@ -272,24 +274,32 @@ export default {
                 .group-name-title
                     font-size: 13px
                     line-height: 1.6
-                    color: #888
+                    color: var(--text-color)
+                    opacity: 0.6
+                    transition: color 0.3s ease
                 .group-name
                     font-size: 14px 
                     line-height: 1.6
                     width: 200px  
                     overflow: hidden
                     white-space: nowrap
-                    text-overflow: ellipsis  
+                    text-overflow: ellipsis
+                    color: var(--text-color)
+                    transition: color 0.3s ease  
             .group-board-info
                 width: 100%
                 height: 50%
                 .group-board-title 
                     font-size: 13px
                     line-height: 1.6
-                    color: #888
+                    color: var(--text-color)
+                    opacity: 0.6
+                    transition: color 0.3s ease
                 .group-board-content 
                     font-size: 14px
-                    line-height: 1.6   
+                    line-height: 1.6
+                    color: var(--text-color)
+                    transition: color 0.3s ease   
         .friend-info-list
             width: 100%
             margin-left: 10px
@@ -309,6 +319,8 @@ export default {
                     margin-right: 12px
                     font-size: 32px
                     cursor: pointer
+                    color: var(--text-color)
+                    transition: color 0.3s ease
                 .nickName
                     flex: 1 1 auto
                     width: 106px
@@ -317,7 +329,8 @@ export default {
                     overflow: hidden
                     white-space: nowrap
                     text-overflow: ellipsis
-                    color: black       
+                    color: var(--text-color)
+                    transition: color 0.3s ease       
         .flex-bottom
             width: 100%
             height: 40px
@@ -325,7 +338,7 @@ export default {
             display: flex
             align-items: center
             padding: 15px 0px 15px 0px
-            border-top: 1px solid #e7e7e7 
+            border-top: 1px solid var(--border-color) 
             .quit-group
                 width: 100%
                 color: rgb(0,220,65);
