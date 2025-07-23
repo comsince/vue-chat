@@ -1,0 +1,59 @@
+
+> wechat@1.0.14 dev
+> node build/dev-server.js
+
+> Starting dev server...
+(node:2248) Warning: Accessing non-existent property 'cat' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2248) Warning: Accessing non-existent property 'cd' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'chmod' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'cp' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'dirs' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'pushd' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'popd' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'echo' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'tempdir' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'pwd' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'exec' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'ls' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'find' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'grep' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'head' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'ln' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'mkdir' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'rm' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'mv' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'sed' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'set' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'sort' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'tail' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'test' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'to' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'toEnd' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'touch' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'uniq' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'which' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'lineno' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'column' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'filename' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'lineno' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'column' of module exports inside circular dependency
+(node:2248) Warning: Accessing non-existent property 'filename' of module exports inside circular dependency
+ DONE  Compiled successfully in 2993ms2:54:20 AM
+
+> Listening at http://localhost:9080
+
+/workspace/node_modules/opn/index.js:83
+					reject(new Error('Exited with code ' + code));
+					       ^
+
+Error: Exited with code 3
+    at ChildProcess.<anonymous> (/workspace/node_modules/opn/index.js:83:13)
+    at Object.onceWrapper (node:events:633:26)
+    at ChildProcess.emit (node:events:518:28)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Pipe.<anonymous> (node:net:351:12)
+
+Node.js v22.16.0

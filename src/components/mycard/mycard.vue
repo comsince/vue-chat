@@ -5,6 +5,7 @@
 	    	<img :src="user.img" class="avatar" @click="showPersonCard" @dblclick="changeFullScreenMode">
 			<personcard v-if="showPersonalCard" v-bind:userId="userId"></personcard>
 	    </header>
+	    <about :visible="showAboutDialog" @close="closeAbout"></about>
 	    <div class="navbar" @click="clearSearch">
 			<div class="conversation-item">
 				<span v-if="unreadTotalCount > 0" class="unread-num">
@@ -25,6 +26,7 @@
 			</div> 
 	    </div>
 	    <footer>
+	        <i title = "关于" class="icon iconfont icon-dkw_xiaoxi" @click="showAbout"></i>
 	        <i title = "退出" class="icon iconfont icon-tuichu" @click="loginOut"></i>
 	    </footer>
 	</div>
@@ -34,18 +36,21 @@
 import { mapState, mapGetters } from 'vuex'
 import addtip from '../../components/menu/addtip'
 import personcard from '../../components/menu/personalCard'
+import about from '../../components/menu/about'
 import webSocketCli from '../../websocket/websocketcli'
 import Logger from '../../websocket/utils/logger'
 
 export default {
 	components: {
 		addtip,
-		personcard
+		personcard,
+		about
 	},
 	data() {
 		return {
 			showAddRequestTip: false,
-			showPersonalCard: false
+			showPersonalCard: false,
+			showAboutDialog: false
 		}
 	},
     computed: {
@@ -67,6 +72,12 @@ export default {
 		},
 		loginOut(){
 			this.$store.dispatch('loginOut','');
+		},
+		showAbout(){
+			this.showAboutDialog = true;
+		},
+		closeAbout(){
+			this.showAboutDialog = false;
 		},
 		changeFullScreenMode(){
 			var fullscreen = this.$store.state.changeFullScreenMode;
@@ -169,4 +180,11 @@ export default {
 	    bottom: 20px
 	    width: 100%
 	    text-align: center
+	    .icon
+	        font-size: 20px
+	        color: rgb(173,174,175)
+	        margin: 0 4px
+	        cursor: pointer
+	        &:hover
+	            opacity: 0.8
 </style>
