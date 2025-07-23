@@ -5,6 +5,8 @@
 	    	<img :src="user.img" class="avatar" @click="showPersonCard" @dblclick="changeFullScreenMode">
 			<personcard v-if="showPersonalCard" v-bind:userId="userId"></personcard>
 	    </header>
+	    <!-- 关于界面 -->
+	    <aboutDialog :visible="showAboutDialog" @close="showAboutDialog = false"></aboutDialog>
 	    <div class="navbar" @click="clearSearch">
 			<div class="conversation-item">
 				<span v-if="unreadTotalCount > 0" class="unread-num">
@@ -25,6 +27,7 @@
 			</div> 
 	    </div>
 	    <footer>
+	        <i title = "关于" class="el-icon-info about-icon" @click="showAbout"></i>
 	        <i title = "退出" class="icon iconfont icon-tuichu" @click="loginOut"></i>
 	    </footer>
 	</div>
@@ -34,18 +37,21 @@
 import { mapState, mapGetters } from 'vuex'
 import addtip from '../../components/menu/addtip'
 import personcard from '../../components/menu/personalCard'
+import aboutDialog from '../../components/menu/aboutDialog'
 import webSocketCli from '../../websocket/websocketcli'
 import Logger from '../../websocket/utils/logger'
 
 export default {
 	components: {
 		addtip,
-		personcard
+		personcard,
+		aboutDialog
 	},
 	data() {
 		return {
 			showAddRequestTip: false,
-			showPersonalCard: false
+			showPersonalCard: false,
+			showAboutDialog: false
 		}
 	},
     computed: {
@@ -61,6 +67,9 @@ export default {
     methods: {
 		showPersonCard(){
 			this.showPersonalCard = !this.showPersonalCard
+		},
+		showAbout(){
+			this.showAboutDialog = true
 		},
     	clearSearch() {
     		this.$store.dispatch('search', '')
@@ -169,4 +178,22 @@ export default {
 	    bottom: 20px
 	    width: 100%
 	    text-align: center
+	    .icon
+	        display: inline-block
+	        font-size: 20px
+	        margin: 0 8px
+	        color: rgb(173,174,175)
+	        cursor: pointer
+	        &:hover
+	            opacity: 0.8
+	        &.icon-tuichu
+	            font-size: 18px
+	    .about-icon
+	        display: inline-block
+	        font-size: 18px
+	        margin: 0 8px
+	        color: rgb(173,174,175)
+	        cursor: pointer
+	        &:hover
+	            opacity: 0.8
 </style>
