@@ -39,7 +39,10 @@ export default {
   height: 100%
   .msglist
     width: 250px
-    background: #fff
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
   .chatbox
     flex: 1
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
 </style>
