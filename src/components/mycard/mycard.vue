@@ -26,6 +26,7 @@
 			</div> 
 	    </div>
 	    <footer>
+	        <span title = "夜间模式" class="dark-mode-toggle" @click="toggleDarkMode">{{ isDarkMode ? '☀️' : '🌙' }}</span>
 	        <i title = "关于" class="icon iconfont icon-dkw_xiaoxi" @click="showAbout"></i>
 	        <i title = "退出" class="icon iconfont icon-tuichu" @click="loginOut"></i>
 	    </footer>
@@ -33,7 +34,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import addtip from '../../components/menu/addtip'
 import personcard from '../../components/menu/personalCard'
 import about from '../../components/menu/about'
@@ -57,13 +58,17 @@ export default {
        ...mapState([
 			 'user',
 			 'userId',
-			 'newFriendRequestCount'
+			 'newFriendRequestCount',
+			 'isDarkMode'
 	   ]),
 	   ...mapGetters([
 		   'unreadTotalCount',
 	   ])
     },
     methods: {
+		...mapActions([
+			'toggleDarkMode'
+		]),
 		showPersonCard(){
 			this.showPersonalCard = !this.showPersonalCard
 		},
@@ -185,6 +190,17 @@ export default {
 	        color: rgb(173,174,175)
 	        margin: 0 4px
 	        cursor: pointer
+	        transition: color 0.3s ease, opacity 0.3s ease
 	        &:hover
 	            opacity: 0.8
+	    .dark-mode-toggle
+	        font-size: 18px
+	        color: rgb(173,174,175)
+	        margin: 0 4px
+	        cursor: pointer
+	        transition: color 0.3s ease, opacity 0.3s ease, transform 0.3s ease
+	        display: inline-block
+	        &:hover
+	            opacity: 0.8
+	            transform: scale(1.1)
 </style>

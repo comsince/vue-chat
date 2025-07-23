@@ -60,13 +60,16 @@ export default {
   border-radius 50px
   width: 75%
   height: 80%
-  background-color: #fff
+  background-color: var(--bg-color)
+  transition: background-color 0.3s ease
   .sidebar
     width: 60px
     height: 100%
-    background: #2b2c2f
+    background: var(--sidebar-bg)
+    transition: background-color 0.3s ease
   .main
     flex: 1
     height: 100%
-    background: #ffffff
+    background: var(--main-bg)
+    transition: background-color 0.3s ease
 </style>

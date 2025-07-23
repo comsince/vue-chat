@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-container" id="app-chat">
+  <div class="layout-container" id="app-chat" :class="{ 'dark-mode': isDarkMode }">
     <router-view></router-view>
     <searchfriend></searchfriend>
     <creategroup></creategroup>
@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import searchfriend from './page/friend/searchfriend'
 import creategroup from './page/group/creategroup'
 import relayMessage from './components/menu/relayMessage'
@@ -18,6 +18,11 @@ export default {
      searchfriend,
      creategroup,
      relayMessage
+   },
+   computed: {
+       ...mapState([
+           'isDarkMode'
+       ])
    }
 }
 </script>
@@ -32,9 +37,24 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column
+    flex-direction: column;
+    --bg-color: #fff;
+    --text-color: #333;
+    --sidebar-bg: #2b2c2f;
+    --main-bg: #ffffff;
+    --border-color: #e1e1e1;
+    --hover-bg: #f5f5f5;
+    transition: background-color 0.3s ease;
 }
 
+.layout-container.dark-mode {
+    --bg-color: #1a1a1a;
+    --text-color: #e1e1e1;
+    --sidebar-bg: #1a1a1a;
+    --main-bg: #2a2a2a;
+    --border-color: #404040;
+    --hover-bg: #333333;
+}
 </style>
 
 

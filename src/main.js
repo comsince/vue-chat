@@ -9,6 +9,7 @@ Vue.config.productionTip = false
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import './assets/dark-mode.css';
 Vue.use(ElementUI);
 /* eslint-disable no-new */
 const vm = new Vue({

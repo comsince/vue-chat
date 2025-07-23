@@ -131,6 +131,8 @@ const state = {
     //修改全屏模式
     changeFullScreenMode: false,
     appHeight: 638,
+    //夜间模式
+    isDarkMode: false,
     visibilityState: 'hidden',
     //是否限制音视频对话框
     showChatBox: false,
@@ -179,6 +181,11 @@ const mutations = {
                 state.notify.close();
             }
           });
+        // 加载夜间模式设置
+        const darkMode = localStorage.getItem('vue-dark-mode');
+        if(darkMode !== null){
+            state.isDarkMode = darkMode === 'true';
+        }
     },
     // 获取搜索值
 	search (state, value) {
@@ -718,6 +725,12 @@ const mutations = {
        state.visibilityState = value;
     },
 
+    toggleDarkMode(state){
+       state.isDarkMode = !state.isDarkMode;
+       // 保存到localStorage以便持久化
+       localStorage.setItem('vue-dark-mode', state.isDarkMode);
+    },
+
     searchUser(state,value){
        state.vueSocket.searchUser(value);
     },
@@ -962,6 +975,7 @@ const actions = {
     deleteMessage: ({ commit }, value) => commit('deleteMessage', value),
     preAddProtoMessage: ({ commit }, value) => commit('preAddProtoMessage', value),
     updateSendMessage: ({ commit }, value) => commit('updateSendMessage', value),
+    toggleDarkMode: ({ commit }) => commit('toggleDarkMode'),
 }
 const store = new Vuex.Store({
   state,

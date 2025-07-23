@@ -1,0 +1,121 @@
+/* 全局夜间模式样式 */
+:root {
+  --bg-color: #fff;
+  --text-color: #333;
+  --sidebar-bg: #2b2c2f;
+  --main-bg: #ffffff;
+  --border-color: #e1e1e1;
+  --hover-bg: #f5f5f5;
+  --input-bg: #fff;
+  --input-border: #dcdfe6;
+  --card-bg: #fff;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode {
+  --bg-color: #1a1a1a;
+  --text-color: #e1e1e1;
+  --sidebar-bg: #1a1a1a;
+  --main-bg: #2a2a2a;
+  --border-color: #404040;
+  --hover-bg: #333333;
+  --input-bg: #2a2a2a;
+  --input-border: #404040;
+  --card-bg: #2a2a2a;
+  --shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* Element UI 夜间模式样式覆盖 */
+.dark-mode .el-input__inner {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-input__inner:focus {
+  border-color: #409eff !important;
+}
+
+.dark-mode .el-button {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-button:hover {
+  background-color: var(--hover-bg) !important;
+}
+
+.dark-mode .el-card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-dialog {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-dialog__header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.dark-mode .el-dialog__title {
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-message-box {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-form-item__label {
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-textarea__inner {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-select .el-input .el-select__caret {
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-option {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-option:hover {
+  background-color: var(--hover-bg) !important;
+}
+
+.dark-mode .el-dropdown-menu {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dark-mode .el-dropdown-menu__item {
+  color: var(--text-color) !important;
+}
+
+.dark-mode .el-dropdown-menu__item:hover {
+  background-color: var(--hover-bg) !important;
+}
+
+/* 自定义组件夜间模式样式 */
+.dark-mode * {
+  color: var(--text-color);
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.dark-mode div, .dark-mode span, .dark-mode p {
+  background-color: transparent;
+}
+
+.dark-mode .router-link-active {
+  color: #409eff !important;
+}
