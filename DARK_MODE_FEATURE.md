@@ -55,6 +55,10 @@
 - **重要**: 修复发送者消息背景夜间模式适配
 - 使用CSS变量 `--self-message-bg` 和 `--self-message-text`
 - 夜间模式：发送者消息深绿色背景 `#4a6741`
+- **功能修复**: 恢复并增强下拉刷新功能
+- 添加 `-webkit-overflow-scrolling: touch` 支持移动端惯性滚动
+- 实现滚动到顶部检测和历史消息加载
+- 添加加载指示器和防抖机制
 
 ### 8. 搜索组件
 **文件**: `src/components/search/search.vue`
