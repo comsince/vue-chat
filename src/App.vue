@@ -44,6 +44,8 @@ export default {
     --main-bg: #ffffff;
     --border-color: #e1e1e1;
     --hover-bg: #f5f5f5;
+    --self-message-bg: #b2e281;
+    --self-message-text: #333;
     transition: background-color 0.3s ease;
 }
 
@@ -54,6 +56,8 @@ export default {
     --main-bg: #2a2a2a;
     --border-color: #404040;
     --hover-bg: #333333;
+    --self-message-bg: #4a6741;
+    --self-message-text: #e1e1e1;
 }
 </style>
 

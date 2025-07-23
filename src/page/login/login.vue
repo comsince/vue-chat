@@ -152,6 +152,8 @@ export default {
   --input-border: #dcdfe6;
   --card-bg: #fff;
   --shadow: rgba(0, 0, 0, 0.1);
+  --self-message-bg: #b2e281;
+  --self-message-text: #333;
 }
 
 .dark-mode {
@@ -165,6 +167,8 @@ export default {
   --input-border: #505050;
   --card-bg: #3a3a3a;
   --shadow: rgba(0, 0, 0, 0.5);
+  --self-message-bg: #4a6741;
+  --self-message-text: #e1e1e1;
 }
 
 /* 登录页面占位符颜色 */

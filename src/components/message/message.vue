@@ -466,12 +466,13 @@ export default {
                         animation: changeright 1s linear infinite
                 .content-message-right-menu            
                     .content-message 
-                        background-color: #b2e281
+                        background-color: var(--self-message-bg)
+                        color: var(--self-message-text)
                         &:before 
                             right: -12px
                             vertical-align: middle
                             border-right-color: transparent
-                            border-left-color: #b2e281
+                            border-left-color: var(--self-message-bg)
     @keyframes changeright     
     0% 
         -webkit-transform:rotate(0deg)
